@@ -116,7 +116,7 @@ public class FinishedApplicationsClusterJ
       toModify.add(createPersistable(entry, session));
     }
     session.savePersistentAll(toModify);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -129,7 +129,7 @@ public class FinishedApplicationsClusterJ
       toRemove.add(createPersistable(entry, session));
     }
     session.deletePersistentAll(toRemove);
-    session.flush();
+//    session.flush();
   }
 
   private FinishedApplications createHopFinishedApplications(

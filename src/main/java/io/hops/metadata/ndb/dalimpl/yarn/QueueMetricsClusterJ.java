@@ -170,7 +170,7 @@ public class QueueMetricsClusterJ
     HopsQuery<QueueMetricsClusterJ.QueueMetricsDTO> query =
         session.createQuery(dobj);
     List<QueueMetricsClusterJ.QueueMetricsDTO> results = query.getResultList();
-    session.flush();
+//    session.flush();
     return createHopQueueMetricsList(results);
 
   }

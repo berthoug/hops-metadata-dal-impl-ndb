@@ -170,6 +170,11 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+    @Override
+  public void flush() throws StorageException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+  
   @Override
   public void rollback() throws StorageException {
     throw new UnsupportedOperationException("Not supported yet.");

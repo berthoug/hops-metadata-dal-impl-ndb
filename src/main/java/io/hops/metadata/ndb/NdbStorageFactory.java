@@ -122,8 +122,10 @@ import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.DelegationKeyClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.DelegationTokenClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.RMStateVersionClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.RPCClusterJ;
+import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.RanNodeClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.SecretMamagerKeysClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.SequenceNumberClusterJ;
+import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.UpdatedNodeClusterJ;
 import io.hops.metadata.ndb.mysqlserver.MysqlServerConnector;
 import io.hops.metadata.yarn.dal.AppSchedulingInfoBlacklistDataAccess;
 import io.hops.metadata.yarn.dal.AppSchedulingInfoDataAccess;
@@ -169,8 +171,10 @@ import io.hops.metadata.yarn.dal.rmstatestore.DelegationKeyDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationTokenDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.RMStateVersionDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.RPCDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.RanNodeDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.SecretMamagerKeysDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.SequenceNumberDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.UpdatedNodeDataAccess;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -199,8 +203,10 @@ public class NdbStorageFactory implements DalStorageFactory {
         .put(RMStateVersionDataAccess.class, new RMStateVersionClusterJ());
     dataAccessMap
         .put(ApplicationStateDataAccess.class, new ApplicationStateClusterJ());
+    dataAccessMap.put(UpdatedNodeDataAccess.class, new UpdatedNodeClusterJ());
     dataAccessMap.put(ApplicationAttemptStateDataAccess.class,
         new ApplicationAttemptStateClusterJ());
+    dataAccessMap.put(RanNodeDataAccess.class, new RanNodeClusterJ());
     dataAccessMap
         .put(DelegationTokenDataAccess.class, new DelegationTokenClusterJ());
     dataAccessMap

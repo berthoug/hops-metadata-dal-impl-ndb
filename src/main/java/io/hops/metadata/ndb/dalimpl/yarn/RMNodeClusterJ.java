@@ -149,7 +149,7 @@ public class RMNodeClusterJ
       toPersist.add(createPersistable(req, session));
     }
     session.savePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -161,13 +161,14 @@ public class RMNodeClusterJ
           getNodeId()));
     }
     session.deletePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override
   public void add(RMNode rmNode) throws StorageException {
     HopsSession session = connector.obtainSession();
     session.savePersistent(createPersistable(rmNode, session));
+    session.flush();
   }
 
   private Map<String, RMNode> createMap(List<RMNodeDTO> results) {

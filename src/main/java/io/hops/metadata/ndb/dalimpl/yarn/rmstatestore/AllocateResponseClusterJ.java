@@ -59,29 +59,30 @@ public class AllocateResponseClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+  //TODO find out why allocate response is sometime too big
   @Override
   public void addAll(Collection<AllocateResponse> toAdd)
       throws StorageException {
-    HopsSession session = connector.obtainSession();
-    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
-    for (AllocateResponse req : toAdd) {
-      toPersist.add(createPersistable(req, session));
-    }
-    session.savePersistentAll(toPersist);
+//    HopsSession session = connector.obtainSession();
+//    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
+//    for (AllocateResponse req : toAdd) {
+//      toPersist.add(createPersistable(req, session));
+//    }
+//    session.savePersistentAll(toPersist);
   }
 
   @Override
   public void removeAll(Collection<AllocateResponse> toAdd)
       throws StorageException {
-    HopsSession session = connector.obtainSession();
-    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
-    for (AllocateResponse req : toAdd) {
-      AllocateResponseDTO persistable = session
-          .newInstance(AllocateResponseDTO.class,
-              req.getApplicationattemptid());
-      toPersist.add(persistable);
-    }
-    session.deletePersistentAll(toPersist);
+//    HopsSession session = connector.obtainSession();
+//    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
+//    for (AllocateResponse req : toAdd) {
+//      AllocateResponseDTO persistable = session
+//          .newInstance(AllocateResponseDTO.class,
+//              req.getApplicationattemptid());
+//      toPersist.add(persistable);
+//    }
+//    session.deletePersistentAll(toPersist);
   }
   
   @Override

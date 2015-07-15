@@ -121,7 +121,7 @@ public class ResourceClusterJ
     }
 
     session.savePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -136,7 +136,7 @@ public class ResourceClusterJ
       toPersist.add(session.newInstance(ResourceDTO.class, pk));
     }
     session.deletePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override

@@ -122,7 +122,7 @@ public class UpdatedContainerInfoClusterJ
       toModify.add(createPersistable(entry, session));
     }
     session.savePersistentAll(toModify);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -135,7 +135,7 @@ public class UpdatedContainerInfoClusterJ
       toRemove.add(createPersistable(entry, session));
     }
     session.deletePersistentAll(toRemove);
-    session.flush();
+//    session.flush();
   }
 
   private UpdatedContainerInfoDTO createPersistable(UpdatedContainerInfo hop,

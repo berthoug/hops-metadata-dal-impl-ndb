@@ -58,6 +58,7 @@ public class RMLoadClusterJ implements TablesDef.RMLoadTableDef, RMLoadDataAcces
   public void update(Load entry) throws StorageException {
     HopsSession session = connector.obtainSession();
     session.savePersistent(createPersistable(entry, session));
+//    session.flush();
   }
 
   @Override

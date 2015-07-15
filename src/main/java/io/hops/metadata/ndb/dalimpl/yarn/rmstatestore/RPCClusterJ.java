@@ -44,10 +44,10 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
   public interface RPCDTO {
 
     @PrimaryKey
-    @Column(name = ID)
-    int getid();
+    @Column(name = RPCID)
+    int getrpcid();
 
-    void setid(int id);
+    void setrpcid(int id);
 
     @Column(name = TYPE)
     String gettype();
@@ -107,11 +107,17 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
   }
 
   @Override
-  public void remove(io.hops.metadata.yarn.entity.appmasterrpc.RPC toRemove)
+  public void removeAll(List<io.hops.metadata.yarn.entity.appmasterrpc.RPC> toRemove)
       throws StorageException {
     HopsSession session = connector.obtainSession();
+    List<RPCDTO> dtoToRemove = new ArrayList<RPCDTO>();
+    for(io.hops.metadata.yarn.entity.appmasterrpc.RPC rpc : toRemove){
+      RPCDTO toRemoveDTO = session.newInstance(RPCDTO.class);
+      toRemoveDTO.setrpcid(rpc.getRPCId());
+      dtoToRemove.add(toRemoveDTO);
+    }
     session
-        .deletePersistent(session.newInstance(RPCDTO.class, toRemove.getId()));
+        .deletePersistentAll(dtoToRemove);
   }
 
   @Override
@@ -140,7 +146,7 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
   private io.hops.metadata.yarn.entity.appmasterrpc.RPC createHopRPC(
       RPCDTO appMasterRPCDTO) throws StorageException {
     try {
-      return new RPC(appMasterRPCDTO.getid(),
+      return new RPC(appMasterRPCDTO.getrpcid(),
           io.hops.metadata.yarn.entity.appmasterrpc.RPC.Type
               .valueOf(appMasterRPCDTO.gettype()),
           CompressionUtils.decompress(appMasterRPCDTO.getrpc()),
@@ -168,7 +174,7 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
       throws StorageException {
     RPCClusterJ.RPCDTO appMasterRPCDTO =
         session.newInstance(RPCClusterJ.RPCDTO.class);
-    appMasterRPCDTO.setid(hop.getId());
+    appMasterRPCDTO.setrpcid(hop.getRPCId());
     appMasterRPCDTO.settype(hop.getType().name());
     try {
       appMasterRPCDTO.setrpc(CompressionUtils.compress(hop.getRpc()));

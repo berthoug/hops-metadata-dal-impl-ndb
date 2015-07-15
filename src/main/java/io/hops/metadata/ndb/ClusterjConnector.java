@@ -115,8 +115,10 @@ import io.hops.metadata.yarn.dal.rmstatestore.DelegationKeyDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationTokenDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.RMStateVersionDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.RPCDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.RanNodeDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.SecretMamagerKeysDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.SequenceNumberDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.UpdatedNodeDataAccess;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -222,6 +224,28 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
     }
   }
 
+    /**
+   * Commit a transaction.
+   *
+   * @throws io.hops.exception.StorageException
+   */
+  @Override
+  public void flush() throws StorageException {
+    HopsSession session = null;
+    boolean dbError = false;
+    try {
+      session = obtainSession();
+      HopsTransaction tx = session.currentTransaction();
+      if (!tx.isActive()) {
+        throw new StorageException("The transaction is not began!");
+      }
+      session.flush();
+    } catch (StorageException e) {
+      dbError = true;
+      throw e;
+    } 
+  }
+  
   /**
    * It rolls back only when the transaction is active.
    */
@@ -361,7 +385,10 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
         RepairJobsDataAccess.class,
         // YARN
         RPCDataAccess.class, ApplicationStateDataAccess.class,
-        ApplicationAttemptStateDataAccess.class, DelegationKeyDataAccess.class,
+        UpdatedNodeDataAccess.class,
+        ApplicationAttemptStateDataAccess.class,
+        RanNodeDataAccess.class,
+        DelegationKeyDataAccess.class,
         DelegationTokenDataAccess.class, SequenceNumberDataAccess.class,
         RMStateVersionDataAccess.class, YarnVariablesDataAccess.class,
         AppSchedulingInfoDataAccess.class,
@@ -583,7 +610,11 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.ApplicationAttemptStateTableDef.TABLE_NAME);
           } else if (e == ApplicationStateDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.ApplicationStateTableDef.TABLE_NAME);
-          } else if (e == RPCDataAccess.class) {
+          } else if (e == RanNodeDataAccess.class) {
+            truncate(transactional, io.hops.metadata.yarn.TablesDef.RanNodeTableDef.TABLE_NAME);
+          }else if (e == UpdatedNodeDataAccess.class) {
+            truncate(transactional, io.hops.metadata.yarn.TablesDef.UpdatedNodeTableDef.TABLE_NAME);
+          }else if (e == RPCDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.RPCTableDef.TABLE_NAME);
           } else if (e == RMLoadDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.RMLoadTableDef.TABLE_NAME);

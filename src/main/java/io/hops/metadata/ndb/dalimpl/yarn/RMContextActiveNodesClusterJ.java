@@ -90,7 +90,7 @@ public class RMContextActiveNodesClusterJ
       toPersist.add(createPersistable(req, session));
     }
     session.savePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -103,7 +103,7 @@ public class RMContextActiveNodesClusterJ
           getNodeId()));
     }
     session.deletePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   private RMContextNodesDTO createPersistable(RMContextActiveNodes entry,

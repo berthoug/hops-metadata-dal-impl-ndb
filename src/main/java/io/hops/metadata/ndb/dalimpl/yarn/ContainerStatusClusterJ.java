@@ -122,7 +122,7 @@ public class ContainerStatusClusterJ implements
       toAdd.add(createPersistable(containerStatus, session));
     }
     session.savePersistentAll(toAdd);
-    session.flush();
+//    session.flush();
   }
 
   private ContainerStatusDTO createPersistable(ContainerStatus hopCS,

@@ -85,7 +85,7 @@ public class NextHeartbeatClusterJ
     HopsSession session = connector.obtainSession();
     session.savePersistent(
         createPersistable(new NextHeartbeat(rmnodeid, nextHeartbeat), session));
-    session.flush();
+//    session.flush();
   }
 
   private NextHeartbeatDTO createPersistable(NextHeartbeat hopNextHeartbeat,

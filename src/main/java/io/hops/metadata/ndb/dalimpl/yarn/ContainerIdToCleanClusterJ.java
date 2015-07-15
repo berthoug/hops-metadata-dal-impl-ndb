@@ -117,7 +117,7 @@ public class ContainerIdToCleanClusterJ implements
       toModify.add(createPersistable(hop, session));
     }
     session.savePersistentAll(toModify);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -131,7 +131,7 @@ public class ContainerIdToCleanClusterJ implements
       toRemove.add(createPersistable(hop, session));
     }
     session.deletePersistentAll(toRemove);
-    session.flush();
+//    session.flush();
   }
 
   private ContainerIdToCleanDTO createPersistable(ContainerId hop,

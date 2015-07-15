@@ -83,7 +83,7 @@ public class ContainerClusterJ
     }
     session.savePersistentAll(toPersist);
 
-    session.flush();
+//    session.flush();
   }
 
   @Override

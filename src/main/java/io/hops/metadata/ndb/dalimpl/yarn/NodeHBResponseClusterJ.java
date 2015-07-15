@@ -77,7 +77,7 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     }
     LOG.debug("HOP :: ClusterJ NodeHBResponse.findById.session_null - FINISH:" +
         rmnodeId);
-    session.flush();
+//    session.flush();
     return null;
   }
 

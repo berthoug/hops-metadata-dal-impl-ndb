@@ -119,7 +119,7 @@ public class PendingEventClusterJ
       LOG.debug(
           "HOP :: ClusterJ PendingEvent.prepare.modify - FINISH:" + modified);
     }
-    session.flush();
+//    session.flush();
   }
 
   @Override

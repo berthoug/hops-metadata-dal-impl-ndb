@@ -76,7 +76,7 @@ public class JustLaunchedContainersClusterJ
       toModify.add(createPersistable(hop, session));
     }
     session.savePersistentAll(toModify);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -93,7 +93,7 @@ public class JustLaunchedContainersClusterJ
           .add(session.newInstance(JustLaunchedContainersDTO.class, objarr));
     }
     session.deletePersistentAll(toRemove);
-    session.flush();
+//    session.flush();
   }
 
   @Override

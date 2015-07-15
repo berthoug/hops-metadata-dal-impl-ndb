@@ -154,6 +154,16 @@ public class RMContainerClusterJ
   }
 
   @Override
+  public void remove(RMContainer toRemove)
+      throws StorageException {
+    HopsSession session = connector.obtainSession();
+    
+    session.deletePersistent(session.
+          newInstance(RMContainerClusterJ.RMContainerDTO.class, toRemove.
+              getContainerIdID()));
+  }
+  
+  @Override
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
     session.savePersistent(createPersistable(rmcontainer, session));

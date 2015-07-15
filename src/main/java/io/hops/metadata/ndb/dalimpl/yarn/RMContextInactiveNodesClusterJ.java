@@ -74,7 +74,7 @@ public class RMContextInactiveNodesClusterJ
       toPersist.add(createPersistable(req, session));
     }
     session.savePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override
@@ -88,7 +88,7 @@ public class RMContextInactiveNodesClusterJ
           getRmnodeid()));
     }
     session.deletePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   private RMContextInactiveNodes createRMContextInactiveNodesEntry(

@@ -102,7 +102,7 @@ public class CSLeafQueueUserInfoClusterJ implements
             = session.createQuery(dobj);
     List<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> results = query.
             getResultList();
-    session.flush();
+//    session.flush();
 
     return createCSLeafQueueUserInfoList(results);
   }

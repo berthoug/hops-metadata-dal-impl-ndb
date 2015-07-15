@@ -112,7 +112,7 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
       toPersist.add(createPersistable(node, session));
     }
     session.savePersistentAll(toPersist);
-    session.flush();
+//    session.flush();
   }
 
   @Override
