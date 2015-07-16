@@ -101,6 +101,7 @@ import io.hops.metadata.yarn.dal.ResourceRequestDataAccess;
 import io.hops.metadata.yarn.dal.FiCaSchedulerAppLastScheduledContainerDataAccess;
 import io.hops.metadata.yarn.dal.FiCaSchedulerAppReservationsDataAccess;
 import io.hops.metadata.yarn.dal.FiCaSchedulerAppSchedulingOpportunitiesDataAccess;
+import io.hops.metadata.yarn.dal.NodeHBResponseDataAccess;
 import io.hops.metadata.yarn.dal.SchedulerApplicationDataAccess;
 import io.hops.metadata.yarn.dal.UpdatedContainerInfoDataAccess;
 import io.hops.metadata.yarn.dal.YarnVariablesDataAccess;
@@ -414,7 +415,8 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
         RMLoadDataAccess.class, PendingEventDataAccess.class,
         LocalityLevelDataAccess.class,
         RunnableAppsDataAccess.class,
-        CSQueueDataAccess.class);
+        CSQueueDataAccess.class,
+        NodeHBResponseDataAccess.class);
   }
 
   private boolean format(boolean transactional,
@@ -618,7 +620,9 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.RPCTableDef.TABLE_NAME);
           } else if (e == RMLoadDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.RMLoadTableDef.TABLE_NAME);
-          } else if (e == YarnVariablesDataAccess.class) {
+          } else if (e == NodeHBResponseDataAccess.class) {
+            truncate(transactional, io.hops.metadata.yarn.TablesDef.NodeHBResponseTableDef.TABLE_NAME);
+          }else if (e == YarnVariablesDataAccess.class) {
             HopsSession session = obtainSession();
             session.currentTransaction().begin();
             session.deletePersistentAll(
