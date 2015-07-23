@@ -66,12 +66,12 @@ public class PendingEventClusterJ
     @Column(name = TYPE)
     byte getType();
 
-    void setType(byte type);
+    void setType(int type);
 
     @Column(name = STATUS)
     byte getStatus();
 
-    void setStatus(byte status);
+    void setStatus(int status);
 
   }
 
@@ -138,7 +138,7 @@ public class PendingEventClusterJ
   }
 
   @Override
-  public List<PendingEvent> getAll(byte status) throws StorageException {
+  public List<PendingEvent> getAll(int status) throws StorageException {
     // LOG.debug("HOP :: ClusterJ PendingEvent.getAll(" + status + ") - START");
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();

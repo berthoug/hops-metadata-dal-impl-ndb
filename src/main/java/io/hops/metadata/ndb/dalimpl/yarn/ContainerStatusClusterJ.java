@@ -154,4 +154,14 @@ public class ContainerStatusClusterJ implements
     }
     return map;
   }
+  public static List<ContainerStatus> createList(
+          List<ContainerStatusDTO> results) {
+    List<ContainerStatus> list
+            = new ArrayList<ContainerStatus>();
+    for (ContainerStatusDTO persistable : results) {
+      ContainerStatus hop = createHopContainerStatus(persistable);
+      list.add( hop);
+    }
+    return list;
+  }
 }
