@@ -137,6 +137,7 @@ public class RMContainerClusterJ
     }
 
     session.savePersistentAll(toPersist);
+    session.flush();
   }
 
   @Override
@@ -167,6 +168,7 @@ public class RMContainerClusterJ
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
     session.savePersistent(createPersistable(rmcontainer, session));
+    session.flush();
   }
 
   private RMContainer createHopRMContainer(RMContainerDTO rMContainerDTO) {
