@@ -87,13 +87,15 @@ public class UpdatedContainerInfoClusterJ
 
     HopsQuery<UpdatedContainerInfoDTO> query = session.createQuery(dobj);
     query.setParameter(RMNODEID, rmnodeid);
-    List<UpdatedContainerInfoDTO> results = query.getResultList();
+    List<UpdatedContainerInfoDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - FINISH:" +
         rmnodeid);
-    if (results != null && !results.isEmpty()) {
-      return createUpdatedContainerInfoMap(results);
+    Map<Integer, List<UpdatedContainerInfo>> result = null;
+    if (queryResults != null && !queryResults.isEmpty()) {
+      result = createUpdatedContainerInfoMap(queryResults);
     }
-    return null;
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -107,9 +109,11 @@ public class UpdatedContainerInfoClusterJ
         createQueryDefinition(UpdatedContainerInfoDTO.class);
     HopsQuery<UpdatedContainerInfoDTO> query = session.createQuery(dobj);
 
-    List<UpdatedContainerInfoDTO> results = query.getResultList();
+    List<UpdatedContainerInfoDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - FINISH");
-    return createMap(results);
+    Map<String,Map<Integer, List<UpdatedContainerInfo>>> result =  createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -123,6 +127,7 @@ public class UpdatedContainerInfoClusterJ
     }
     session.savePersistentAll(toModify);
 //    session.flush();
+    session.release(toModify);
   }
 
   @Override
@@ -136,6 +141,7 @@ public class UpdatedContainerInfoClusterJ
     }
     session.deletePersistentAll(toRemove);
 //    session.flush();
+   session.release(toRemove);
   }
 
   private UpdatedContainerInfoDTO createPersistable(UpdatedContainerInfo hop,

@@ -79,9 +79,11 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
     query.setParameter("schedulerapp_id", ficaId);
 
     List<FiCaSchedulerAppNewlyAllocatedContainersClusterJ.FiCaSchedulerAppNewlyAllocatedContainersDTO>
-        results = query.getResultList();
-    return createFiCaSchedulerAppNewlyAllocatedContainersList(results);
-
+        queryResults = query.getResultList();
+    List<FiCaSchedulerAppContainer> result =
+            createFiCaSchedulerAppNewlyAllocatedContainersList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -94,9 +96,12 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
             FiCaSchedulerAppNewlyAllocatedContainersDTO.class);
     HopsQuery<FiCaSchedulerAppNewlyAllocatedContainersDTO> query = session.
         createQuery(dobj);
-    List<FiCaSchedulerAppNewlyAllocatedContainersDTO> results = query.
+    List<FiCaSchedulerAppNewlyAllocatedContainersDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, List<FiCaSchedulerAppContainer>> result = 
+            createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -111,6 +116,7 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
       toPersist.add(persistable);
     }
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
@@ -130,6 +136,7 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
               objarr));
     }
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private FiCaSchedulerAppContainer createHopFiCaSchedulerAppNewlyAllocatedContainers(

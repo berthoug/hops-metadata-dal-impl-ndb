@@ -80,9 +80,12 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
               = session.createQuery(dobj);
       query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> results
+      List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> queryResults
               = query.getResultList();
-      return createReservationsList(results);
+      List<FiCaSchedulerAppLastScheduledContainer> result =
+              createReservationsList(queryResults);
+      session.release(queryResults);
+      return result;
     } catch (Exception e) {
       throw new StorageException(e);
     }
@@ -103,6 +106,7 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
           toAdd.add(persistable);
         }
         session.savePersistentAll(toAdd);
+        session.release(toAdd);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -127,6 +131,7 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
                   objarr));
         }
         session.deletePersistentAll(toRemove);
+        session.release(toRemove);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -145,10 +150,13 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
     HopsQuery<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> query
             = session.
             createQuery(dobj);
-    List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> results
+    List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> queryResults
             = query.
             getResultList();
-    return createMap(results);
+    Map<String, List<FiCaSchedulerAppLastScheduledContainer>> result =
+            createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private FiCaSchedulerAppLastScheduledContainer createHopFiCaSchedulerAppLastScheduledContainer(

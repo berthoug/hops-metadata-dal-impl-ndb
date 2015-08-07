@@ -73,9 +73,11 @@ public class LaunchedContainersClusterJ implements
         qb.createQueryDefinition(LaunchedContainersDTO.class);
     HopsQuery<LaunchedContainersDTO> query = session.
         createQuery(dobj);
-    List<LaunchedContainersDTO> results = query.
+    List<LaunchedContainersDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, List<LaunchedContainers>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
 
@@ -89,6 +91,7 @@ public class LaunchedContainersClusterJ implements
       toPersist.add(createPersistable(id, session));
     }
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
@@ -104,6 +107,7 @@ public class LaunchedContainersClusterJ implements
       toPersist.add(session.newInstance(LaunchedContainersDTO.class, objarr));
     }
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private LaunchedContainers createLaunchedContainersEntry(

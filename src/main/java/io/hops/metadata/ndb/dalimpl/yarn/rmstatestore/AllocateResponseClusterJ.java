@@ -69,6 +69,7 @@ public class AllocateResponseClusterJ implements
 //      toPersist.add(createPersistable(req, session));
 //    }
 //    session.savePersistentAll(toPersist);
+//      session.release(toPersist);
   }
 
   @Override
@@ -83,6 +84,7 @@ public class AllocateResponseClusterJ implements
 //      toPersist.add(persistable);
 //    }
 //    session.deletePersistentAll(toPersist);
+//      session.release(toPersist);
   }
   
   @Override
@@ -92,8 +94,10 @@ public class AllocateResponseClusterJ implements
     HopsQueryDomainType<AllocateResponseDTO> dobj =
         qb.createQueryDefinition(AllocateResponseDTO.class);
     HopsQuery<AllocateResponseDTO> query = session.createQuery(dobj);
-    List<AllocateResponseDTO> results = query.getResultList();
-    return createHopAllocateResponseList(results);
+    List<AllocateResponseDTO> queryResults = query.getResultList();
+    List<AllocateResponse> result = createHopAllocateResponseList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private AllocateResponseDTO createPersistable(AllocateResponse hop,

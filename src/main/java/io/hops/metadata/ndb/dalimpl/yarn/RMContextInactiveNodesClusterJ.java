@@ -60,8 +60,11 @@ public class RMContextInactiveNodesClusterJ
         createQueryDefinition(RMContextInactiveNodesDTO.class);
     HopsQuery<RMContextInactiveNodesDTO> query = session.createQuery(dobj);
 
-    List<RMContextInactiveNodesDTO> results = query.getResultList();
-    return createRMContextInactiveNodesList(results);
+    List<RMContextInactiveNodesDTO> queryResults = query.getResultList();
+    List<RMContextInactiveNodes> result = 
+            createRMContextInactiveNodesList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -75,6 +78,7 @@ public class RMContextInactiveNodesClusterJ
     }
     session.savePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
   @Override
@@ -89,6 +93,7 @@ public class RMContextInactiveNodesClusterJ
     }
     session.deletePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
   private RMContextInactiveNodes createRMContextInactiveNodesEntry(

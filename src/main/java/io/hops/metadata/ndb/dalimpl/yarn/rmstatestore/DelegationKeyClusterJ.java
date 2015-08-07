@@ -60,16 +60,20 @@ public class DelegationKeyClusterJ
   @Override
   public void remove(DelegationKey removed) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.deletePersistent(session
+    DelegationKeyDTO dto = session
         .newInstance(DelegationKeyClusterJ.DelegationKeyDTO.class,
-            removed.getKey()));
+            removed.getKey());
+    session.deletePersistent(dto);
+    session.release(dto);
   }
 
   @Override
   public void createDTMasterKeyEntry(DelegationKey hopDelegationKey)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(hopDelegationKey, session));
+    DelegationKeyDTO dto = createPersistable(hopDelegationKey, session);
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   @Override
@@ -80,9 +84,11 @@ public class DelegationKeyClusterJ
       HopsQueryDomainType<DelegationKeyDTO> dobj =
           qb.createQueryDefinition(DelegationKeyDTO.class);
       HopsQuery<DelegationKeyDTO> query = session.createQuery(dobj);
-      List<DelegationKeyDTO> results = query.getResultList();
+      List<DelegationKeyDTO> queryResults = query.getResultList();
 
-      return createHopDelegationKeyList(results);
+      List<DelegationKey> result = createHopDelegationKeyList(queryResults);
+      session.release(queryResults);
+      return result;
 
     } catch (Exception e) {
       throw new StorageException(e);

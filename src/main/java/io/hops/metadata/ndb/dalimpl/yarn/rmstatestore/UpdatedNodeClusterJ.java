@@ -57,6 +57,7 @@ public class UpdatedNodeClusterJ implements
       }
     }
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
   
    @Override
@@ -66,9 +67,11 @@ public class UpdatedNodeClusterJ implements
      HopsQueryDomainType<UpdatedNodeDTO> dobj = qb.
         createQueryDefinition(UpdatedNodeDTO.class);
      HopsQuery<UpdatedNodeDTO> query = session.createQuery(dobj);
-    List<UpdatedNodeDTO> results = query.getResultList();
+    List<UpdatedNodeDTO> queryResults = query.getResultList();
 
-    return createMap(results);
+    Map<String, List<UpdatedNode>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
   
   private UpdatedNodeDTO createPersistable(UpdatedNode hop,

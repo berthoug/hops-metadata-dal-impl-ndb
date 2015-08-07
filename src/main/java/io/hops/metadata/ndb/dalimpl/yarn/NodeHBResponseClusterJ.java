@@ -68,17 +68,17 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     LOG.debug("HOP :: ClusterJ NodeHBResponse.findById - START:" + rmnodeId);
     HopsSession session = connector.obtainSession();
     NodeHBResponseDTO nodeHBresponseDTO;
-    if (session != null) {
-      nodeHBresponseDTO = session.find(NodeHBResponseDTO.class, rmnodeId);
-      LOG.debug("HOP :: ClusterJ NodeHBResponse.findById - FINISH:" + rmnodeId);
-      if (nodeHBresponseDTO != null) {
-        return createHopNodeHBResponse(nodeHBresponseDTO);
-      }
+    nodeHBresponseDTO = session.find(NodeHBResponseDTO.class, rmnodeId);
+    LOG.debug("HOP :: ClusterJ NodeHBResponse.findById - FINISH:" + rmnodeId);
+    NodeHBResponse result = null;
+    if (nodeHBresponseDTO != null) {
+      result = createHopNodeHBResponse(nodeHBresponseDTO);
     }
     LOG.debug("HOP :: ClusterJ NodeHBResponse.findById.session_null - FINISH:" +
         rmnodeId);
 //    session.flush();
-    return null;
+    session.release(nodeHBresponseDTO);
+    return result;
   }
 
   @Override
@@ -90,16 +90,20 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
         qb.createQueryDefinition(NodeHBResponseDTO.class);
     HopsQuery<NodeHBResponseDTO> query = session.
         createQuery(dobj);
-    List<NodeHBResponseDTO> results = query.
+    List<NodeHBResponseDTO> queryResults = query.
         getResultList();
     LOG.debug("HOP :: ClusterJ NodeHBResponse.getAll - FINISH");
-    return createMap(results);
+    Map<String, NodeHBResponse> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
   public void add(NodeHBResponse toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(toAdd, session));
+    NodeHBResponseDTO dto = createPersistable(toAdd, session);
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   public static NodeHBResponse createHopNodeHBResponse(

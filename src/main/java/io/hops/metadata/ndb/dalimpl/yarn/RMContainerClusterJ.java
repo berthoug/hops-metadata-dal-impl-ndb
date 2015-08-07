@@ -120,9 +120,12 @@ public class RMContainerClusterJ
         qb.createQueryDefinition(RMContainerDTO.class);
     HopsQuery<RMContainerDTO> query = session.
         createQuery(dobj);
-    List<RMContainerDTO> results = query.
+    List<RMContainerDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+
+    Map<String,RMContainer> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -138,6 +141,7 @@ public class RMContainerClusterJ
 
     session.savePersistentAll(toPersist);
     session.flush();
+    session.release(toPersist);
   }
 
   @Override
@@ -152,23 +156,27 @@ public class RMContainerClusterJ
               getContainerIdID()));
     }
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
   public void remove(RMContainer toRemove)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    
-    session.deletePersistent(session.
+    RMContainerDTO dto = session.
           newInstance(RMContainerClusterJ.RMContainerDTO.class, toRemove.
-              getContainerIdID()));
+              getContainerIdID());
+    session.deletePersistent(dto);
+    session.release(dto);
   }
   
   @Override
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(rmcontainer, session));
+    RMContainerDTO dto = createPersistable(rmcontainer, session);
+    session.savePersistent(dto);
     session.flush();
+    session.release(dto);
   }
 
   private RMContainer createHopRMContainer(RMContainerDTO rMContainerDTO) {

@@ -64,28 +64,33 @@ public class NextHeartbeatClusterJ
     HopsQueryDomainType<NextHeartbeatDTO> dobj =
         qb.createQueryDefinition(NextHeartbeatDTO.class);
     HopsQuery<NextHeartbeatDTO> query = session.createQuery(dobj);
-    List<NextHeartbeatDTO> results = query.getResultList();
+    List<NextHeartbeatDTO> queryResults = query.getResultList();
 
-    return createMap(results);
+    Map<String, Boolean> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
   public boolean findEntry(String rmnodeId) throws StorageException {
     HopsSession session = connector.obtainSession();
     NextHeartbeatDTO nextHBDTO = session.find(NextHeartbeatDTO.class, rmnodeId);
+    boolean result = false;
     if (nextHBDTO != null) {
-      return createHopNextHeartbeat(nextHBDTO).isNextheartbeat();
+      result = createHopNextHeartbeat(nextHBDTO).isNextheartbeat();
     }
-    return false;
+    session.release(nextHBDTO);
+    return result;
   }
 
   @Override
   public void updateNextHeartbeat(String rmnodeid, boolean nextHeartbeat)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(
-        createPersistable(new NextHeartbeat(rmnodeid, nextHeartbeat), session));
+    NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(rmnodeid, nextHeartbeat), session);
+    session.savePersistent(hbDTO);
 //    session.flush();
+    session.release(hbDTO);
   }
 
   private NextHeartbeatDTO createPersistable(NextHeartbeat hopNextHeartbeat,

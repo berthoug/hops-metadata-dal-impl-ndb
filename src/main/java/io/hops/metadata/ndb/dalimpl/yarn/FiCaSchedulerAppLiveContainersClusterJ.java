@@ -69,9 +69,11 @@ public class FiCaSchedulerAppLiveContainersClusterJ
         qb.createQueryDefinition(FiCaSchedulerAppLiveContainersDTO.class);
     HopsQuery<FiCaSchedulerAppLiveContainersDTO> query = session.
         createQuery(dobj);
-    List<FiCaSchedulerAppLiveContainersDTO> results = query.
+    List<FiCaSchedulerAppLiveContainersDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, List<FiCaSchedulerAppContainer>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -86,6 +88,7 @@ public class FiCaSchedulerAppLiveContainersClusterJ
       toPersist.add(persistable);
     }
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
@@ -103,6 +106,7 @@ public class FiCaSchedulerAppLiveContainersClusterJ
           objarr));
     }
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private FiCaSchedulerAppContainer createHopFiCaSchedulerAppLiveContainers(

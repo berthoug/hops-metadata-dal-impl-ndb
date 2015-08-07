@@ -100,10 +100,12 @@ public class FinishedApplicationsClusterJ
         qb.createQueryDefinition(FinishedApplicationsDTO.class);
     HopsQuery<FinishedApplicationsDTO> query = session.
         createQuery(dobj);
-    List<FinishedApplicationsDTO> results = query.
+    List<FinishedApplicationsDTO> queryResults = query.
         getResultList();
     LOG.debug("HOP :: ClusterJ FinishedApplications.getAll - FINISH");
-    return createMap(results);
+    Map<String, List<FinishedApplications>> result = createMap(queryResults);
+    session.release(queryResults);
+      return result;
   }
 
   @Override
@@ -117,6 +119,7 @@ public class FinishedApplicationsClusterJ
     }
     session.savePersistentAll(toModify);
 //    session.flush();
+    session.release(toModify);
   }
 
   @Override
@@ -130,6 +133,7 @@ public class FinishedApplicationsClusterJ
     }
     session.deletePersistentAll(toRemove);
 //    session.flush();
+    session.release(toRemove);
   }
 
   private FinishedApplications createHopFinishedApplications(

@@ -58,13 +58,17 @@ public class SequenceNumberClusterJ implements TablesDef.SequenceNumberTableDef,
     }
 
 
-    return createHopSequenceNumber(sequenceNumberDTO);
+    SequenceNumber result = createHopSequenceNumber(sequenceNumberDTO);
+    session.release(sequenceNumberDTO);
+    return result;
   }
 
   @Override
   public void add(SequenceNumber toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(toAdd, session));
+    SequenceNumberDTO dto = createPersistable(toAdd, session);
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   private SequenceNumber createHopSequenceNumber(

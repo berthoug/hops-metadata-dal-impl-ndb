@@ -94,7 +94,9 @@ public class CSQueueClusterJ implements TablesDef.CSQueueTableDef,
     if (session != null) {
       csQueueDTO = session.find(CSQueueDTO.class, id);
     }
-    return createCSQueue(csQueueDTO);
+    CSQueue result = createCSQueue(csQueueDTO);
+    session.release(csQueueDTO);
+    return result;
   }
 
   @Override
@@ -104,9 +106,11 @@ public class CSQueueClusterJ implements TablesDef.CSQueueTableDef,
     HopsQueryDomainType<CSQueueClusterJ.CSQueueDTO> dobj = qb.
             createQueryDefinition(CSQueueClusterJ.CSQueueDTO.class);
     HopsQuery<CSQueueClusterJ.CSQueueDTO> query = session.createQuery(dobj);
-    List<CSQueueClusterJ.CSQueueDTO> results = query.getResultList();
+    List<CSQueueClusterJ.CSQueueDTO> queryResults = query.getResultList();
 
-    return createCSQueueList(results);
+    List<CSQueue> result = createCSQueueList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private List<CSQueue> createCSQueueList(List<CSQueueClusterJ.CSQueueDTO> list)
@@ -130,6 +134,7 @@ public class CSQueueClusterJ implements TablesDef.CSQueueTableDef,
           toModify.add(createPersistable(hop, session));
         }
         session.savePersistentAll(toModify);
+        session.release(toModify);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -146,6 +151,7 @@ public class CSQueueClusterJ implements TablesDef.CSQueueTableDef,
           toRemove.add(session.newInstance(CSQueueClusterJ.CSQueueDTO.class));
         }
         session.deletePersistentAll(toRemove);
+        session.release(toRemove);
       }
     } catch (Exception e) {
       throw new StorageException(e);

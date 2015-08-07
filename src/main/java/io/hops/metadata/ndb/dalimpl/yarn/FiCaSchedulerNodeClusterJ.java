@@ -74,6 +74,7 @@ public class FiCaSchedulerNodeClusterJ implements
     HopsSession session = connector.obtainSession();
     FiCaSchedulerNodeDTO persistable = createPersistable(toAdd, session);
     session.savePersistent(persistable);
+    session.release(persistable);
     session.flush();
   }
 
@@ -88,6 +89,7 @@ public class FiCaSchedulerNodeClusterJ implements
       toPersist.add(persistable);
     }
       session.savePersistentAll(toPersist);
+      session.release(toPersist);
       session.flush();
   }
 
@@ -103,6 +105,7 @@ public class FiCaSchedulerNodeClusterJ implements
       toPersist.add(persistable);
     }
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
@@ -116,9 +119,12 @@ public class FiCaSchedulerNodeClusterJ implements
       HopsQuery<FiCaSchedulerNodeClusterJ.FiCaSchedulerNodeDTO> query =
           session.createQuery(dobj);
 
-      List<FiCaSchedulerNodeClusterJ.FiCaSchedulerNodeDTO> results =
+      List<FiCaSchedulerNodeClusterJ.FiCaSchedulerNodeDTO> queryResults =
           query.getResultList();
-      return createFiCaSchedulerNodeMap(results);
+      Map<String, FiCaSchedulerNode> result =
+              createFiCaSchedulerNodeMap(queryResults);
+      session.release(queryResults);
+      return result;
     } catch (Exception e) {
       throw new StorageException(e);
     }

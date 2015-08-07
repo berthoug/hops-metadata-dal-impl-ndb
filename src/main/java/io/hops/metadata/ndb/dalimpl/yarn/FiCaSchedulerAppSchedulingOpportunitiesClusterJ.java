@@ -80,9 +80,12 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
               = session.createQuery(dobj);
       query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> results
+      List<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> queryResults
               = query.getResultList();
-      return createSchedulingOpportunitiesList(results);
+      List<FiCaSchedulerAppSchedulingOpportunities> result =
+              createSchedulingOpportunitiesList(queryResults);
+      session.release(queryResults);
+      return result;
     } catch (Exception e) {
       throw new StorageException(e);
     }
@@ -103,6 +106,7 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
           toAdd.add(persistable);
         }
         session.savePersistentAll(toAdd);
+        session.release(toAdd);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -127,6 +131,7 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
                   objarr));
         }
         session.deletePersistentAll(toRemove);
+        session.release(toRemove);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -145,10 +150,13 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
     HopsQuery<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> query
             = session.
             createQuery(dobj);
-    List<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> results
+    List<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> queryResults
             = query.
             getResultList();
-    return createMap(results);
+    Map<String, List<FiCaSchedulerAppSchedulingOpportunities>> result = 
+            createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private FiCaSchedulerAppSchedulingOpportunities createSchedulerAppSchedulingOpportunities(

@@ -169,10 +169,11 @@ public class QueueMetricsClusterJ
         createQueryDefinition(QueueMetricsClusterJ.QueueMetricsDTO.class);
     HopsQuery<QueueMetricsClusterJ.QueueMetricsDTO> query =
         session.createQuery(dobj);
-    List<QueueMetricsClusterJ.QueueMetricsDTO> results = query.getResultList();
+    List<QueueMetricsClusterJ.QueueMetricsDTO> queryResults = query.getResultList();
 //    session.flush();
-    return createHopQueueMetricsList(results);
-
+    List<QueueMetrics> result = createHopQueueMetricsList(queryResults);
+    session.release(queryResults);
+    return result;
   }
   
   @Override
@@ -185,6 +186,7 @@ public class QueueMetricsClusterJ
       toPersist.add(persistable);
     }
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private List<QueueMetrics> createHopQueueMetricsList(

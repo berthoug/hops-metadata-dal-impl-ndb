@@ -92,11 +92,12 @@ public class AppSchedulingInfoClusterJ implements
             AppSchedulingInfoClusterJ.AppSchedulingInfoDTO.class);
     HopsQuery<AppSchedulingInfoClusterJ.AppSchedulingInfoDTO> query =
         session.createQuery(dobj);
-    List<AppSchedulingInfoClusterJ.AppSchedulingInfoDTO> results =
+    List<AppSchedulingInfoClusterJ.AppSchedulingInfoDTO> queryResults =
         query.getResultList();
-
-    return createHopAppSchedulingInfoList(results);
-
+    List<AppSchedulingInfo> result = 
+            createHopAppSchedulingInfoList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   
@@ -107,12 +108,15 @@ public class AppSchedulingInfoClusterJ implements
         createPersistable(toAdd, session);
     session.savePersistent(persistable);
     session.flush();
+    session.release(persistable);
   }
   
   public void remove(AppSchedulingInfo toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.deletePersistent(session
-        .newInstance(AppSchedulingInfoDTO.class, toRemove.getSchedulerAppId()));
+    AppSchedulingInfoDTO persitable = session
+        .newInstance(AppSchedulingInfoDTO.class, toRemove.getSchedulerAppId());
+    session.deletePersistent(persitable);
+    session.release(persitable);
   }
   
   
