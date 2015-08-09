@@ -86,7 +86,7 @@ public class ContainerIdToCleanClusterJ implements
         "HOP :: ClusterJ ContainerIdToClean.findByRMNode - FINISH:" + rmnodeId);
     if (queryResults != null && !queryResults.isEmpty()) {
       List<ContainerId> results = createContainersToCleanList(queryResults);
-      session.release(results);
+      session.release(queryResults);
       return results;
     }
     return null;

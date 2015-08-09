@@ -548,7 +548,7 @@ delimiter $$
 
 
 
-CREATE TABLE `yarn_just_finished_containers` (
+CREATE TABLE `yarn_justlaunchedcontainers` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `containerid` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`containerid`, `rmnodeid`),
