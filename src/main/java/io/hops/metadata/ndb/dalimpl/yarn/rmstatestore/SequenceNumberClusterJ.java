@@ -52,10 +52,7 @@ public class SequenceNumberClusterJ implements TablesDef.SequenceNumberTableDef,
   public SequenceNumber findById(int id) throws StorageException {
     HopsSession session = connector.obtainSession();
 
-    SequenceNumberDTO sequenceNumberDTO = null;
-    if (session != null) {
-      sequenceNumberDTO = session.find(SequenceNumberDTO.class, id);
-    }
+    SequenceNumberDTO sequenceNumberDTO = session.find(SequenceNumberDTO.class, id);
 
 
     SequenceNumber result = createHopSequenceNumber(sequenceNumberDTO);

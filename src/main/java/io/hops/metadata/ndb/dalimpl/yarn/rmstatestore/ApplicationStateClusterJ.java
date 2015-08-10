@@ -79,10 +79,7 @@ public class ApplicationStateClusterJ implements
       throws StorageException {
     HopsSession session = connector.obtainSession();
 
-    ApplicationStateDTO appStateDTO = null;
-    if (session != null) {
-      appStateDTO = session.find(ApplicationStateDTO.class, id);
-    }
+    ApplicationStateDTO appStateDTO = session.find(ApplicationStateDTO.class, id);
 
     ApplicationState result =  createHopApplicationState(appStateDTO);
     session.release(appStateDTO);

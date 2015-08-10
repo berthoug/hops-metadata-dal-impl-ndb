@@ -261,11 +261,13 @@ public class HopsSession {
     }
   }
   
-  public <T> void release(T t)  throws StorageException {
-    try {
-      session.release(t);
-    } catch (ClusterJException e) {
-      throw HopsExceptionHelper.wrap(e);
+  public <T> void release(T t) throws StorageException {
+    if (t != null) {
+      try {
+        session.release(t);
+      } catch (ClusterJException e) {
+        throw HopsExceptionHelper.wrap(e);
+      }
     }
   }
   

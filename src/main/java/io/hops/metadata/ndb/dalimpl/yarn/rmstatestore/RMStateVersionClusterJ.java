@@ -52,10 +52,7 @@ public class RMStateVersionClusterJ implements TablesDef.RMStateVersionTableDef,
   public RMStateVersion findById(int id) throws StorageException {
     HopsSession session = connector.obtainSession();
 
-    RMStateVersionClusterJ.VersionDTO versionDTO = null;
-    if (session != null) {
-      versionDTO = session.find(RMStateVersionClusterJ.VersionDTO.class, id);
-    }
+    VersionDTO versionDTO = session.find(RMStateVersionClusterJ.VersionDTO.class, id);
 
     RMStateVersion result = createHopVersion(versionDTO);
     session.release(versionDTO);
