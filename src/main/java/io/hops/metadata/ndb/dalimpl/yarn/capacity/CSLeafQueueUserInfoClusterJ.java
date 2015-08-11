@@ -32,7 +32,9 @@ import io.hops.metadata.yarn.entity.capacity.CSLeafQueueUserInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CSLeafQueueUserInfoClusterJ implements
         TablesDef.CSLeafQueueUserInfoTableDef,
@@ -94,7 +96,7 @@ public class CSLeafQueueUserInfoClusterJ implements
   }
 
   @Override
-  public List<CSLeafQueueUserInfo> findAll() throws StorageException,
+  public Map<String,CSLeafQueueUserInfo> findAll() throws StorageException,
           IOException {
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
@@ -106,20 +108,21 @@ public class CSLeafQueueUserInfoClusterJ implements
     List<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> queryResults = query.
             getResultList();
 
-    List<CSLeafQueueUserInfo> result = createCSLeafQueueUserInfoList(queryResults);
+    Map<String, CSLeafQueueUserInfo> result = createCSLeafQueueUserInfoMap(queryResults);
     session.release(queryResults);
     return result;
   }
 
-  private List<CSLeafQueueUserInfo> createCSLeafQueueUserInfoList(
+  private Map<String, CSLeafQueueUserInfo> createCSLeafQueueUserInfoMap(
           List<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> list) throws
           IOException {
-    List<CSLeafQueueUserInfo> csLeafQueueUserInfoList
-            = new ArrayList<CSLeafQueueUserInfo>();
+    Map<String,CSLeafQueueUserInfo> csLeafQueueUserInfoMap
+            = new HashMap<String, CSLeafQueueUserInfo>();
     for (CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO persistable : list) {
-      csLeafQueueUserInfoList.add(createCSLeafQueueUserInfo(persistable));
+      CSLeafQueueUserInfo info = createCSLeafQueueUserInfo(persistable);
+      csLeafQueueUserInfoMap.put(info.getUserName(), info);
     }
-    return csLeafQueueUserInfoList;
+    return csLeafQueueUserInfoMap;
   }
 
   @Override

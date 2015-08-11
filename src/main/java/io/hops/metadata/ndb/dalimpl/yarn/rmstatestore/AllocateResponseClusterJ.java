@@ -63,28 +63,28 @@ public class AllocateResponseClusterJ implements
   @Override
   public void addAll(Collection<AllocateResponse> toAdd)
       throws StorageException {
-//    HopsSession session = connector.obtainSession();
-//    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
-//    for (AllocateResponse req : toAdd) {
-//      toPersist.add(createPersistable(req, session));
-//    }
-//    session.savePersistentAll(toPersist);
-//      session.release(toPersist);
+    HopsSession session = connector.obtainSession();
+    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
+    for (AllocateResponse req : toAdd) {
+      toPersist.add(createPersistable(req, session));
+    }
+    session.savePersistentAll(toPersist);
+      session.release(toPersist);
   }
 
   @Override
   public void removeAll(Collection<AllocateResponse> toAdd)
       throws StorageException {
-//    HopsSession session = connector.obtainSession();
-//    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
-//    for (AllocateResponse req : toAdd) {
-//      AllocateResponseDTO persistable = session
-//          .newInstance(AllocateResponseDTO.class,
-//              req.getApplicationattemptid());
-//      toPersist.add(persistable);
-//    }
-//    session.deletePersistentAll(toPersist);
-//      session.release(toPersist);
+    HopsSession session = connector.obtainSession();
+    List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
+    for (AllocateResponse req : toAdd) {
+      AllocateResponseDTO persistable = session
+          .newInstance(AllocateResponseDTO.class,
+              req.getApplicationattemptid());
+      toPersist.add(persistable);
+    }
+    session.deletePersistentAll(toPersist);
+      session.release(toPersist);
   }
   
   @Override
