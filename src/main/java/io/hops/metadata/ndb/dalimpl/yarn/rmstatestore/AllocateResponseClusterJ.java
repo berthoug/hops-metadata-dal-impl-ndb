@@ -37,11 +37,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.DataFormatException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class AllocateResponseClusterJ implements
     TablesDef.AllocateResponseTableDef,
     AllocateResponseDataAccess<AllocateResponse> {
 
+  public static final Log LOG = LogFactory.getLog(AllocateResponseClusterJ.class);
   @PersistenceCapable(table = TABLE_NAME)
   public interface AllocateResponseDTO {
 
@@ -106,10 +109,14 @@ public class AllocateResponseClusterJ implements
         session.newInstance(AllocateResponseDTO.class);
 
     allocateResponseDTO.setapplicationattemptid(hop.getApplicationattemptid());
+    int size = 0;
     try {
-      allocateResponseDTO.setallocateresponse(CompressionUtils.compress(hop.
-          getAllocateResponse()));
+      byte[] toPersist = CompressionUtils.compress(hop.
+          getAllocateResponse());
+      size = toPersist.length;
+      allocateResponseDTO.setallocateresponse(toPersist);
     } catch (IOException e) {
+      LOG.error("allocate response probably too big: " + size + "  id: " + hop.getApplicationattemptid());
       throw new StorageException(e);
     }
 

@@ -116,6 +116,7 @@ import io.hops.metadata.ndb.dalimpl.yarn.fair.LocalityLevelClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.fair.PreemptionMapClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.fair.RunnableAppsClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.AllocateResponseClusterJ;
+import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.AllocatedContainersClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.ApplicationAttemptStateClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.ApplicationStateClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.DelegationKeyClusterJ;
@@ -165,6 +166,7 @@ import io.hops.metadata.yarn.dal.fair.LocalityLevelDataAccess;
 import io.hops.metadata.yarn.dal.fair.PreemptionMapDataAccess;
 import io.hops.metadata.yarn.dal.fair.RunnableAppsDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.AllocateResponseDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.AllocatedContainersDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationAttemptStateDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationStateDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationKeyDataAccess;
@@ -302,6 +304,8 @@ public class NdbStorageFactory implements DalStorageFactory {
         new SecretMamagerKeysClusterJ());
     dataAccessMap
         .put(AllocateResponseDataAccess.class, new AllocateResponseClusterJ());
+    dataAccessMap
+        .put(AllocatedContainersDataAccess.class, new AllocatedContainersClusterJ());
     dataAccessMap.put(PendingEventDataAccess.class, new PendingEventClusterJ());
     dataAccessMap
         .put(BlockChecksumDataAccess.class, new BlockChecksumClusterj());
