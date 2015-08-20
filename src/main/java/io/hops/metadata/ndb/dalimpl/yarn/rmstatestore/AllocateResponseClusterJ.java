@@ -115,8 +115,8 @@ public class AllocateResponseClusterJ implements
           getAllocateResponse());
       size = toPersist.length;
       allocateResponseDTO.setallocateresponse(toPersist);
-    } catch (IOException e) {
-      LOG.error("allocate response probably too big: " + size + "  id: " + hop.getApplicationattemptid());
+    } catch (Exception e) {
+      LOG.error("allocate response probably too big: " + size + " orginial size: " + hop.getAllocateResponse().length +  "  id: " + hop.getApplicationattemptid());
       throw new StorageException(e);
     }
 

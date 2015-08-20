@@ -16,7 +16,7 @@ import io.hops.metadata.ndb.wrapper.HopsQueryBuilder;
 import io.hops.metadata.ndb.wrapper.HopsQueryDomainType;
 import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
-import io.hops.metadata.yarn.dal.rmstatestore.AllocatedContainersDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.AllocatedNMTokensDataAccess;
 import io.hops.metadata.yarn.entity.rmstatestore.AllocateResponse;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AllocatedContainersClusterJ implements
-        TablesDef.AllocatedContainersTableDef,
-        AllocatedContainersDataAccess<AllocateResponse> {
+public class AllocatedNMTokensClusterJ implements
+        TablesDef.AllocatedNMTokensTableDef,
+        AllocatedNMTokensDataAccess<AllocateResponse> {
 
   @PersistenceCapable(table = TABLE_NAME)
-  public interface AllocatedContainerDTO {
+  public interface AllocatedNMTokenDTO {
 
     @PrimaryKey
     @Column(name = APPLICATIONATTEMPTID)
@@ -38,10 +38,10 @@ public class AllocatedContainersClusterJ implements
     void setapplicationattemptid(String applicationattemptid);
 
     @PrimaryKey
-    @Column(name = CONTAINERID)
-    String getcontainerid();
+    @Column(name = NMTOKEN)
+    byte[] getnmtoken();
 
-    void setcontainerid(String containerid);
+    void setnmtoken(byte[] nmtoken);
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -49,19 +49,19 @@ public class AllocatedContainersClusterJ implements
   public void update(Collection<AllocateResponse> entries) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    List<AllocatedContainerDTO> toPersist
-            = new ArrayList<AllocatedContainerDTO>();
+    List<AllocatedNMTokenDTO> toPersist
+            = new ArrayList<AllocatedNMTokenDTO>();
     for (AllocateResponse resp : entries) {
       //put new values
       toPersist.addAll(createPersistable(resp, session));
       //remove old values
       HopsQueryBuilder qb = session.getQueryBuilder();
-      HopsQueryDomainType<AllocatedContainerDTO> dobj = qb.
-              createQueryDefinition(AllocatedContainerDTO.class);
+      HopsQueryDomainType<AllocatedNMTokenDTO> dobj = qb.
+              createQueryDefinition(AllocatedNMTokenDTO.class);
       HopsPredicate pred1 = dobj.get(APPLICATIONATTEMPTID).equal(dobj.param(
               APPLICATIONATTEMPTID));
       dobj.where(pred1);
-      HopsQuery<AllocatedContainerDTO> query = session.createQuery(dobj);
+      HopsQuery<AllocatedNMTokenDTO> query = session.createQuery(dobj);
       query.setParameter("inodeIdParam", resp.getApplicationattemptid());
       query.deletePersistentAll();
 
@@ -70,45 +70,43 @@ public class AllocatedContainersClusterJ implements
     session.release(toPersist);
   }
 
-  public Map<String, List<String>> getAll() throws StorageException {
+  public Map<String, List<byte[]>> getAll() throws StorageException {
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
-    HopsQueryDomainType<AllocatedContainerDTO> dobj = qb.createQueryDefinition(
-            AllocatedContainerDTO.class);
-    HopsQuery<AllocatedContainerDTO> query = session.createQuery(dobj);
-    List<AllocatedContainerDTO> queryResults = query.getResultList();
-    Map<String, List<String>> result = createHopAllocatedContainersMap(
+    HopsQueryDomainType<AllocatedNMTokenDTO> dobj = qb.createQueryDefinition(AllocatedNMTokenDTO.class);
+    HopsQuery<AllocatedNMTokenDTO> query = session.createQuery(dobj);
+    List<AllocatedNMTokenDTO> queryResults = query.getResultList();
+    Map<String, List<byte[]>> result = createHopAllocatedNMTokensMap(
             queryResults);
     session.release(queryResults);
     return result;
   }
 
-  private List<AllocatedContainerDTO> createPersistable(AllocateResponse hop,
+  private List<AllocatedNMTokenDTO> createPersistable(AllocateResponse hop,
           HopsSession session) throws StorageException {
-    List<AllocatedContainerDTO> result = new ArrayList<AllocatedContainerDTO>();
-    for (String containerId : hop.getAllocatedContainers()) {
-      AllocatedContainerDTO allocatedContainerDTO = session.newInstance(
-              AllocatedContainerDTO.class);
+    List<AllocatedNMTokenDTO> result = new ArrayList<AllocatedNMTokenDTO>();
+    for (byte[] nmToken : hop.getAllocatedNMTokens()) {
+      AllocatedNMTokenDTO allocatedContainerDTO = session.newInstance(AllocatedNMTokenDTO.class);
       allocatedContainerDTO.setapplicationattemptid(hop.
               getApplicationattemptid());
-      allocatedContainerDTO.setcontainerid(containerId);
+      allocatedContainerDTO.setnmtoken(nmToken);
       result.add(allocatedContainerDTO);
     }
     return result;
   }
 
-  private Map<String, List<String>> createHopAllocatedContainersMap(
-          List<AllocatedContainerDTO> list) throws StorageException {
-    Map<String, List<String>> allocatedContainersMap
-            = new HashMap<String, List<String>>();
+  private Map<String, List<byte[]>> createHopAllocatedNMTokensMap(
+          List<AllocatedNMTokenDTO> list) throws StorageException {
+    Map<String, List<byte[]>> allocatedContainersMap
+            = new HashMap<String, List<byte[]>>();
 
-    for (AllocatedContainerDTO dto : list) {
+    for (AllocatedNMTokenDTO dto : list) {
       if (allocatedContainersMap.get(dto.getapplicationattemptid()) == null) {
         allocatedContainersMap.put(dto.getapplicationattemptid(),
-                new ArrayList<String>());
+                new ArrayList<byte[]>());
       }
       allocatedContainersMap.get(dto.getapplicationattemptid()).add(dto.
-              getcontainerid());
+              getnmtoken());
     }
     return allocatedContainersMap;
   }

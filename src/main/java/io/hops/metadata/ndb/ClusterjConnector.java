@@ -111,6 +111,7 @@ import io.hops.metadata.yarn.dal.fair.LocalityLevelDataAccess;
 import io.hops.metadata.yarn.dal.fair.RunnableAppsDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.AllocateResponseDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.AllocatedContainersDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.AllocatedNMTokensDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationAttemptStateDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationStateDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationKeyDataAccess;
@@ -413,7 +414,7 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
         RMContextActiveNodesDataAccess.class,
         UpdatedContainerInfoDataAccess.class, YarnLeDescriptorDataAccess.class,
         SecretMamagerKeysDataAccess.class, AllocateResponseDataAccess.class,
-        AllocatedContainersDataAccess.class,
+        AllocatedContainersDataAccess.class, AllocatedNMTokensDataAccess.class,
         RMLoadDataAccess.class, PendingEventDataAccess.class,
         LocalityLevelDataAccess.class,
         RunnableAppsDataAccess.class,
@@ -606,6 +607,8 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.AllocateResponseTableDef.TABLE_NAME);
           } else if (e == AllocatedContainersDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.AllocatedContainersTableDef.TABLE_NAME);
+          } else if (e == AllocatedNMTokensDataAccess.class) {
+            truncate(transactional, io.hops.metadata.yarn.TablesDef.AllocatedNMTokensTableDef.TABLE_NAME);
           } else if (e == DelegationKeyDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.DelegationKeyTableDef.TABLE_NAME);
           } else if (e == DelegationTokenDataAccess.class) {

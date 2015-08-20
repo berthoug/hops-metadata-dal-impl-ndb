@@ -853,7 +853,20 @@ CREATE TABLE `yarn_allocated_containers` (
   `applicationattemptid` VARCHAR(45) NOT NULL,
  `containerid` VARCHAR(45) NOT NULL,
 PRIMARY KEY (`applicationattemptid`, `containerid`),
-CONSTRAINT `rmnodeid`
+CONSTRAINT `applicationattemptid`
+    FOREIGN KEY (`applicationattemptid`)
+    REFERENCES `yarn_allocate_response` (`applicationattemptid`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+) ENGINE=ndbcluster DEFAULT CHARSET=latin1$$
+
+delimiter $$
+
+CREATE TABLE `yarn_allocated_nmtokens` (
+  `applicationattemptid` VARCHAR(45) NOT NULL,
+ `nmtoken` VARBINARY(1000) NOT NULL,
+PRIMARY KEY (`applicationattemptid`, `nmtoken`),
+CONSTRAINT `applicationattemptid`
     FOREIGN KEY (`applicationattemptid`)
     REFERENCES `yarn_allocate_response` (`applicationattemptid`)
     ON DELETE CASCADE
