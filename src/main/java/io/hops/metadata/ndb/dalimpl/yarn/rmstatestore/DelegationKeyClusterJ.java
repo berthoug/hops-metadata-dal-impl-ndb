@@ -57,21 +57,25 @@ public class DelegationKeyClusterJ
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+  public static int remove=0;
   @Override
   public void remove(DelegationKey removed) throws StorageException {
     HopsSession session = connector.obtainSession();
     DelegationKeyDTO dto = session
         .newInstance(DelegationKeyClusterJ.DelegationKeyDTO.class,
             removed.getKey());
+    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }
 
+  public static int add=0;
   @Override
   public void createDTMasterKeyEntry(DelegationKey hopDelegationKey)
       throws StorageException {
     HopsSession session = connector.obtainSession();
     DelegationKeyDTO dto = createPersistable(hopDelegationKey, session);
+    add++;
     session.savePersistent(dto);
     session.release(dto);
   }

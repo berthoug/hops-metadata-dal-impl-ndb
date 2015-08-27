@@ -75,6 +75,7 @@ public class ContainerClusterJ
     return result;
   }
 
+  public static int add =0;
   @Override
   public void addAll(Collection<Container> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -83,6 +84,7 @@ public class ContainerClusterJ
       ContainerDTO persistable = createPersistable(container, session);
       toPersist.add(persistable);
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
     session.release(toPersist);

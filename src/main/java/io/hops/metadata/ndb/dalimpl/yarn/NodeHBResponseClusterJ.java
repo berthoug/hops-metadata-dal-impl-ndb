@@ -35,6 +35,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,13 +99,18 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     session.release(queryResults);
     return result;
   }
-
+  public static int add =0;
   @Override
-  public void add(NodeHBResponse toAdd) throws StorageException {
+  public void addAll(Collection<NodeHBResponse> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    NodeHBResponseDTO dto = createPersistable(toAdd, session);
-    session.savePersistent(dto);
-    session.release(dto);
+    List<NodeHBResponseDTO> toPersist = new ArrayList<NodeHBResponseDTO>();
+    for(NodeHBResponse response: toAdd){
+      NodeHBResponseDTO dto = createPersistable(response, session);
+      toPersist.add(dto);
+    }
+    add+=toPersist.size();
+    session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   public static NodeHBResponse createHopNodeHBResponse(

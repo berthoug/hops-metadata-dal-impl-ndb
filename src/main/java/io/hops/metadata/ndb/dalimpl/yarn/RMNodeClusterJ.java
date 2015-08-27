@@ -145,6 +145,7 @@ public class RMNodeClusterJ
     return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<RMNode> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -152,11 +153,13 @@ public class RMNodeClusterJ
     for (RMNode req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
     session.release(toPersist);
   }
 
+  public static int remove =0;
   @Override
   public void removeAll(Collection<RMNode> toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -165,6 +168,7 @@ public class RMNodeClusterJ
       toPersist.add(session.newInstance(RMNodeDTO.class, entry.
           getNodeId()));
     }
+    remove +=toPersist.size();
     session.deletePersistentAll(toPersist);
 //    session.flush();
     session.release(toPersist);
@@ -174,6 +178,7 @@ public class RMNodeClusterJ
   public void add(RMNode rmNode) throws StorageException {
     HopsSession session = connector.obtainSession();
     RMNodeDTO dto = createPersistable(rmNode, session);
+    add++;
     session.savePersistent(dto);
     session.flush();
     session.release(dto);

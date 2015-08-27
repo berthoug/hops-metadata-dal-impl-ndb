@@ -59,10 +59,12 @@ public class RMStateVersionClusterJ implements TablesDef.RMStateVersionTableDef,
     return result;
   }
 
+  public static int add=0;
   @Override
   public void add(RMStateVersion toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     VersionDTO dto = createPersistable(toAdd, session);
+    add++;
     session.savePersistent(dto);
     session.release(dto);
   }

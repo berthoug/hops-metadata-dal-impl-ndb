@@ -176,6 +176,7 @@ public class QueueMetricsClusterJ
     return result;
   }
   
+  public static int add = 0;
   @Override
   public void addAll(Collection<QueueMetrics> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -185,6 +186,7 @@ public class QueueMetricsClusterJ
           createPersistable(hop, session);
       toPersist.add(persistable);
     }
+    add+= toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }

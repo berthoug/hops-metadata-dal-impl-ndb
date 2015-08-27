@@ -116,7 +116,7 @@ public class ContainerStatusClusterJ implements
     session.release(queryResults);
     return result;
   }
-
+ public static int add = 0;
   @Override
   public void addAll(Collection<ContainerStatus> containersStatus)
       throws StorageException {
@@ -125,6 +125,7 @@ public class ContainerStatusClusterJ implements
     for (ContainerStatus containerStatus : containersStatus) {
       toAdd.add(createPersistable(containerStatus, session));
     }
+    add+=toAdd.size();
     session.savePersistentAll(toAdd);
 //    session.flush();
     session.release(toAdd);

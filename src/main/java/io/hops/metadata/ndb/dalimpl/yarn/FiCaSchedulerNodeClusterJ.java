@@ -68,11 +68,12 @@ public class FiCaSchedulerNodeClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+  public static int add = 0;
   @Override
-
   public void add(FiCaSchedulerNode toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     FiCaSchedulerNodeDTO persistable = createPersistable(toAdd, session);
+    add++;
     session.savePersistent(persistable);
     session.release(persistable);
     session.flush();
@@ -88,11 +89,13 @@ public class FiCaSchedulerNodeClusterJ implements
       FiCaSchedulerNodeDTO persistable = createPersistable(hop, session);
       toPersist.add(persistable);
     }
+    add+=toPersist.size();
       session.savePersistentAll(toPersist);
       session.release(toPersist);
       session.flush();
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(Collection<FiCaSchedulerNode> toRemove)
       throws StorageException {
@@ -104,6 +107,7 @@ public class FiCaSchedulerNodeClusterJ implements
           session.newInstance(FiCaSchedulerNodeDTO.class, hop.getRmnodeId());
       toPersist.add(persistable);
     }
+    remove += toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }

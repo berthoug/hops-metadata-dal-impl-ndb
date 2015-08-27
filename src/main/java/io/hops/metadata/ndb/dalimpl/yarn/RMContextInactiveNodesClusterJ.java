@@ -67,6 +67,7 @@ public class RMContextInactiveNodesClusterJ
     return result;
   }
 
+  public static int add =0;
   @Override
   public void addAll(Collection<RMContextInactiveNodes> toAdd)
       throws StorageException {
@@ -76,11 +77,13 @@ public class RMContextInactiveNodesClusterJ
     for (RMContextInactiveNodes req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
     session.release(toPersist);
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<RMContextInactiveNodes> toRemove)
       throws StorageException {
@@ -91,6 +94,7 @@ public class RMContextInactiveNodesClusterJ
       toPersist.add(session.newInstance(RMContextInactiveNodesDTO.class, entry.
           getRmnodeid()));
     }
+    remove +=toPersist.size();
     session.deletePersistentAll(toPersist);
 //    session.flush();
     session.release(toPersist);

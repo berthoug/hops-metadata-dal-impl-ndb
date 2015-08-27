@@ -30,6 +30,7 @@ import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
 import io.hops.metadata.yarn.dal.NextHeartbeatDataAccess;
 import io.hops.metadata.yarn.entity.NextHeartbeat;
+import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -83,14 +84,20 @@ public class NextHeartbeatClusterJ
     return result;
   }
 
+  public static int add=0;
   @Override
-  public void updateNextHeartbeat(String rmnodeid, boolean nextHeartbeat)
+  public void updateAll(List<NextHeartbeat> toUpdate)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(rmnodeid, nextHeartbeat), session);
-    session.savePersistent(hbDTO);
+    List<NextHeartbeatDTO> toPersist = new ArrayList<NextHeartbeatDTO>();
+    for(NextHeartbeat hb: toUpdate){
+      NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(hb.getRmnodeid(), hb.isNextheartbeat()), session);
+      toPersist.add(hbDTO);
+    }
+    add +=toPersist.size();
+    session.savePersistentAll(toPersist);
 //    session.flush();
-    session.release(hbDTO);
+    session.release(toPersist);
   }
 
   private NextHeartbeatDTO createPersistable(NextHeartbeat hopNextHeartbeat,

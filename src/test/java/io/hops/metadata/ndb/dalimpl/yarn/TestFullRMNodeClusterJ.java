@@ -86,8 +86,8 @@ public class TestFullRMNodeClusterJ {
         new RMNode("70", "rmnode70", 9999, 9876, "127.0.0.1", "hop.sics.se",
             "life is good ", -10L, "relax", "hayarn", 10, 3);
     final Node hopNodeOrigin = new Node("70", "rmnode70", "ici", 1000, "papa");
-    final NodeHBResponse hopNHBROrigin =
-        new NodeHBResponse("70", new byte[]{new Integer(1).byteValue()});
+    final List<NodeHBResponse> hopNHBROrigin = new ArrayList<NodeHBResponse>();
+        hopNHBROrigin.add(new NodeHBResponse("70", new byte[]{new Integer(1).byteValue()}));
     final Resource hopResourceOrigin =
         new Resource("70", Resource.TOTAL_CAPABILITY, Resource.RMNODE, 1, 100);
 
@@ -150,7 +150,7 @@ public class TestFullRMNodeClusterJ {
             NodeHBResponseDataAccess nodeHBRDA =
                 (NodeHBResponseDataAccess) storageFactory
                     .getDataAccess(NodeHBResponseDataAccess.class);
-            nodeHBRDA.add(hopNHBROrigin);
+            nodeHBRDA.addAll(hopNHBROrigin);
 
             ResourceDataAccess resourceDA = (ResourceDataAccess) storageFactory
                 .getDataAccess(ResourceDataAccess.class);
@@ -217,7 +217,7 @@ public class TestFullRMNodeClusterJ {
     Assert.assertTrue(nodeFinal.getLevel() == hopNodeOrigin.getLevel());
 
     NodeHBResponse nodeHBRFinal = hopRMNodeFull.getHopNodeHBResponse();
-    Assert.assertTrue(nodeHBRFinal.getResponse()[0] == (hopNHBROrigin.
+    Assert.assertTrue(nodeHBRFinal.getResponse()[0] == (hopNHBROrigin.get(0).
         getResponse()[0]));
 
     Resource resourceFinal = hopRMNodeFull.getHopResource();

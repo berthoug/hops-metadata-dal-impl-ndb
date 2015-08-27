@@ -648,7 +648,7 @@ CREATE TABLE `yarn_launchedcontainers` (
     REFERENCES `yarn_ficascheduler_node` (`rmnodeid`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1$$
+) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(containerid_id)$$
 
 
 delimiter $$
@@ -844,34 +844,37 @@ delimiter $$
 CREATE TABLE `yarn_allocate_response` (
   `applicationattemptid` VARCHAR(45) NOT NULL,
   `allocate_response` VARBINARY(13500) NULL,
+  `responseid` INT NOT NULL,
 PRIMARY KEY (`applicationattemptid`)
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1$$
+) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(applicationattemptid)$$
 
 delimiter $$
 
 CREATE TABLE `yarn_allocated_containers` (
   `applicationattemptid` VARCHAR(45) NOT NULL,
  `containerid` VARCHAR(45) NOT NULL,
-PRIMARY KEY (`applicationattemptid`, `containerid`),
-CONSTRAINT `applicationattemptid`
+ `responseid` INT NOT NULL,
+PRIMARY KEY (`applicationattemptid`, `containerid`,`responseid`),
+CONSTRAINT `appandresponseid`
     FOREIGN KEY (`applicationattemptid`)
     REFERENCES `yarn_allocate_response` (`applicationattemptid`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1$$
+) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(applicationattemptid)$$
 
 delimiter $$
 
 CREATE TABLE `yarn_allocated_nmtokens` (
   `applicationattemptid` VARCHAR(45) NOT NULL,
  `nmtoken` VARBINARY(1000) NOT NULL,
-PRIMARY KEY (`applicationattemptid`, `nmtoken`),
+  `responseid` INT NOT NULL,
+PRIMARY KEY (`applicationattemptid`, `nmtoken`,`responseid`),
 CONSTRAINT `applicationattemptid`
     FOREIGN KEY (`applicationattemptid`)
     REFERENCES `yarn_allocate_response` (`applicationattemptid`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION
-) ENGINE=ndbcluster DEFAULT CHARSET=latin1$$
+) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(applicationattemptid)$$
 
 delimiter $$
 

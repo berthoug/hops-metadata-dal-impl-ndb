@@ -35,7 +35,9 @@ import io.hops.util.CompressionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.DataFormatException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,23 +60,32 @@ public class AllocateResponseClusterJ implements
     byte[] getallocateresponse();
 
     void setallocateresponse(byte[] allocateresponse);
+    
+//    @PrimaryKey
+    @Column(name = RESPONSEID)
+    int getresponseid();
+    
+    void setresponseid(int id);
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  //TODO find out why allocate response is sometime too big
+  public static int add =0;
   @Override
-  public void addAll(Collection<AllocateResponse> toAdd)
+  public void update(Collection<AllocateResponse> toAdd)
       throws StorageException {
     HopsSession session = connector.obtainSession();
     List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
     for (AllocateResponse req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add +=toPersist.size();
     session.savePersistentAll(toPersist);
-      session.release(toPersist);
+    session.flush();
+    session.release(toPersist);
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<AllocateResponse> toAdd)
       throws StorageException {
@@ -82,23 +93,25 @@ public class AllocateResponseClusterJ implements
     List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
     for (AllocateResponse req : toAdd) {
       AllocateResponseDTO persistable = session
-          .newInstance(AllocateResponseDTO.class,
-              req.getApplicationattemptid());
+          .newInstance(AllocateResponseDTO.class);
+      persistable.setapplicationattemptid(req.getApplicationattemptid());
+      persistable.setresponseid(req.getResponseId());
       toPersist.add(persistable);
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
       session.release(toPersist);
   }
   
   @Override
-  public List<AllocateResponse> getAll() throws StorageException {
+  public Map<String, AllocateResponse> getAll() throws StorageException {
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
     HopsQueryDomainType<AllocateResponseDTO> dobj =
         qb.createQueryDefinition(AllocateResponseDTO.class);
     HopsQuery<AllocateResponseDTO> query = session.createQuery(dobj);
     List<AllocateResponseDTO> queryResults = query.getResultList();
-    List<AllocateResponse> result = createHopAllocateResponseList(queryResults);
+    Map<String, AllocateResponse> result = createHopAllocateResponseMap(queryResults);
     session.release(queryResults);
     return result;
   }
@@ -115,6 +128,7 @@ public class AllocateResponseClusterJ implements
           getAllocateResponse());
       size = toPersist.length;
       allocateResponseDTO.setallocateresponse(toPersist);
+      allocateResponseDTO.setresponseid(hop.getResponseId());
     } catch (Exception e) {
       LOG.error("allocate response probably too big: " + size + " orginial size: " + hop.getAllocateResponse().length +  "  id: " + hop.getApplicationattemptid());
       throw new StorageException(e);
@@ -123,13 +137,14 @@ public class AllocateResponseClusterJ implements
     return allocateResponseDTO;
   }
   
-  private List<AllocateResponse> createHopAllocateResponseList(
+  private Map<String, AllocateResponse> createHopAllocateResponseMap(
       List<AllocateResponseDTO> list) throws StorageException {
-    List<AllocateResponse> hopList = new ArrayList<AllocateResponse>();
+    Map<String, AllocateResponse> hopMap = new HashMap<String, AllocateResponse>();
     for (AllocateResponseDTO dto : list) {
-      hopList.add(createHopAllocateResponse(dto));
+      AllocateResponse hop = createHopAllocateResponse(dto);
+      hopMap.put(hop.getApplicationattemptid(), hop);
     }
-    return hopList;
+    return hopMap;
   }
 
   private AllocateResponse createHopAllocateResponse(
@@ -138,7 +153,8 @@ public class AllocateResponseClusterJ implements
       try {
         return new AllocateResponse(allocateResponseDTO.
             getapplicationattemptid(), CompressionUtils.
-            decompress(allocateResponseDTO.getallocateresponse()));
+            decompress(allocateResponseDTO.getallocateresponse()), 
+                allocateResponseDTO.getresponseid());
       } catch (IOException e) {
         throw new StorageException(e);
       } catch (DataFormatException e) {

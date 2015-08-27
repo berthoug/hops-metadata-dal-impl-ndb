@@ -45,7 +45,7 @@ public class UpdatedNodeClusterJ implements
   }
   
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
-  
+  public static int add=0;
   @Override
   public void addAll(Collection<List<UpdatedNode>> toAdd)
       throws StorageException {
@@ -56,6 +56,7 @@ public class UpdatedNodeClusterJ implements
         toPersist.add(createPersistable(n, session));
       }
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }

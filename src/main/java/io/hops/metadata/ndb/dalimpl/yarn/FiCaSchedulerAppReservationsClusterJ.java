@@ -90,11 +90,11 @@ public class FiCaSchedulerAppReservationsClusterJ implements
     }
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<SchedulerAppReservations> modified) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
       if (modified != null) {
         List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> toAdd
                 = new ArrayList<SchedulerAppReservationsDTO>();
@@ -103,19 +103,17 @@ public class FiCaSchedulerAppReservationsClusterJ implements
                   = createPersistable(hop, session);
           toAdd.add(persistable);
         }
+        add+=toAdd.size();
         session.savePersistentAll(toAdd);
         session.release(toAdd);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<SchedulerAppReservations> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
       if (removed != null) {
         List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> toRemove
                 = new ArrayList<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO>();
@@ -127,13 +125,11 @@ public class FiCaSchedulerAppReservationsClusterJ implements
                   FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO.class,
                   objarr));
         }
+        remove+=toRemove.size();
         session.deletePersistentAll(toRemove);
         session.release(toRemove);
       }
 
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
   }
 
   @Override

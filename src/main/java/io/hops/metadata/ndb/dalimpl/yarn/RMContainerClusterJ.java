@@ -128,8 +128,8 @@ public class RMContainerClusterJ
     return result;
   }
 
+  public static int add =0;
   @Override
-
   public void addAll(Collection<RMContainer> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
 
@@ -138,12 +138,13 @@ public class RMContainerClusterJ
     for (RMContainer hop : toAdd) {
       toPersist.add(createPersistable(hop, session));
     }
-
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.flush();
     session.release(toPersist);
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(Collection<RMContainer> toRemove)
       throws StorageException {
@@ -155,6 +156,7 @@ public class RMContainerClusterJ
           newInstance(RMContainerClusterJ.RMContainerDTO.class, hop.
               getContainerIdID()));
     }
+    remove += toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }
@@ -166,6 +168,7 @@ public class RMContainerClusterJ
     RMContainerDTO dto = session.
           newInstance(RMContainerClusterJ.RMContainerDTO.class, toRemove.
               getContainerIdID());
+    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }
@@ -174,6 +177,7 @@ public class RMContainerClusterJ
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
     RMContainerDTO dto = createPersistable(rmcontainer, session);
+    add++;
     session.savePersistent(dto);
     session.flush();
     session.release(dto);

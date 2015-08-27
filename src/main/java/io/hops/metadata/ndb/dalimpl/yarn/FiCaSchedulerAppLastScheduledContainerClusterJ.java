@@ -91,11 +91,11 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
     }
   }
 
+  public static int add = 0;
   @Override
   public void addAll(Collection<FiCaSchedulerAppLastScheduledContainer> modified)
           throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
 
       if (modified != null) {
         List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> toAdd
@@ -105,20 +105,18 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
                   = createPersistable(hop, session);
           toAdd.add(persistable);
         }
+        add+= toAdd.size();
         session.savePersistentAll(toAdd);
         session.release(toAdd);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(
           Collection<FiCaSchedulerAppLastScheduledContainer> removed)
           throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
       if (removed != null) {
         List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> toRemove
                 = new ArrayList<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO>();
@@ -130,12 +128,10 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
                   FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO.class,
                   objarr));
         }
+        remove +=toRemove.size();
         session.deletePersistentAll(toRemove);
         session.release(toRemove);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
   }
 
   @Override

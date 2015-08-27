@@ -80,6 +80,7 @@ public class SchedulerApplicationClusterJ
     return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<SchedulerApplication> toAdd)
       throws StorageException {
@@ -89,11 +90,13 @@ public class SchedulerApplicationClusterJ
     for (SchedulerApplication req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.flush();
     session.release(toPersist);
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(Collection<SchedulerApplication> toRemove)
       throws StorageException {
@@ -104,6 +107,7 @@ public class SchedulerApplicationClusterJ
       toPersist.add(session.newInstance(SchedulerApplicationDTO.class, entry.
           getAppid()));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }

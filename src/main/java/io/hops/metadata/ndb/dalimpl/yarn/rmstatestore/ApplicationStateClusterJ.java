@@ -107,6 +107,7 @@ public class ApplicationStateClusterJ implements
 
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<ApplicationState> toAdd)
       throws StorageException {
@@ -115,11 +116,13 @@ public class ApplicationStateClusterJ implements
     for (ApplicationState req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.flush();
     session.release(toPersist);
   }
 
+  public static int remove;
   @Override
   public void removeAll(Collection<ApplicationState> toRemove)
       throws StorageException {
@@ -129,6 +132,7 @@ public class ApplicationStateClusterJ implements
       toPersist.add(session.newInstance(ApplicationStateDTO.class, entry.
           getApplicationId()));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }
@@ -137,6 +141,7 @@ public class ApplicationStateClusterJ implements
   public void add(ApplicationState toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     ApplicationStateDTO dto = createPersistable(toAdd, session);
+    add++;
     session.savePersistent(dto);
     session.flush();
     session.release(dto);
@@ -147,6 +152,7 @@ public class ApplicationStateClusterJ implements
     HopsSession session = connector.obtainSession();
     ApplicationStateDTO dto = session.newInstance(ApplicationStateDTO.class, toRemove.
                 getApplicationId());
+    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }

@@ -34,6 +34,7 @@ import io.hops.metadata.yarn.entity.AppSchedulingInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class AppSchedulingInfoClusterJ implements
@@ -100,23 +101,31 @@ public class AppSchedulingInfoClusterJ implements
     return result;
   }
 
-  
+  public static int add=0;
   @Override
-  public void add(AppSchedulingInfo toAdd) throws StorageException {
+  public void addAll(Collection<AppSchedulingInfo> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    AppSchedulingInfoClusterJ.AppSchedulingInfoDTO persistable =
-        createPersistable(toAdd, session);
-    session.savePersistent(persistable);
+    List<AppSchedulingInfoDTO> toPersist = new ArrayList<AppSchedulingInfoDTO>();
+    for(AppSchedulingInfo info: toAdd){
+     toPersist.add(createPersistable(info, session));
+    }
+    add += toPersist.size();
+    session.savePersistentAll(toPersist);
     session.flush();
-    session.release(persistable);
+    session.release(toPersist);
   }
   
-  public void remove(AppSchedulingInfo toRemove) throws StorageException {
+  public static int remove =0;
+  public void removeAll(Collection<AppSchedulingInfo> toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
-    AppSchedulingInfoDTO persitable = session
-        .newInstance(AppSchedulingInfoDTO.class, toRemove.getSchedulerAppId());
-    session.deletePersistent(persitable);
-    session.release(persitable);
+    List<AppSchedulingInfoDTO> toPersist = new ArrayList<AppSchedulingInfoDTO>();
+    for(AppSchedulingInfo info: toRemove){
+     toPersist.add(session
+        .newInstance(AppSchedulingInfoDTO.class, info.getSchedulerAppId()));
+    }
+    remove += toPersist.size();
+    session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
   
   

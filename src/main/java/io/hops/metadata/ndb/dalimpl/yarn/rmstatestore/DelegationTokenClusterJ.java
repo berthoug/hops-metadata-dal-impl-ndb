@@ -57,12 +57,13 @@ public class DelegationTokenClusterJ implements
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
-
+  public static int add=0;
   @Override
   public void createDelegationTokenEntry(DelegationToken hopDelegationToken)
       throws StorageException {
     HopsSession session = connector.obtainSession();
     DelegationTokenDTO dto = createPersistable(hopDelegationToken, session);
+    add++;
     session.savePersistent(dto);
     session.release(dto);
   }
@@ -80,12 +81,14 @@ public class DelegationTokenClusterJ implements
     return result;
   }
 
+  public static int remove=0;
   @Override
   public void remove(DelegationToken removed) throws StorageException {
     HopsSession session = connector.obtainSession();
     DelegationTokenDTO dto = session
         .newInstance(DelegationTokenClusterJ.DelegationTokenDTO.class, removed.
                 getSeqnumber());
+    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }
