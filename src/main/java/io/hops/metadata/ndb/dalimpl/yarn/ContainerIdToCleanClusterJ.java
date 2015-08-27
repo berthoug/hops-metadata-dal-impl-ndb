@@ -63,6 +63,12 @@ public class ContainerIdToCleanClusterJ implements
     String getcontainerid();
 
     void setcontainerid(String containerid);
+    
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
+
+    void setpendingeventid(int pendingeventid);
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -141,12 +147,13 @@ public class ContainerIdToCleanClusterJ implements
     //Set values to persist new ContainerStatus
     dto.setrmnodeid(hop.getRmnodeid());
     dto.setcontainerid(hop.getContainerId());
+    dto.setpendingeventid(hop.getPendingEventId());
     return dto;
   }
 
   private ContainerId createHopContainerIdToClean(ContainerIdToCleanDTO dto) {
     ContainerId hop = new ContainerId(dto.getrmnodeid(), dto.
-        getcontainerid());
+        getcontainerid(),dto.getpendingeventid());
     return hop;
   }
 

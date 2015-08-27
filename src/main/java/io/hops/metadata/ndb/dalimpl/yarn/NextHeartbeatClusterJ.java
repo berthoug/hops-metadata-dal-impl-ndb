@@ -34,10 +34,13 @@ import io.hops.metadata.yarn.entity.NextHeartbeat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class NextHeartbeatClusterJ
     implements TablesDef.NextHeartbeatTableDef, NextHeartbeatDataAccess<NextHeartbeat> {
 
+    private static final Log LOG = LogFactory.getLog(NextHeartbeatClusterJ.class);
   @PersistenceCapable(table = TABLE_NAME)
   public interface NextHeartbeatDTO extends RMNodeComponentDTO {
 
@@ -51,7 +54,12 @@ public class NextHeartbeatClusterJ
     int getNextheartbeat();
 
     void setNextheartbeat(int Nextheartbeat);
+    
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
 
+    void setpendingeventid(int pendingeventid);
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -80,12 +88,18 @@ public class NextHeartbeatClusterJ
   }
 
   @Override
-  public void updateNextHeartbeat(String rmnodeid, boolean nextHeartbeat)
+  public void updateNextHeartbeat(String rmnodeid, boolean nextHeartbeat,int pendingId)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(
-        createPersistable(new NextHeartbeat(rmnodeid, nextHeartbeat), session));
-//    session.flush();
+    if(nextHeartbeat){
+      LOG.info("updating the database as true");
+      session.savePersistent(createPersistable(new NextHeartbeat(rmnodeid,
+            nextHeartbeat,pendingId), session));
+    } else {
+      session.remove(createPersistable(new NextHeartbeat(rmnodeid,
+              true,pendingId), session));
+    }
+    //session.flush();
   }
 
   private NextHeartbeatDTO createPersistable(NextHeartbeat hopNextHeartbeat,
@@ -94,13 +108,14 @@ public class NextHeartbeatClusterJ
     //Set values to persist new persistedEvent
     DTO.setrmnodeid(hopNextHeartbeat.getRmnodeid());
     DTO.setNextheartbeat(booleanToInt(hopNextHeartbeat.isNextheartbeat()));
+    DTO.setpendingeventid(hopNextHeartbeat.getPendingEventId());
     return DTO;
   }
 
   public static NextHeartbeat createHopNextHeartbeat(
       NextHeartbeatDTO nextHBDTO) {
     return new NextHeartbeat(nextHBDTO.getrmnodeid(), intToBoolean(nextHBDTO.
-        getNextheartbeat()));
+        getNextheartbeat()),nextHBDTO.getpendingeventid());
   }
 
   private Map<String, Boolean> createMap(List<NextHeartbeatDTO> results) {

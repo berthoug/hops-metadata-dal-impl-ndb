@@ -49,7 +49,7 @@ public class PendingEventClusterJ
   private static final Log LOG = LogFactory.getLog(PendingEventClusterJ.class);
 
   @PersistenceCapable(table = TABLE_NAME)
-  public interface PendingEventDTO {
+  public interface PendingEventDTO extends RMNodeComponentDTO  {
 
     @PrimaryKey
     @Column(name = ID)
@@ -64,12 +64,12 @@ public class PendingEventClusterJ
     void setrmnodeid(String rmnodeid);
 
     @Column(name = TYPE)
-    byte getType();
+    int getType();
 
     void setType(int type);
 
     @Column(name = STATUS)
-    byte getStatus();
+    int getStatus();
 
     void setStatus(int status);
 
@@ -119,7 +119,7 @@ public class PendingEventClusterJ
       LOG.debug(
           "HOP :: ClusterJ PendingEvent.prepare.modify - FINISH:" + modified);
     }
-//    session.flush();
+    session.flush();
   }
 
   @Override

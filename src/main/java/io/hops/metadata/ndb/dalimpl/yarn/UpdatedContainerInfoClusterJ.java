@@ -66,6 +66,12 @@ public class UpdatedContainerInfoClusterJ
         int getupdatedcontainerinfoid();
 
         void setupdatedcontainerinfoid(int updatedcontainerinfoid);
+        
+        @Column(name = PENDING_EVENT_ID)
+        int getpendingeventid();
+
+        void setpendingeventid(int updatedcontainerinfoid);
+        
 
     }
 
@@ -174,6 +180,7 @@ public class UpdatedContainerInfoClusterJ
         dto.setrmnodeid(hop.getRmnodeid());
         dto.setcontainerid(hop.getContainerId());
         dto.setupdatedcontainerinfoid(hop.getUpdatedContainerInfoId());
+        dto.setpendingeventid(hop.getPendingEventId());
         return dto;
     }
 
@@ -186,7 +193,7 @@ public class UpdatedContainerInfoClusterJ
     private UpdatedContainerInfo createHopUpdatedContainerInfo(
             UpdatedContainerInfoDTO dto) {
         return new UpdatedContainerInfo(dto.getrmnodeid(), dto.getcontainerid(),
-                dto.getupdatedcontainerinfoid());
+                dto.getupdatedcontainerinfoid(),dto.getpendingeventid());
     }
 
     private List<UpdatedContainerInfo> createUpdatedContainerInfoList(
