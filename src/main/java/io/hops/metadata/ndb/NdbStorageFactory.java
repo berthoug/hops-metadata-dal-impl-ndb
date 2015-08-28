@@ -350,6 +350,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("AppSchedulingInfoAdd", AppSchedulingInfoClusterJ.add);
     yarnStats.put("AppSchedulingInfoRemove", AppSchedulingInfoClusterJ.remove);
     yarnStats.put("ContainerAdd", ContainerClusterJ.add);
+    yarnStats.put("ContainerAdd_totalPersistableSize", ContainerClusterJ.totalPersistableSize);
+    yarnStats.put("ContainerAdd_totalContainerSize", ContainerClusterJ.totalContainerSize);
     yarnStats.put("ContainerIdToCleanAdd", ContainerIdToCleanClusterJ.add);
     yarnStats.put("ContainerIdToCleanRemove", ContainerIdToCleanClusterJ.remove);
     yarnStats.put("ContainerStatusAdd", ContainerStatusClusterJ.add);
@@ -508,8 +510,25 @@ public class NdbStorageFactory implements DalStorageFactory {
     result = result.concat("\tadd: ");
     value = ContainerClusterJ.add - yarnStats.get("ContainerAdd");
     yarnStats.put("ContainerAdd", ContainerClusterJ.add);
-    result = result.concat(value + "\n");
-   
+    if (value != 0) {
+      int lastSecondTotalContainerSize = ContainerClusterJ.totalContainerSize
+              - yarnStats.get("ContainerAdd_totalContainerSize");
+      int avgLastSecondTotalContainerSize = lastSecondTotalContainerSize / value;
+      yarnStats.put("ContainerAdd_totalContainerSize",
+              ContainerClusterJ.totalContainerSize);
+      int lastSecondTotalPersistableSize
+              = ContainerClusterJ.totalPersistableSize - yarnStats.get(
+                      "ContainerAdd_totalPersistableSize");
+      int avgLastSecondTotalPersistableSize = lastSecondTotalPersistableSize
+              / value;
+      yarnStats.put("ContainerAdd_totalPersistableSize",
+              ContainerClusterJ.totalPersistableSize);
+      result = result.concat(value + " (avg container size: "
+              + avgLastSecondTotalContainerSize + ", avg persistable size: "
+              + avgLastSecondTotalPersistableSize + ")\n");
+    } else {
+      result = result.concat(value + "\n");
+    }
 
     result = result.concat("ContainerIdToClean:\n");
     result = result.concat("\tadd: ");

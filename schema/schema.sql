@@ -782,12 +782,12 @@ delimiter $$
 CREATE TABLE `yarn_container` (
   `containerid_id` VARCHAR(45) NOT NULL,
   `containerstate` VARBINARY(13500) NULL,
-  PRIMARY KEY (`containerid_id`),
-  CONSTRAINT `containerid_id`
-    FOREIGN KEY (`containerid_id`)
-    REFERENCES `yarn_rmcontainer` (`containerid_id`)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
+  PRIMARY KEY (`containerid_id`)#,
+#  CONSTRAINT `containerid_id`
+#    FOREIGN KEY (`containerid_id`)
+#    REFERENCES `yarn_rmcontainer` (`containerid_id`)
+#    ON DELETE CASCADE
+#    ON UPDATE NO ACTION
 ) ENGINE=ndbcluster DEFAULT CHARSET=latin1$$
 
 
