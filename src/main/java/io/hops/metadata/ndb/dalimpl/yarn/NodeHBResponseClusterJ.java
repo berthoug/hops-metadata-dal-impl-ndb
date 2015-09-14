@@ -100,6 +100,7 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     return result;
   }
   public static int add =0;
+  public static int totalSize =0;
   @Override
   public void addAll(Collection<NodeHBResponse> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -107,6 +108,7 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     for(NodeHBResponse response: toAdd){
       NodeHBResponseDTO dto = createPersistable(response, session);
       toPersist.add(dto);
+      totalSize+= response.getResponse().length;
     }
     add+=toPersist.size();
     session.savePersistentAll(toPersist);

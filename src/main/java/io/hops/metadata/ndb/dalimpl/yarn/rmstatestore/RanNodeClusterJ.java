@@ -48,11 +48,11 @@ public class RanNodeClusterJ implements
 
   public static int add=0;
   @Override
-  public void addAll(Collection<List<RanNode>> toAdd)
+  public void addAll(Collection<Collection<RanNode>> toAdd)
           throws StorageException {
     HopsSession session = connector.obtainSession();
     List<RanNodeDTO> toPersist = new ArrayList<RanNodeDTO>();
-    for (List<RanNode> l : toAdd) {
+    for (Collection<RanNode> l : toAdd) {
       for (RanNode n : l) {
         toPersist.add(createPersistable(n, session));
       }

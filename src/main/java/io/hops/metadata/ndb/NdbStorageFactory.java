@@ -395,6 +395,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             NodeClusterJ.add);
     yarnStats.put("NodeHBResponseClusterJAdd",
             NodeHBResponseClusterJ.add);
+    yarnStats.put("nodeHbResponseSize", NodeHBResponseClusterJ.totalSize);
     yarnStats.put("QueueMetricsClusterJAdd",
             QueueMetricsClusterJ.add);
     yarnStats.put("RMContainerClusterJAdd",
@@ -421,6 +422,8 @@ public class NdbStorageFactory implements DalStorageFactory {
             ResourceClusterJ.remove);
     yarnStats.put("ResourceRequestClusterJAdd",
             ResourceRequestClusterJ.add);
+    yarnStats.put("RequestSize",
+              NodeHBResponseClusterJ.totalSize);
     yarnStats.put("ResourceRequestClusterJRemove",
             ResourceRequestClusterJ.remove);
     yarnStats.put("SchedulerApplicationClusterJAdd",
@@ -697,7 +700,19 @@ public class NdbStorageFactory implements DalStorageFactory {
             "NodeHBResponseClusterJAdd");
     yarnStats.put("NodeHBResponseClusterJAdd",
             NodeHBResponseClusterJ.add);
-    result = result.concat(value + "\n");
+    
+    if (value != 0) {
+      int lastSecondTotalResponseSize = NodeHBResponseClusterJ.totalSize
+              - yarnStats.get("nodeHbResponseSize");
+      int avgLastSecondTotalResponseSize = lastSecondTotalResponseSize / value;
+      yarnStats.put("nodeHbResponseSize",
+              NodeHBResponseClusterJ.totalSize);
+      
+      result = result.concat(value + " (avg size: "
+              + avgLastSecondTotalResponseSize + ")\n");
+    } else {
+      result = result.concat(value + "\n");
+    }
  
     
                 result = result.concat("QueueMetricsClusterJ:\n");
@@ -794,7 +809,19 @@ public class NdbStorageFactory implements DalStorageFactory {
             "ResourceRequestClusterJAdd");
     yarnStats.put("ResourceRequestClusterJAdd",
             ResourceRequestClusterJ.add);
-    result = result.concat(value + "\n");
+       
+    if (value != 0) {
+      int lastSecondTotalRequestSize = ResourceRequestClusterJ.totalSize
+              - yarnStats.get("RequestSize");
+      int avgLastSecondTotalRequestSize = lastSecondTotalRequestSize / value;
+      yarnStats.put("RequestSize",
+              ResourceRequestClusterJ.totalSize);
+      
+      result = result.concat(value + " (avg size: "
+              + avgLastSecondTotalRequestSize + ")\n");
+    } else {
+      result = result.concat(value + "\n");
+    }
     result = result.concat("\tremove: ");
     value = ResourceRequestClusterJ.remove - yarnStats.get(
             "ResourceRequestClusterJRemove");
