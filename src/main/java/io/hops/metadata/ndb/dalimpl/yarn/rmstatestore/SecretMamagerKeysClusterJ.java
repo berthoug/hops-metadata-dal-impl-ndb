@@ -66,22 +66,31 @@ public class SecretMamagerKeysClusterJ implements
     HopsQueryDomainType<SecretMamagerKeysDTO> dobj =
         qb.createQueryDefinition(SecretMamagerKeysDTO.class);
     HopsQuery<SecretMamagerKeysDTO> query = session.createQuery(dobj);
-    List<SecretMamagerKeysDTO> results = query.getResultList();
-    return createHopSecretMamagerKeyList(results);
-    
+    List<SecretMamagerKeysDTO> queryResults = query.getResultList();
+    List<SecretMamagerKey> result = createHopSecretMamagerKeyList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add =0;
   @Override
   public void add(SecretMamagerKey toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(toAdd, session));
+    SecretMamagerKeysDTO dto = createPersistable(toAdd, session);
+    add++;
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
+  public static int remove=0;
   @Override
   public void remove(SecretMamagerKey toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.deletePersistent(
-        session.newInstance(SecretMamagerKeysDTO.class, toRemove.getKeyType()));
+    SecretMamagerKeysDTO dto = 
+        session.newInstance(SecretMamagerKeysDTO.class, toRemove.getKeyType());
+    remove++;
+    session.deletePersistent(dto);
+    session.release(dto);
   }
   
   private SecretMamagerKeysDTO createPersistable(SecretMamagerKey hop,

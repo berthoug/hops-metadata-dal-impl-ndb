@@ -87,19 +87,19 @@ public class ResourceClusterJ
       throws StorageException {
     LOG.debug("HOP :: ClusterJ Resource.findEntry - START:" + id);
     HopsSession session = connector.obtainSession();
-    if (session != null) {
-      ResourceDTO resourceDTO;
-      Object[] pk = new Object[3];
-      pk[0] = id;
-      pk[1] = type;
-      pk[2] = parent;
-      resourceDTO = session.find(ResourceDTO.class, pk);
-      LOG.debug("HOP :: ClusterJ Resource.findEntry - FINISH:" + id);
-      if (resourceDTO != null) {
-        return createHopResource(resourceDTO);
-      }
+    ResourceDTO resourceDTO;
+    Object[] pk = new Object[3];
+    pk[0] = id;
+    pk[1] = type;
+    pk[2] = parent;
+    resourceDTO = session.find(ResourceDTO.class, pk);
+    LOG.debug("HOP :: ClusterJ Resource.findEntry - FINISH:" + id);
+    Resource result = null;
+    if (resourceDTO != null) {
+      result= createHopResource(resourceDTO);
     }
-    return null;
+    session.release(resourceDTO);
+    return result;
   }
 
   @Override
@@ -112,12 +112,15 @@ public class ResourceClusterJ
         qb.createQueryDefinition(ResourceDTO.class);
     HopsQuery<ResourceDTO> query = session.
         createQuery(dobj);
-    List<ResourceDTO> results = query.
+    List<ResourceDTO> queryResults = query.
         getResultList();
     LOG.debug("HOP :: ClusterJ Resource.getAll - FINISH");
-    return createMap(results);
+    Map<String,Map<Integer, Map<Integer, Resource>>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<Resource> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -125,11 +128,13 @@ public class ResourceClusterJ
     for (Resource req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
-
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<Resource> toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -141,14 +146,19 @@ public class ResourceClusterJ
       pk[2] = req.getParent();
       toPersist.add(session.newInstance(ResourceDTO.class, pk));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
   @Override
   public void add(Resource resourceNode) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(resourceNode, session));
+    ResourceDTO dto = createPersistable(resourceNode, session);
+    add++;
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   private Resource createHopResource(ResourceDTO resourceDTO) {

@@ -79,12 +79,11 @@ public class ApplicationStateClusterJ implements
       throws StorageException {
     HopsSession session = connector.obtainSession();
 
-    ApplicationStateDTO appStateDTO = null;
-    if (session != null) {
-      appStateDTO = session.find(ApplicationStateDTO.class, id);
-    }
+    ApplicationStateDTO appStateDTO = session.find(ApplicationStateDTO.class, id);
 
-    return createHopApplicationState(appStateDTO);
+    ApplicationState result =  createHopApplicationState(appStateDTO);
+    session.release(appStateDTO);
+    return result;
   }
 
   @Override
@@ -98,14 +97,17 @@ public class ApplicationStateClusterJ implements
       //dobj.where(pred1);
       HopsQuery<ApplicationStateDTO> query = session.createQuery(dobj);
       //query.setParameter("applicationid", applicationid);
-      List<ApplicationStateDTO> results = query.getResultList();
-      return createHopApplicationStateList(results);
+      List<ApplicationStateDTO> queryResults = query.getResultList();
+      List<ApplicationState> result =  createHopApplicationStateList(queryResults);
+      session.release(queryResults);
+      return result;
     } catch (Exception e) {
       throw new StorageException(e);
     }
 
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<ApplicationState> toAdd)
       throws StorageException {
@@ -114,9 +116,13 @@ public class ApplicationStateClusterJ implements
     for (ApplicationState req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.flush();
+    session.release(toPersist);
   }
 
+  public static int remove;
   @Override
   public void removeAll(Collection<ApplicationState> toRemove)
       throws StorageException {
@@ -126,21 +132,29 @@ public class ApplicationStateClusterJ implements
       toPersist.add(session.newInstance(ApplicationStateDTO.class, entry.
           getApplicationId()));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
   public void add(ApplicationState toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(toAdd, session));
+    ApplicationStateDTO dto = createPersistable(toAdd, session);
+    add++;
+    session.savePersistent(dto);
+    session.flush();
+    session.release(dto);
   }
 
   @Override
   public void remove(ApplicationState toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.deletePersistent(
-        session.newInstance(ApplicationStateDTO.class, toRemove.
-                getApplicationId()));
+    ApplicationStateDTO dto = session.newInstance(ApplicationStateDTO.class, toRemove.
+                getApplicationId());
+    remove++;
+    session.deletePersistent(dto);
+    session.release(dto);
   }
   
   private ApplicationState createHopApplicationState(

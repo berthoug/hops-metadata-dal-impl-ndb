@@ -68,28 +68,38 @@ public class ContainerClusterJ
         qb.createQueryDefinition(ContainerDTO.class);
     HopsQuery<ContainerDTO> query = session.
         createQuery(dobj);
-    List<ContainerDTO> results = query.
+    List<ContainerDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, Container> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add =0;
+  public static int totalPersistableSize =0;
+  public static int totalContainerSize=0;
   @Override
   public void addAll(Collection<Container> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     List<ContainerDTO> toPersist = new ArrayList<ContainerDTO>();
     for (Container container : toAdd) {
       ContainerDTO persistable = createPersistable(container, session);
+      totalPersistableSize += persistable.getcontainerstate().length;
+      totalContainerSize+= container.getContainerState().length;
       toPersist.add(persistable);
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
-
 //    session.flush();
+    session.release(toPersist);
   }
 
   @Override
   public void createContainer(Container container) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(container, session));
+    ContainerDTO persistable = createPersistable(container, session);
+    session.savePersistent(persistable);
+    session.release(persistable);
   }
 
   private Container createHopContainer(ContainerDTO containerDTO)

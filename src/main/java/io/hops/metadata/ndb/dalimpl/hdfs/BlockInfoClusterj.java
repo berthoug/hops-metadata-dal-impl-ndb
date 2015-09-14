@@ -168,6 +168,11 @@ public class BlockInfoClusterj
     session.deletePersistentAll(luDeletions);
     session.savePersistentAll(blkChanges);
     session.savePersistentAll(luChanges);
+    
+    session.release(blkDeletions);
+    session.release(luDeletions);
+    session.release(blkChanges);
+    session.release(luChanges);
   }
 
   @Override
@@ -182,7 +187,11 @@ public class BlockInfoClusterj
     if (bit == null) {
       return null;
     }
-    return createBlockInfo(bit);
+    
+    BlockInfo bi = createBlockInfo(bit);
+    session.release(bit);
+    
+    return bi;
   }
 
   @Override
@@ -195,7 +204,10 @@ public class BlockInfoClusterj
     dobj.where(pred1);
     HopsQuery<BlockInfoDTO> query = session.createQuery(dobj);
     query.setParameter("iNodeParam", inodeId);
-    return createBlockInfoList(query.getResultList());
+    List<BlockInfoDTO> dtos = query.getResultList();
+    List<BlockInfo> lbis = createBlockInfoList(dtos);
+    session.release(dtos);
+    return lbis;
   }
 
   @Override
@@ -209,7 +221,11 @@ public class BlockInfoClusterj
     dobj.where(pred1);
     HopsQuery<BlockInfoClusterj.BlockInfoDTO> query = session.createQuery(dobj);
     query.setParameter("iNodeParam", Ints.asList(inodeIds));
-    return createBlockInfoList(query.getResultList());
+    
+    List<BlockInfoDTO> biDtos = query.getResultList();
+    List<BlockInfo> lbis = createBlockInfoList(biDtos);
+    session.release(biDtos);
+    return lbis;
   }
 
   public BlockInfo scanByBlockId(long blockId) throws StorageException {
@@ -221,7 +237,10 @@ public class BlockInfoClusterj
     dobj.where(pred1);
     HopsQuery<BlockInfoClusterj.BlockInfoDTO> query = session.createQuery(dobj);
     query.setParameter("blockIdParam", blockId);
-    return createBlockInfo(query.getResultList().get(0));
+    List<BlockInfoDTO> biDtos = query.getResultList();
+    BlockInfo bi = createBlockInfo(biDtos.get(0));
+    session.release(biDtos);
+    return bi;
   }
 
   @Override
@@ -231,7 +250,11 @@ public class BlockInfoClusterj
     HopsQueryDomainType<BlockInfoClusterj.BlockInfoDTO> dobj =
         qb.createQueryDefinition(BlockInfoClusterj.BlockInfoDTO.class);
     HopsQuery<BlockInfoClusterj.BlockInfoDTO> query = session.createQuery(dobj);
-    return createBlockInfoList(query.getResultList());
+    
+    List<BlockInfoDTO> biDtos = query.getResultList();
+    List<BlockInfo> lbis = createBlockInfoList(biDtos);
+    session.release(biDtos);
+    return lbis;
   }
 
   @Override
@@ -241,24 +264,20 @@ public class BlockInfoClusterj
     List<ReplicaClusterj.ReplicaDTO> replicas =
         ReplicaClusterj.getReplicas(session, storageId);
     long[] blockIds = new long[replicas.size()];
+    int[] inodeIds = new int[replicas.size()];
     for (int i = 0; i < blockIds.length; i++) {
       blockIds[i] = replicas.get(i).getBlockId();
+      inodeIds[i] = replicas.get(i).getINodeId();
     }
-    List<BlockInfo> ret = readBlockInfoBatch(session, blockIds);
+    List<BlockInfo> ret = readBlockInfoBatch(session, inodeIds, blockIds);
+    session.release(replicas);
     return ret;
   }
-  
+
   @Override
   public Set<Long> findByStorageIdOnlyIds(int storageId)
       throws StorageException {
-    HopsSession session = connector.obtainSession();
-    List<ReplicaClusterj.ReplicaDTO> replicas =
-        ReplicaClusterj.getReplicas(session, storageId);
-    Set<Long> blks = new HashSet<Long>();
-    for (ReplicaClusterj.ReplicaDTO replica : replicas) {
-      blks.add(replica.getBlockId());
-    }
-    return blks;
+    return ReplicaClusterj.getReplicas(storageId);
   }
 
   @Override
@@ -268,14 +287,7 @@ public class BlockInfoClusterj
     List<BlockInfo> blks = readBlockInfoBatch(session, inodeIds, blockIds);
     return blks;
   }
-  
-  private List<BlockInfo> readBlockInfoBatch(final HopsSession session,
-      final long[] blockIds) throws StorageException {
-    int[] inodeIds =
-        BlockLookUpClusterj.readINodeIdsByBlockIds(session, blockIds);
-    return readBlockInfoBatch(session, inodeIds, blockIds);
-  }
-  
+
   private List<BlockInfo> readBlockInfoBatch(final HopsSession session,
       final int[] inodeIds, final long[] blockIds) throws StorageException {
     final List<BlockInfoClusterj.BlockInfoDTO> bdtos =
@@ -289,7 +301,9 @@ public class BlockInfoClusterj
       bdtos.add(bdto);
     }
     session.flush();
-    return createBlockInfoList(bdtos);
+    List<BlockInfo> lbis = createBlockInfoList(bdtos);
+    session.release(bdtos);
+    return lbis;
   }
   
   private List<BlockInfo> createBlockInfoList(
@@ -301,7 +315,6 @@ public class BlockInfoClusterj
         list.add(createBlockInfo(blockInfoDTO));
       }
     }
-
     return list;
   }
 

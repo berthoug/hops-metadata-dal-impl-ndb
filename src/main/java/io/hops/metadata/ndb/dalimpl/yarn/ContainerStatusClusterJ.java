@@ -98,7 +98,9 @@ public class ContainerStatusClusterJ implements
           .find(ContainerStatusDTO.class, new Object[]{containerId, rmNodeId});
       LOG.debug("HOP :: ClusterJ ContainerStatus.findById - FINISH");
       if (uciDTO != null) {
-        return createHopContainerStatus(uciDTO);
+          ContainerStatus result = createHopContainerStatus(uciDTO);
+          session.release(uciDTO);
+          return result;
       }
     }
     return null;
@@ -114,11 +116,13 @@ public class ContainerStatusClusterJ implements
         qb.createQueryDefinition(ContainerStatusDTO.class);
     HopsQuery<ContainerStatusDTO> query = session.createQuery(dobj);
 
-    List<ContainerStatusDTO> results = query.getResultList();
+    List<ContainerStatusDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ ContainerStatus.getAll - START");
-    return createMap(results);
+    Map<String, ContainerStatus> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
-
+ public static int add = 0;
   @Override
   public void addAll(Collection<ContainerStatus> containersStatus)
       throws StorageException {
@@ -127,8 +131,10 @@ public class ContainerStatusClusterJ implements
     for (ContainerStatus containerStatus : containersStatus) {
       toAdd.add(createPersistable(containerStatus, session));
     }
+    add+=toAdd.size();
     session.savePersistentAll(toAdd);
 //    session.flush();
+    session.release(toAdd);
   }
 
   private ContainerStatusDTO createPersistable(ContainerStatus hopCS,

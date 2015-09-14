@@ -120,13 +120,16 @@ public class RMContainerClusterJ
         qb.createQueryDefinition(RMContainerDTO.class);
     HopsQuery<RMContainerDTO> query = session.
         createQuery(dobj);
-    List<RMContainerDTO> results = query.
+    List<RMContainerDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+
+    Map<String,RMContainer> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add =0;
   @Override
-
   public void addAll(Collection<RMContainer> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
 
@@ -135,10 +138,13 @@ public class RMContainerClusterJ
     for (RMContainer hop : toAdd) {
       toPersist.add(createPersistable(hop, session));
     }
-
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.flush();
+    session.release(toPersist);
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(Collection<RMContainer> toRemove)
       throws StorageException {
@@ -150,23 +156,31 @@ public class RMContainerClusterJ
           newInstance(RMContainerClusterJ.RMContainerDTO.class, hop.
               getContainerIdID()));
     }
+    remove += toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
   public void remove(RMContainer toRemove)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    
-    session.deletePersistent(session.
+    RMContainerDTO dto = session.
           newInstance(RMContainerClusterJ.RMContainerDTO.class, toRemove.
-              getContainerIdID()));
+              getContainerIdID());
+    remove++;
+    session.deletePersistent(dto);
+    session.release(dto);
   }
   
   @Override
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(rmcontainer, session));
+    RMContainerDTO dto = createPersistable(rmcontainer, session);
+    add++;
+    session.savePersistent(dto);
+    session.flush();
+    session.release(dto);
   }
 
   private RMContainer createHopRMContainer(RMContainerDTO rMContainerDTO) {

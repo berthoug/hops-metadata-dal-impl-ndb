@@ -86,14 +86,14 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     LOG.debug("HOP :: ClusterJ Node.findById - START:" + id);
     HopsSession session = connector.obtainSession();
     NodeDTO nodeDTO;
-    if (session != null) {
-      nodeDTO = session.find(NodeDTO.class, id);
-      LOG.debug("HOP :: ClusterJ Node.findById - FINISH:" + id);
-      if (nodeDTO != null) {
-        return createHopNode(nodeDTO);
-      }
+    nodeDTO = session.find(NodeDTO.class, id);
+    LOG.debug("HOP :: ClusterJ Node.findById - FINISH:" + id);
+    Node result = null;
+    if (nodeDTO != null) {
+      result = createHopNode(nodeDTO);
     }
-    return null;
+    session.release(nodeDTO);
+    return result;
   }
 
   @Override
@@ -105,11 +105,13 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     HopsQueryDomainType<NodeDTO> dobj = qb.createQueryDefinition(NodeDTO.class);
     HopsQuery<NodeDTO> query = session.createQuery(dobj);
 
-    List<NodeDTO> results = query.getResultList();
+    List<NodeDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ Node.getAll - FINISH");
-    return createMap(results);
+    Map<String, Node> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
-
+  public static int add=0;
   @Override
   public void addAll(Collection<Node> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -117,14 +119,18 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     for (Node node : toAdd) {
       toPersist.add(createPersistable(node, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
   @Override
   public void createNode(Node node) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(node, session));
+    NodeDTO dto = createPersistable(node, session);
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   private NodeDTO createPersistable(Node hopNode, HopsSession session)

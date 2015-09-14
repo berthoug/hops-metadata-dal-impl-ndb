@@ -66,12 +66,11 @@ public class UpdatedContainerInfoClusterJ
         int getupdatedcontainerinfoid();
 
         void setupdatedcontainerinfoid(int updatedcontainerinfoid);
-        
+
         @Column(name = PENDING_EVENT_ID)
         int getpendingeventid();
 
         void setpendingeventid(int updatedcontainerinfoid);
-        
 
     }
 
@@ -92,14 +91,17 @@ public class UpdatedContainerInfoClusterJ
 
         HopsQuery<UpdatedContainerInfoDTO> query = session.createQuery(dobj);
         query.setParameter(RMNODEID, rmnodeid);
-        List<UpdatedContainerInfoDTO> results = query.getResultList();
+        List<UpdatedContainerInfoDTO> queryResults = query.getResultList();
         LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - FINISH:"
                 + rmnodeid);
-        if (results != null && !results.isEmpty()) {
-            return createUpdatedContainerInfoMap(results);
+        Map<Integer, List<UpdatedContainerInfo>> result = null;
+        if (queryResults != null && !queryResults.isEmpty()) {
+            result = createUpdatedContainerInfoMap(queryResults);
         }
-        return null;
+        session.release(queryResults);
+        return result;
     }
+    public static int add = 0;
 
     @Override
     public List<UpdatedContainerInfo> findByRMNodeList(
@@ -157,8 +159,13 @@ public class UpdatedContainerInfoClusterJ
             toModify.add(createPersistable(entry, session));
         }
         session.savePersistentAll(toModify);
+        add += toModify.size();
+        session.savePersistentAll(toModify);
 //    session.flush();
+        session.release(toModify);
     }
+
+    public static int remove = 0;
 
     @Override
     public void removeAll(Collection<UpdatedContainerInfo> containers)
@@ -170,7 +177,10 @@ public class UpdatedContainerInfoClusterJ
             toRemove.add(createPersistable(entry, session));
         }
         session.deletePersistentAll(toRemove);
+        remove += toRemove.size();
+        session.deletePersistentAll(toRemove);
 //    session.flush();
+        session.release(toRemove);
     }
 
     private UpdatedContainerInfoDTO createPersistable(UpdatedContainerInfo hop,
@@ -180,7 +190,6 @@ public class UpdatedContainerInfoClusterJ
         dto.setrmnodeid(hop.getRmnodeid());
         dto.setcontainerid(hop.getContainerId());
         dto.setupdatedcontainerinfoid(hop.getUpdatedContainerInfoId());
-        dto.setpendingeventid(hop.getPendingEventId());
         return dto;
     }
 
@@ -193,19 +202,7 @@ public class UpdatedContainerInfoClusterJ
     private UpdatedContainerInfo createHopUpdatedContainerInfo(
             UpdatedContainerInfoDTO dto) {
         return new UpdatedContainerInfo(dto.getrmnodeid(), dto.getcontainerid(),
-                dto.getupdatedcontainerinfoid(),dto.getpendingeventid());
-    }
-
-    private List<UpdatedContainerInfo> createUpdatedContainerInfoList(
-            List<UpdatedContainerInfoDTO> list) {
-        List<UpdatedContainerInfo> updatedContainerInfos
-                = new ArrayList<UpdatedContainerInfo>();
-        for (UpdatedContainerInfoDTO persistable : list) {
-
-            updatedContainerInfos.add(
-                    createHopUpdatedContainerInfo(persistable));
-        }
-        return updatedContainerInfos;
+                dto.getupdatedcontainerinfoid(), dto.getpendingeventid());
     }
 
     private Map<Integer, List<UpdatedContainerInfo>> createUpdatedContainerInfoMap(
@@ -220,6 +217,18 @@ public class UpdatedContainerInfoClusterJ
             }
             updatedContainerInfos.get(persistable.getupdatedcontainerinfoid())
                     .add(createHopUpdatedContainerInfo(persistable));
+        }
+        return updatedContainerInfos;
+    }
+
+    private List<UpdatedContainerInfo> createUpdatedContainerInfoList(
+            List<UpdatedContainerInfoDTO> list) {
+        List<UpdatedContainerInfo> updatedContainerInfos
+                = new ArrayList<UpdatedContainerInfo>();
+        for (UpdatedContainerInfoDTO persistable : list) {
+
+            updatedContainerInfos.add(
+                    createHopUpdatedContainerInfo(persistable));
         }
         return updatedContainerInfos;
     }

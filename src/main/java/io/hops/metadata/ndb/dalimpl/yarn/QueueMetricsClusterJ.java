@@ -169,12 +169,14 @@ public class QueueMetricsClusterJ
         createQueryDefinition(QueueMetricsClusterJ.QueueMetricsDTO.class);
     HopsQuery<QueueMetricsClusterJ.QueueMetricsDTO> query =
         session.createQuery(dobj);
-    List<QueueMetricsClusterJ.QueueMetricsDTO> results = query.getResultList();
+    List<QueueMetricsClusterJ.QueueMetricsDTO> queryResults = query.getResultList();
 //    session.flush();
-    return createHopQueueMetricsList(results);
-
+    List<QueueMetrics> result = createHopQueueMetricsList(queryResults);
+    session.release(queryResults);
+    return result;
   }
   
+  public static int add = 0;
   @Override
   public void addAll(Collection<QueueMetrics> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -184,7 +186,9 @@ public class QueueMetricsClusterJ
           createPersistable(hop, session);
       toPersist.add(persistable);
     }
+    add+= toPersist.size();
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private List<QueueMetrics> createHopQueueMetricsList(

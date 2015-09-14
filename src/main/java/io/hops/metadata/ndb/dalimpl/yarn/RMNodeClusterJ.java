@@ -126,12 +126,14 @@ public class RMNodeClusterJ
     LOG.debug("HOP :: ClusterJ RMNode.findByNodeId - START:" + nodeid);
     HopsSession session = connector.obtainSession();
     RMNodeDTO rmnodeDTO = session.find(RMNodeDTO.class, nodeid);
+    RMNode result = null;
     if (rmnodeDTO != null) {
       LOG.debug("HOP :: ClusterJ RMNode.findByNodeId - FINISH:" + nodeid);
-      return createHopRMNode(rmnodeDTO);
+      result = createHopRMNode(rmnodeDTO);
     }
     LOG.debug("HOP :: ClusterJ RMNode.findByNodeId - FINISH:" + nodeid);
-    return null;
+    session.release(rmnodeDTO);
+    return result;
   }
 
   @Override
@@ -142,11 +144,14 @@ public class RMNodeClusterJ
     HopsQueryDomainType<RMNodeDTO> dobj =
         qb.createQueryDefinition(RMNodeDTO.class);
     HopsQuery<RMNodeDTO> query = session.createQuery(dobj);
-    List<RMNodeDTO> results = query.getResultList();
+    List<RMNodeDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ RMNode.getAll - FINISH");
-    return createMap(results);
+    Map<String, RMNode> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<RMNode> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -154,10 +159,13 @@ public class RMNodeClusterJ
     for (RMNode req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
+  public static int remove =0;
   @Override
   public void removeAll(Collection<RMNode> toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -166,15 +174,20 @@ public class RMNodeClusterJ
       toPersist.add(session.newInstance(RMNodeDTO.class, entry.
           getNodeId()));
     }
+    remove +=toPersist.size();
     session.deletePersistentAll(toPersist);
 //    session.flush();
+    session.release(toPersist);
   }
 
   @Override
   public void add(RMNode rmNode) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(rmNode, session));
+    RMNodeDTO dto = createPersistable(rmNode, session);
+    add++;
+    session.savePersistent(dto);
     session.flush();
+    session.release(dto);
   }
 
   private Map<String, RMNode> createMap(List<RMNodeDTO> results) {

@@ -79,9 +79,11 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
     query.setParameter("schedulerapp_id", ficaId);
 
     List<FiCaSchedulerAppNewlyAllocatedContainersClusterJ.FiCaSchedulerAppNewlyAllocatedContainersDTO>
-        results = query.getResultList();
-    return createFiCaSchedulerAppNewlyAllocatedContainersList(results);
-
+        queryResults = query.getResultList();
+    List<FiCaSchedulerAppContainer> result =
+            createFiCaSchedulerAppNewlyAllocatedContainersList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -94,11 +96,15 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
             FiCaSchedulerAppNewlyAllocatedContainersDTO.class);
     HopsQuery<FiCaSchedulerAppNewlyAllocatedContainersDTO> query = session.
         createQuery(dobj);
-    List<FiCaSchedulerAppNewlyAllocatedContainersDTO> results = query.
+    List<FiCaSchedulerAppNewlyAllocatedContainersDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, List<FiCaSchedulerAppContainer>> result = 
+            createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<FiCaSchedulerAppContainer> toAdd)
       throws StorageException {
@@ -110,9 +116,12 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
           persistable = createPersistable(hop, session);
       toPersist.add(persistable);
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(
       Collection<FiCaSchedulerAppContainer> toRemove)
@@ -129,7 +138,9 @@ public class FiCaSchedulerAppNewlyAllocatedContainersClusterJ
           .newInstance(FiCaSchedulerAppNewlyAllocatedContainersDTO.class,
               objarr));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private FiCaSchedulerAppContainer createHopFiCaSchedulerAppNewlyAllocatedContainers(

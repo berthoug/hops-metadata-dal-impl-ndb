@@ -73,12 +73,14 @@ public class LaunchedContainersClusterJ implements
         qb.createQueryDefinition(LaunchedContainersDTO.class);
     HopsQuery<LaunchedContainersDTO> query = session.
         createQuery(dobj);
-    List<LaunchedContainersDTO> results = query.
+    List<LaunchedContainersDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, List<LaunchedContainers>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
-
+  public static int add=0;
   @Override
   public void addAll(Collection<LaunchedContainers> toAdd)
       throws StorageException {
@@ -88,9 +90,12 @@ public class LaunchedContainersClusterJ implements
     for (LaunchedContainers id : toAdd) {
       toPersist.add(createPersistable(id, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
+  public static int remove =0;
   @Override
   public void removeAll(Collection<LaunchedContainers> toRemove)
       throws StorageException {
@@ -98,12 +103,14 @@ public class LaunchedContainersClusterJ implements
     List<LaunchedContainersDTO> toPersist =
         new ArrayList<LaunchedContainersDTO>();
     for (LaunchedContainers hopContainerId : toRemove) {
-      Object[] objarr = new Object[2];
-      objarr[0] = hopContainerId.getSchedulerNodeID();
-      objarr[1] = hopContainerId.getContainerIdID();
-      toPersist.add(session.newInstance(LaunchedContainersDTO.class, objarr));
+      LaunchedContainersDTO persistable = session.newInstance(LaunchedContainersDTO.class);
+      persistable.setschedulernode_id(hopContainerId.getSchedulerNodeID());
+      persistable.setcontaineridid(hopContainerId.getContainerIdID());
+      toPersist.add(persistable);
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private LaunchedContainers createLaunchedContainersEntry(

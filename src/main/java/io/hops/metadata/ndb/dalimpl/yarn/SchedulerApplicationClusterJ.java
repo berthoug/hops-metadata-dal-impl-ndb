@@ -73,11 +73,14 @@ public class SchedulerApplicationClusterJ
             SchedulerApplicationClusterJ.SchedulerApplicationDTO.class);
     HopsQuery<SchedulerApplicationDTO> query = session.
         createQuery(dobj);
-    List<SchedulerApplicationClusterJ.SchedulerApplicationDTO> results = query.
+    List<SchedulerApplicationClusterJ.SchedulerApplicationDTO> queryResults = query.
         getResultList();
-    return createApplicationIdMap(results);
+    Map<String, SchedulerApplication> result = createApplicationIdMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<SchedulerApplication> toAdd)
       throws StorageException {
@@ -87,9 +90,13 @@ public class SchedulerApplicationClusterJ
     for (SchedulerApplication req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.flush();
+    session.release(toPersist);
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(Collection<SchedulerApplication> toRemove)
       throws StorageException {
@@ -100,7 +107,9 @@ public class SchedulerApplicationClusterJ
       toPersist.add(session.newInstance(SchedulerApplicationDTO.class, entry.
           getAppid()));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private Map<String, SchedulerApplication> createApplicationIdMap(

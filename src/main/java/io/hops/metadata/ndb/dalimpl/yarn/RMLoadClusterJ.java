@@ -54,11 +54,15 @@ public class RMLoadClusterJ implements TablesDef.RMLoadTableDef, RMLoadDataAcces
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+  public static int add=0;
   @Override
   public void update(Load entry) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(entry, session));
+    RMLoadDTO dto = createPersistable(entry, session);
+    add++;
+    session.savePersistent(dto);
 //    session.flush();
+    session.release(dto);
   }
 
   @Override
@@ -69,9 +73,11 @@ public class RMLoadClusterJ implements TablesDef.RMLoadTableDef, RMLoadDataAcces
         qb.createQueryDefinition(RMLoadDTO.class);
     HopsQuery<RMLoadDTO> query = session.
         createQuery(dobj);
-    List<RMLoadDTO> results = query.
+    List<RMLoadDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String, Load> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private RMLoadDTO createPersistable(Load entry, HopsSession session)

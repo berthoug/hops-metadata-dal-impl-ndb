@@ -30,6 +30,7 @@ import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
 import io.hops.metadata.yarn.dal.NextHeartbeatDataAccess;
 import io.hops.metadata.yarn.entity.NextHeartbeat;
+import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,34 +73,40 @@ public class NextHeartbeatClusterJ
     HopsQueryDomainType<NextHeartbeatDTO> dobj =
         qb.createQueryDefinition(NextHeartbeatDTO.class);
     HopsQuery<NextHeartbeatDTO> query = session.createQuery(dobj);
-    List<NextHeartbeatDTO> results = query.getResultList();
+    List<NextHeartbeatDTO> queryResults = query.getResultList();
 
-    return createMap(results);
+    Map<String, Boolean> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
   public boolean findEntry(String rmnodeId) throws StorageException {
     HopsSession session = connector.obtainSession();
     NextHeartbeatDTO nextHBDTO = session.find(NextHeartbeatDTO.class, rmnodeId);
+    boolean result = false;
     if (nextHBDTO != null) {
-      return createHopNextHeartbeat(nextHBDTO).isNextheartbeat();
+      result = createHopNextHeartbeat(nextHBDTO).isNextheartbeat();
     }
-    return false;
+    session.release(nextHBDTO);
+    return result;
   }
 
+  public static int add=0;
   @Override
-  public void updateNextHeartbeat(String rmnodeid, boolean nextHeartbeat,int pendingId)
+
+  public void updateAll(List<NextHeartbeat> toUpdate)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    if(nextHeartbeat){
-      LOG.info("updating the database as true");
-      session.savePersistent(createPersistable(new NextHeartbeat(rmnodeid,
-            nextHeartbeat,pendingId), session));
-    } else {
-      session.remove(createPersistable(new NextHeartbeat(rmnodeid,
-              true,pendingId), session));
+    List<NextHeartbeatDTO> toPersist = new ArrayList<NextHeartbeatDTO>();
+    for(NextHeartbeat hb: toUpdate){
+      NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(hb.getRmnodeid(), hb.isNextheartbeat(),hb.getPendingEventId()), session);
+      toPersist.add(hbDTO);
     }
-    //session.flush();
+    add +=toPersist.size();
+    session.savePersistentAll(toPersist);
+//    session.flush();
+    session.release(toPersist);
   }
 
   private NextHeartbeatDTO createPersistable(NextHeartbeat hopNextHeartbeat,

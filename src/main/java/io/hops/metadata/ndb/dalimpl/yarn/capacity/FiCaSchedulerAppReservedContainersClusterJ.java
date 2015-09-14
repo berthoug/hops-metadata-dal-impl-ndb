@@ -84,8 +84,11 @@ public class FiCaSchedulerAppReservedContainersClusterJ
       throw new StorageException("HOP :: Error while retrieving row");
     }
 
-    return createHopFiCaSchedulerAppReservedContainers(
-        fiCaSchedulerAppReservedContainersDTO);
+    FiCaSchedulerAppReservedContainers result = 
+            createHopFiCaSchedulerAppReservedContainers(
+                    fiCaSchedulerAppReservedContainersDTO);
+    session.release(fiCaSchedulerAppReservedContainersDTO);
+    return result;
   }
   
   @Override
@@ -101,6 +104,7 @@ public class FiCaSchedulerAppReservedContainersClusterJ
           toAdd.add(persistable);
         }
         session.savePersistentAll(toAdd);
+        session.release(toAdd);
       }
   }
 
@@ -120,6 +124,7 @@ public class FiCaSchedulerAppReservedContainersClusterJ
           toRemove.add(persistable);
         }
         session.deletePersistentAll(toRemove);
+        session.release(toRemove);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -137,10 +142,12 @@ public class FiCaSchedulerAppReservedContainersClusterJ
     HopsQuery<FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO> query
             = session.
             createQuery(dobj);
-    List<FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO> results
+    List<FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO> queryResults
             = query.
             getResultList();
-    return createMap(results);
+    Map<String, List<FiCaSchedulerAppReservedContainers>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private FiCaSchedulerAppReservedContainers createHopFiCaSchedulerAppReservedContainers(

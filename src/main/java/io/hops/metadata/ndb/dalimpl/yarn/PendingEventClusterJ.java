@@ -81,14 +81,18 @@ public class PendingEventClusterJ
   public void createPendingEvent(PendingEvent persistedEvent)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.makePersistent(createPersistable(persistedEvent, session));
+    PendingEventDTO dto = createPersistable(persistedEvent, session);
+    session.makePersistent(dto);
+    session.release(dto);
   }
 
   @Override
   public void removePendingEvent(PendingEvent persistedEvent)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.deletePersistent(createPersistable(persistedEvent, session));
+    PendingEventDTO dto = createPersistable(persistedEvent, session);
+    session.deletePersistent(dto);
+    session.release(dto);
   }
 
   @Override
@@ -105,6 +109,7 @@ public class PendingEventClusterJ
                 getRmnodeId()}));
       }
       session.deletePersistentAll(toRemove);
+      session.release(toRemove);
       LOG.debug(
           "HOP :: ClusterJ PendingEvent.prepare.remove - FINISH:" + removed);
     }
@@ -116,6 +121,7 @@ public class PendingEventClusterJ
         toModify.add(createPersistable(hop, session));
       }
       session.savePersistentAll(toModify);
+      session.release(toModify);
       LOG.debug(
           "HOP :: ClusterJ PendingEvent.prepare.modify - FINISH:" + modified);
     }
@@ -132,9 +138,11 @@ public class PendingEventClusterJ
         qb.createQueryDefinition(PendingEventDTO.class);
     HopsQuery<PendingEventDTO> query = session.createQuery(dobj);
 
-    List<PendingEventDTO> results = query.getResultList();
+    List<PendingEventDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ PendingEvent.getAll - FINISH");
-    return createPendingEventList(results);
+    List<PendingEvent> result = createPendingEventList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -149,9 +157,11 @@ public class PendingEventClusterJ
     dobj.where(pred1);
     HopsQuery<PendingEventDTO> query = session.createQuery(dobj);
     query.setParameter(STATUS, status);
-    List<PendingEventDTO> results = query.getResultList();
+    List<PendingEventDTO> queryResults = query.getResultList();
     //LOG.debug("HOP :: ClusterJ PendingEvent.getAll(" + status + ") - FINISH");
-    return createPendingEventList(results);
+    List<PendingEvent> result = createPendingEventList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   /**

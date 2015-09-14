@@ -106,12 +106,15 @@ public class FinishedApplicationsClusterJ
         qb.createQueryDefinition(FinishedApplicationsDTO.class);
     HopsQuery<FinishedApplicationsDTO> query = session.
         createQuery(dobj);
-    List<FinishedApplicationsDTO> results = query.
+    List<FinishedApplicationsDTO> queryResults = query.
         getResultList();
     LOG.debug("HOP :: ClusterJ FinishedApplications.getAll - FINISH");
-    return createMap(results);
+    Map<String, List<FinishedApplications>> result = createMap(queryResults);
+    session.release(queryResults);
+      return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<FinishedApplications> applications)
       throws StorageException {
@@ -121,10 +124,13 @@ public class FinishedApplicationsClusterJ
     for (FinishedApplications entry : applications) {
       toModify.add(createPersistable(entry, session));
     }
+    add+=toModify.size();
     session.savePersistentAll(toModify);
 //    session.flush();
+    session.release(toModify);
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<FinishedApplications> applications)
       throws StorageException {
@@ -134,8 +140,10 @@ public class FinishedApplicationsClusterJ
     for (FinishedApplications entry : applications) {
       toRemove.add(createPersistable(entry, session));
     }
+    remove+=toRemove.size();
     session.deletePersistentAll(toRemove);
 //    session.flush();
+    session.release(toRemove);
   }
 
   private FinishedApplications createHopFinishedApplications(

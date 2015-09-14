@@ -79,19 +79,22 @@ public class FiCaSchedulerAppReservationsClusterJ implements
               = session.createQuery(dobj);
       query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> results
+      List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> queryResults
               = query.getResultList();
-      return createReservationsList(results);
+      List<SchedulerAppReservations> result = 
+              createReservationsList(queryResults);
+      session.release(queryResults);
+      return result;
     } catch (Exception e) {
       throw new StorageException(e);
     }
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<SchedulerAppReservations> modified) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
       if (modified != null) {
         List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> toAdd
                 = new ArrayList<SchedulerAppReservationsDTO>();
@@ -100,18 +103,17 @@ public class FiCaSchedulerAppReservationsClusterJ implements
                   = createPersistable(hop, session);
           toAdd.add(persistable);
         }
+        add+=toAdd.size();
         session.savePersistentAll(toAdd);
+        session.release(toAdd);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<SchedulerAppReservations> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
       if (removed != null) {
         List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> toRemove
                 = new ArrayList<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO>();
@@ -123,12 +125,11 @@ public class FiCaSchedulerAppReservationsClusterJ implements
                   FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO.class,
                   objarr));
         }
+        remove+=toRemove.size();
         session.deletePersistentAll(toRemove);
+        session.release(toRemove);
       }
 
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
   }
 
   @Override
@@ -142,10 +143,12 @@ public class FiCaSchedulerAppReservationsClusterJ implements
     HopsQuery<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> query
             = session.
             createQuery(dobj);
-    List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> results
+    List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> queryResults
             = query.
             getResultList();
-    return createMap(results);
+    Map<String, List<SchedulerAppReservations>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private SchedulerAppReservations createHopFiCaSchedulerAppReservations(

@@ -45,7 +45,7 @@ public class UpdatedNodeClusterJ implements
   }
   
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
-  
+  public static int add=0;
   @Override
   public void addAll(Collection<List<UpdatedNode>> toAdd)
       throws StorageException {
@@ -56,7 +56,9 @@ public class UpdatedNodeClusterJ implements
         toPersist.add(createPersistable(n, session));
       }
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
   
    @Override
@@ -66,9 +68,11 @@ public class UpdatedNodeClusterJ implements
      HopsQueryDomainType<UpdatedNodeDTO> dobj = qb.
         createQueryDefinition(UpdatedNodeDTO.class);
      HopsQuery<UpdatedNodeDTO> query = session.createQuery(dobj);
-    List<UpdatedNodeDTO> results = query.getResultList();
+    List<UpdatedNodeDTO> queryResults = query.getResultList();
 
-    return createMap(results);
+    Map<String, List<UpdatedNode>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
   
   private UpdatedNodeDTO createPersistable(UpdatedNode hop,

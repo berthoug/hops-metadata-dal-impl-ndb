@@ -68,12 +68,15 @@ public class FiCaSchedulerNodeClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+  public static int add = 0;
   @Override
-
   public void add(FiCaSchedulerNode toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     FiCaSchedulerNodeDTO persistable = createPersistable(toAdd, session);
+    add++;
     session.savePersistent(persistable);
+    session.release(persistable);
+    session.flush();
   }
 
   @Override
@@ -85,11 +88,14 @@ public class FiCaSchedulerNodeClusterJ implements
     for (FiCaSchedulerNode hop : toAdd) {
       FiCaSchedulerNodeDTO persistable = createPersistable(hop, session);
       toPersist.add(persistable);
-
-      session.savePersistentAll(toPersist);
     }
+    add+=toPersist.size();
+      session.savePersistentAll(toPersist);
+      session.release(toPersist);
+      session.flush();
   }
 
+  public static int remove = 0;
   @Override
   public void removeAll(Collection<FiCaSchedulerNode> toRemove)
       throws StorageException {
@@ -101,7 +107,9 @@ public class FiCaSchedulerNodeClusterJ implements
           session.newInstance(FiCaSchedulerNodeDTO.class, hop.getRmnodeId());
       toPersist.add(persistable);
     }
+    remove += toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
@@ -115,9 +123,12 @@ public class FiCaSchedulerNodeClusterJ implements
       HopsQuery<FiCaSchedulerNodeClusterJ.FiCaSchedulerNodeDTO> query =
           session.createQuery(dobj);
 
-      List<FiCaSchedulerNodeClusterJ.FiCaSchedulerNodeDTO> results =
+      List<FiCaSchedulerNodeClusterJ.FiCaSchedulerNodeDTO> queryResults =
           query.getResultList();
-      return createFiCaSchedulerNodeMap(results);
+      Map<String, FiCaSchedulerNode> result =
+              createFiCaSchedulerNodeMap(queryResults);
+      session.release(queryResults);
+      return result;
     } catch (Exception e) {
       throw new StorageException(e);
     }

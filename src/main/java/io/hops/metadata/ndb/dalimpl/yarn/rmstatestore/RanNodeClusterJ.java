@@ -17,7 +17,6 @@ import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
 import io.hops.metadata.yarn.dal.rmstatestore.RanNodeDataAccess;
 import io.hops.metadata.yarn.entity.rmstatestore.RanNode;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +46,7 @@ public class RanNodeClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+  public static int add=0;
   @Override
   public void addAll(Collection<List<RanNode>> toAdd)
           throws StorageException {
@@ -57,7 +57,9 @@ public class RanNodeClusterJ implements
         toPersist.add(createPersistable(n, session));
       }
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   @Override
@@ -67,9 +69,11 @@ public class RanNodeClusterJ implements
     HopsQueryDomainType<RanNodeDTO> dobj = qb.
         createQueryDefinition(RanNodeDTO.class);
     HopsQuery<RanNodeDTO> query = session.createQuery(dobj);
-    List<RanNodeDTO> results = query.getResultList();
+    List<RanNodeDTO> queryResults = query.getResultList();
 
-    return createMap(results);
+    Map<String, List<RanNode>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
   
   

@@ -71,7 +71,7 @@ public class JustLaunchedContainersClusterJ
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
-
+  public static int add=0;
   @Override
   public void addAll(Collection<JustLaunchedContainers> containers)
       throws StorageException {
@@ -81,10 +81,13 @@ public class JustLaunchedContainersClusterJ
     for (JustLaunchedContainers hop : containers) {
       toModify.add(createPersistable(hop, session));
     }
+    add+=toModify.size();
     session.savePersistentAll(toModify);
 //    session.flush();
+    session.release(toModify);
   }
 
+  public static int remove =0;
   @Override
   public void removeAll(Collection<JustLaunchedContainers> containers)
       throws StorageException {
@@ -98,8 +101,10 @@ public class JustLaunchedContainersClusterJ
       toRemove
           .add(session.newInstance(JustLaunchedContainersDTO.class, objarr));
     }
+    remove +=toRemove.size();
     session.deletePersistentAll(toRemove);
 //    session.flush();
+    session.release(toRemove);
   }
 
   @Override
@@ -116,13 +121,15 @@ public class JustLaunchedContainersClusterJ
     dobj.where(pred);
     HopsQuery<JustLaunchedContainersDTO> query = session.createQuery(dobj);
     query.setParameter(RMNODEID, rmnodeId);
-    List<JustLaunchedContainersDTO> results = query.getResultList();
+    List<JustLaunchedContainersDTO> queryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ JustLaunchedContainers.findByRMNode - FINISH:" +
         rmnodeId);
-    if (results != null && !results.isEmpty()) {
-      return createJustLaunchedContainersList(results);
+    List<JustLaunchedContainers> result = null;
+    if (queryResults != null && !queryResults.isEmpty()) {
+      result = createJustLaunchedContainersList(queryResults);
     }
-    return null;
+    session.release(queryResults);
+    return result;
   }
 
   @Override
@@ -134,13 +141,14 @@ public class JustLaunchedContainersClusterJ
     HopsQueryDomainType<JustLaunchedContainersDTO> dobj = qb.
         createQueryDefinition(JustLaunchedContainersDTO.class);
     HopsQuery<JustLaunchedContainersDTO> query = session.createQuery(dobj);
-    List<JustLaunchedContainersDTO> results = query.getResultList();
+    List<JustLaunchedContainersDTO> QueryResults = query.getResultList();
     LOG.debug("HOP :: ClusterJ JustLaunchedContainers.getAll - FINISH");
-    if (results != null && !results.isEmpty()) {
-      return createMap(results);
-    } else {
-      return null;
-    }
+    Map<String, List<JustLaunchedContainers>> result = null;
+    if (QueryResults != null && !QueryResults.isEmpty()) {
+      result = createMap(QueryResults);
+    } 
+    session.release(QueryResults);
+    return result;
   }
 
   private JustLaunchedContainers createJustLaunchedContainers(

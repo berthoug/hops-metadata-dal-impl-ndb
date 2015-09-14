@@ -129,7 +129,13 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
         //If commandport is zero, node was not found so return null
         //This is due to ClusterJ issue with returning a DTO object even if
         //the row was not found in the DB!
-        if(hopRMNode.getHostName() == null){
+        if (hopRMNode.getHostName() == null) {
+          session.release(components);
+          session.release(containerStatusDTOs);
+          session.release(nextHBDTO);
+          session.release(nodeDTO);
+          session.release(nodeHBResponseDTO);
+          session.release(rmnodeDTO);
           return null;
         }
       } else if (comp instanceof NodeClusterJ.NodeDTO) {
@@ -145,13 +151,19 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
       }
           
     }
-
-    return new RMNodeComps(hopRMNode, hopNextHeartbeat, hopNode,
-            hopNodeHBResponse, hopResource,hopJustLaunchedContainers,
-            hopUpdatedContainerInfo, hopContainerIdsToClean,
-            hopFinishedApplications,
-            ContainerStatusClusterJ.createList(containerStatusDTOs));
-  
+    
+    RMNodeComps result = new RMNodeComps(hopRMNode, hopNextHeartbeat, hopNode,
+        hopNodeHBResponse, hopResource, hopJustLaunchedContainers,
+        hopUpdatedContainerInfo, hopContainerIdsToClean,
+        hopFinishedApplications,
+        ContainerStatusClusterJ.createList(containerStatusDTOs));
+    session.release(components);
+    session.release(containerStatusDTOs);
+    session.release(nextHBDTO);
+    session.release(nodeDTO);
+    session.release(nodeHBResponseDTO);
+    session.release(rmnodeDTO);
+    return result;
   }
 
 }

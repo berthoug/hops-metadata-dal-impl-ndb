@@ -32,7 +32,9 @@ import io.hops.metadata.yarn.entity.capacity.CSLeafQueueUserInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CSLeafQueueUserInfoClusterJ implements
         TablesDef.CSLeafQueueUserInfoTableDef,
@@ -79,19 +81,22 @@ public class CSLeafQueueUserInfoClusterJ implements
     if (session != null) {
       csLeafOueueUserInfoDTO = session.find(CSLeafQueueUserInfoDTO.class, id);
     }
-    return createCSLeafQueueUserInfo(csLeafOueueUserInfoDTO);
+    CSLeafQueueUserInfo result = createCSLeafQueueUserInfo(csLeafOueueUserInfoDTO);
+    session.release(csLeafOueueUserInfoDTO);
+    return result;
   }
 
   @Override
   public void createCSLeafQueueUserInfo(
           CSLeafQueueUserInfo csleafqueueuserinfo) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(csleafqueueuserinfo, session));
-
+    CSLeafQueueUserInfoDTO dto = createPersistable(csleafqueueuserinfo, session);
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   @Override
-  public List<CSLeafQueueUserInfo> findAll() throws StorageException,
+  public Map<String,CSLeafQueueUserInfo> findAll() throws StorageException,
           IOException {
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
@@ -100,22 +105,24 @@ public class CSLeafQueueUserInfoClusterJ implements
                     CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO.class);
     HopsQuery<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> query
             = session.createQuery(dobj);
-    List<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> results = query.
+    List<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> queryResults = query.
             getResultList();
-//    session.flush();
 
-    return createCSLeafQueueUserInfoList(results);
+    Map<String, CSLeafQueueUserInfo> result = createCSLeafQueueUserInfoMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
-  private List<CSLeafQueueUserInfo> createCSLeafQueueUserInfoList(
+  private Map<String, CSLeafQueueUserInfo> createCSLeafQueueUserInfoMap(
           List<CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO> list) throws
           IOException {
-    List<CSLeafQueueUserInfo> csLeafQueueUserInfoList
-            = new ArrayList<CSLeafQueueUserInfo>();
+    Map<String,CSLeafQueueUserInfo> csLeafQueueUserInfoMap
+            = new HashMap<String, CSLeafQueueUserInfo>();
     for (CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO persistable : list) {
-      csLeafQueueUserInfoList.add(createCSLeafQueueUserInfo(persistable));
+      CSLeafQueueUserInfo info = createCSLeafQueueUserInfo(persistable);
+      csLeafQueueUserInfoMap.put(info.getUserName(), info);
     }
-    return csLeafQueueUserInfoList;
+    return csLeafQueueUserInfoMap;
   }
 
   @Override
@@ -130,6 +137,7 @@ public class CSLeafQueueUserInfoClusterJ implements
           toModify.add(createPersistable(hop, session));
         }
         session.savePersistentAll(toModify);
+        session.release(toModify);
       }
     } catch (Exception e) {
       throw new StorageException(e);
@@ -150,6 +158,7 @@ public class CSLeafQueueUserInfoClusterJ implements
                   getUserName()));
         }
         session.deletePersistentAll(toRemove);
+        session.release(toRemove);
       }
     } catch (Exception e) {
       throw new StorageException(e);

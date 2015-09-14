@@ -52,18 +52,21 @@ public class RMStateVersionClusterJ implements TablesDef.RMStateVersionTableDef,
   public RMStateVersion findById(int id) throws StorageException {
     HopsSession session = connector.obtainSession();
 
-    RMStateVersionClusterJ.VersionDTO versionDTO = null;
-    if (session != null) {
-      versionDTO = session.find(RMStateVersionClusterJ.VersionDTO.class, id);
-    }
+    VersionDTO versionDTO = session.find(RMStateVersionClusterJ.VersionDTO.class, id);
 
-    return createHopVersion(versionDTO);
+    RMStateVersion result = createHopVersion(versionDTO);
+    session.release(versionDTO);
+    return result;
   }
 
+  public static int add=0;
   @Override
   public void add(RMStateVersion toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.savePersistent(createPersistable(toAdd, session));
+    VersionDTO dto = createPersistable(toAdd, session);
+    add++;
+    session.savePersistent(dto);
+    session.release(dto);
   }
 
   private RMStateVersion createHopVersion(VersionDTO versionDTO) {

@@ -80,11 +80,14 @@ public class ResourceRequestClusterJ implements
         qb.createQueryDefinition(ResourceRequestDTO.class);
     HopsQuery<ResourceRequestDTO> query = session.
         createQuery(dobj);
-    List<ResourceRequestDTO> results = query.
+    List<ResourceRequestDTO> queryResults = query.
         getResultList();
-    return createMap(results);
+    Map<String,List<ResourceRequest>> result = createMap(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
+  public static int add=0;
   @Override
   public void addAll(Collection<ResourceRequest> toAdd)
       throws StorageException {
@@ -93,9 +96,12 @@ public class ResourceRequestClusterJ implements
     for (ResourceRequest req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
+    add+=toPersist.size();
     session.savePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
+  public static int remove=0;
   @Override
   public void removeAll(Collection<ResourceRequest> toRemove)
       throws StorageException {
@@ -108,7 +114,9 @@ public class ResourceRequestClusterJ implements
       pk[2] = hop.getName();
       toPersist.add(session.newInstance(ResourceRequestDTO.class, pk));
     }
+    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
+    session.release(toPersist);
   }
 
   private ResourceRequest createHopResourceRequest(
