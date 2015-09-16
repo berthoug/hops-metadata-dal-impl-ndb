@@ -158,9 +158,9 @@ public class UpdatedContainerInfoClusterJ
         for (UpdatedContainerInfo entry : containers) {
             toModify.add(createPersistable(entry, session));
         }
+        
         session.savePersistentAll(toModify);
         add += toModify.size();
-        session.savePersistentAll(toModify);
 //    session.flush();
         session.release(toModify);
     }
@@ -178,7 +178,6 @@ public class UpdatedContainerInfoClusterJ
         }
         session.deletePersistentAll(toRemove);
         remove += toRemove.size();
-        session.deletePersistentAll(toRemove);
 //    session.flush();
         session.release(toRemove);
     }
@@ -190,6 +189,7 @@ public class UpdatedContainerInfoClusterJ
         dto.setrmnodeid(hop.getRmnodeid());
         dto.setcontainerid(hop.getContainerId());
         dto.setupdatedcontainerinfoid(hop.getUpdatedContainerInfoId());
+        dto.setpendingeventid(hop.getPendingEventId());
         return dto;
     }
 
