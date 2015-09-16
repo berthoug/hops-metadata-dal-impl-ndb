@@ -145,7 +145,7 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
           int nbrows = 0;
           do {
             PreparedStatement s = conn.prepareStatement(
-                "delete from " + tableName + " limit 1000");
+                "delete from " + tableName + " limit 100");
             nbrows = s.executeUpdate();
           } while (nbrows > 0);
         }

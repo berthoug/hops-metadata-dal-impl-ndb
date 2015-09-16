@@ -72,6 +72,12 @@ public class ResourceClusterJ
     int getVirtualcores();
 
     void setVirtualcores(int virtualcores);
+    
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
+
+    void setpendingeventid(int pendingid);
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -162,7 +168,7 @@ public class ResourceClusterJ
     }
     return new Resource(resourceDTO.getId(), resourceDTO.getType(),
         resourceDTO.getParent(), resourceDTO.getMemory(), resourceDTO.
-        getVirtualcores());
+        getVirtualcores(),resourceDTO.getpendingeventid());
   }
 
   private ResourceDTO createPersistable(Resource resource, HopsSession session)
@@ -173,6 +179,7 @@ public class ResourceClusterJ
     resourceDTO.setParent(resource.getParent());
     resourceDTO.setMemory(resource.getMemory());
     resourceDTO.setVirtualcores(resource.getVirtualCores());
+    resourceDTO.setpendingeventid(resource.getPendingEventId());
     return resourceDTO;
   }
 

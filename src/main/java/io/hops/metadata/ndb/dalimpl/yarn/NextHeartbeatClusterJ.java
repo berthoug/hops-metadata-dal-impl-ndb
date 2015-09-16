@@ -35,9 +35,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class NextHeartbeatClusterJ
     implements TablesDef.NextHeartbeatTableDef, NextHeartbeatDataAccess<NextHeartbeat> {
+
+  private static final Log LOG = LogFactory.getLog(NextHeartbeatClusterJ.class);
 
   @PersistenceCapable(table = TABLE_NAME)
   public interface NextHeartbeatDTO extends RMNodeComponentDTO {
@@ -52,6 +56,11 @@ public class NextHeartbeatClusterJ
     int getNextheartbeat();
 
     void setNextheartbeat(int Nextheartbeat);
+
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
+
+    void setpendingeventid(int pendingeventid);
 
   }
 
@@ -84,42 +93,54 @@ public class NextHeartbeatClusterJ
     return result;
   }
 
-  public static int add=0;
+  public static int add = 0;
   @Override
   public void updateAll(List<NextHeartbeat> toUpdate)
-      throws StorageException {
+          throws StorageException {
     HopsSession session = connector.obtainSession();
     List<NextHeartbeatDTO> toPersist = new ArrayList<NextHeartbeatDTO>();
-    for(NextHeartbeat hb: toUpdate){
-      NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(hb.getRmnodeid(), hb.isNextheartbeat()), session);
-      toPersist.add(hbDTO);
+    List<NextHeartbeatDTO> toRemove = new ArrayList<NextHeartbeatDTO>();
+
+    for (NextHeartbeat hb : toUpdate) {
+      NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(hb.
+              getRmnodeid(), hb.isNextheartbeat(), hb.getPendingEventId()),
+              session);
+
+      if (hb.isNextheartbeat()) {
+        toPersist.add(hbDTO);
+      } else {
+        toRemove.add(hbDTO);
+      }
     }
-    add +=toPersist.size();
+    add += toPersist.size();
     session.savePersistentAll(toPersist);
-//    session.flush();
     session.release(toPersist);
+    session.flush();
+    session.deletePersistentAll(toRemove);
+    session.release(toRemove);
   }
 
   private NextHeartbeatDTO createPersistable(NextHeartbeat hopNextHeartbeat,
-      HopsSession session) throws StorageException {
+          HopsSession session) throws StorageException {
     NextHeartbeatDTO DTO = session.newInstance(NextHeartbeatDTO.class);
     //Set values to persist new persistedEvent
     DTO.setrmnodeid(hopNextHeartbeat.getRmnodeid());
     DTO.setNextheartbeat(booleanToInt(hopNextHeartbeat.isNextheartbeat()));
+    DTO.setpendingeventid(hopNextHeartbeat.getPendingEventId());
     return DTO;
   }
 
   public static NextHeartbeat createHopNextHeartbeat(
-      NextHeartbeatDTO nextHBDTO) {
+          NextHeartbeatDTO nextHBDTO) {
     return new NextHeartbeat(nextHBDTO.getrmnodeid(), intToBoolean(nextHBDTO.
-        getNextheartbeat()));
+            getNextheartbeat()), nextHBDTO.getpendingeventid());
   }
 
   private Map<String, Boolean> createMap(List<NextHeartbeatDTO> results) {
     Map<String, Boolean> map = new HashMap<String, Boolean>();
     for (NextHeartbeatDTO persistable : results) {
       map.put(persistable.getrmnodeid(), intToBoolean(persistable.
-          getNextheartbeat()));
+              getNextheartbeat()));
     }
     return map;
   }

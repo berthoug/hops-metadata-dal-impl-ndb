@@ -49,7 +49,7 @@ public class PendingEventClusterJ
   private static final Log LOG = LogFactory.getLog(PendingEventClusterJ.class);
 
   @PersistenceCapable(table = TABLE_NAME)
-  public interface PendingEventDTO {
+  public interface PendingEventDTO extends RMNodeComponentDTO  {
 
     @PrimaryKey
     @Column(name = ID)
@@ -64,14 +64,14 @@ public class PendingEventClusterJ
     void setrmnodeid(String rmnodeid);
 
     @Column(name = TYPE)
-    byte getType();
+    int getType();
 
-    void setType(byte type);
+    void setType(int type);
 
     @Column(name = STATUS)
-    byte getStatus();
+    int getStatus();
 
-    void setStatus(byte status);
+    void setStatus(int status);
 
   }
 
@@ -93,6 +93,44 @@ public class PendingEventClusterJ
     PendingEventDTO dto = createPersistable(persistedEvent, session);
     session.deletePersistent(dto);
     session.release(dto);
+  }
+
+  public static int add = 0;
+
+  @Override
+  public void addAll(Collection<PendingEvent> toAddPendingEvent)
+          throws StorageException {
+    HopsSession session = connector.obtainSession();
+    List<PendingEventClusterJ.PendingEventDTO> toPersist
+            = new ArrayList<PendingEventClusterJ.PendingEventDTO>();
+    for (PendingEvent pendEvent : toAddPendingEvent) {
+      PendingEventClusterJ.PendingEventDTO pendingEventDTO = createPersistable(
+              new PendingEvent(pendEvent.getRmnodeId(), pendEvent.
+                      getType(), pendEvent.getStatus(), pendEvent.getId()),
+              session);
+      toPersist.add(pendingEventDTO);
+    }
+    add += toPersist.size();
+    session.savePersistentAll(toPersist);
+//    session.flush();
+    session.release(toPersist);
+  }
+
+  public static int remove = 0;
+
+  @Override
+  public void removeAll(Collection<PendingEvent> toRemovePendingEvents)
+          throws StorageException {
+    HopsSession session = connector.obtainSession();
+    List<PendingEventClusterJ.PendingEventDTO> toRemove
+            = new ArrayList<PendingEventClusterJ.PendingEventDTO>();
+    for (PendingEvent pendEvent : toRemovePendingEvents) {
+      toRemove.add(createPersistable(pendEvent, session));
+    }
+    remove += toRemove.size();
+    session.deletePersistentAll(toRemove);
+//    session.flush();
+    session.release(toRemove);
   }
 
   @Override
@@ -125,7 +163,7 @@ public class PendingEventClusterJ
       LOG.debug(
           "HOP :: ClusterJ PendingEvent.prepare.modify - FINISH:" + modified);
     }
-//    session.flush();
+    session.flush();
   }
 
   @Override
@@ -146,7 +184,7 @@ public class PendingEventClusterJ
   }
 
   @Override
-  public List<PendingEvent> getAll(byte status) throws StorageException {
+  public List<PendingEvent> getAll(int status) throws StorageException {
     // LOG.debug("HOP :: ClusterJ PendingEvent.getAll(" + status + ") - START");
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();

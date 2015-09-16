@@ -453,6 +453,7 @@ CREATE TABLE `yarn_rmnode` (
   `overcommittimeout` INT NULL,
   `nodemanager_version` VARCHAR(45) NULL,
   `uci_id` INT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`rmnodeid`))
 ENGINE = ndbcluster DEFAULT CHARSET=latin1
 PACK_KEYS = DEFAULT PARTITION BY KEY(rmnodeid)$$
@@ -466,6 +467,7 @@ CREATE TABLE `yarn_resource` (
   `parent` INT NOT NULL,
   `memory` INT NULL,
   `virtualcores` INT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`id`, `type`, `parent`),
   INDEX `id` (`id` ASC)
 ) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(id)$$
@@ -479,6 +481,7 @@ CREATE TABLE `yarn_node` (
   `location` VARCHAR(45) NULL,
   `level` INT NULL,
   `parent` VARCHAR(45) NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`nodeid`),
   INDEX `name` (`name` ASC, `location` ASC),
   CONSTRAINT `nodeid`
@@ -514,6 +517,7 @@ CREATE TABLE `yarn_updatedcontainerinfo` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `containerid` VARCHAR(45) NOT NULL,
   `updatedcontainerinfoid` INT NOT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`rmnodeid`, `containerid`, `updatedcontainerinfoid`),
   INDEX `containerid` (`containerid` ASC),
   CONSTRAINT `rmnodeid`
@@ -532,6 +536,7 @@ CREATE TABLE `yarn_containerstatus` (
   `state` VARCHAR(45) NULL,
   `diagnostics` VARCHAR(2000) NULL,
   `exitstatus` INT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`containerid`, `rmnodeid`),
   INDEX `rmnodeid_idx` (`rmnodeid` ASC),
   CONSTRAINT `rmnodeid`
@@ -551,6 +556,7 @@ delimiter $$
 CREATE TABLE `yarn_justlaunchedcontainers` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `containerid` VARCHAR(45) NOT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`containerid`, `rmnodeid`),
   INDEX `rmnodeid_idx` (`rmnodeid` ASC),
   CONSTRAINT `rmnodeid`
@@ -604,6 +610,7 @@ delimiter $$
 CREATE TABLE `yarn_containerid_toclean` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `containerid` VARCHAR(45) NOT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`rmnodeid`, `containerid`),
   INDEX `rmnodeId` (`containerid` ASC),
   CONSTRAINT `rmnodeid`
@@ -656,6 +663,7 @@ delimiter $$
 CREATE TABLE `yarn_rmnode_finishedapplications` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `applicationid` VARCHAR(45) NOT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`rmnodeid`, `applicationid`),
   INDEX `index2` (`rmnodeid` ASC),
   CONSTRAINT `rmnodeid`
@@ -808,12 +816,12 @@ CREATE TABLE `yarn_resourcerequest` (
   `priority` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `resourcerequeststate` VARBINARY(13500) NULL,
-  PRIMARY KEY (`applicationattemptid`, `priority`, `name`),
-  CONSTRAINT `applicationattemptid`
-    FOREIGN KEY (`applicationattemptid`)
-    REFERENCES `yarn_appschedulinginfo` (`applicationattemptid`)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
+  PRIMARY KEY (`applicationattemptid`, `priority`, `name`)#,
+#  CONSTRAINT `applicationattemptid`
+#    FOREIGN KEY (`applicationattemptid`)
+#    REFERENCES `yarn_appschedulinginfo` (`applicationattemptid`)
+#    ON DELETE NO action
+#    ON UPDATE NO ACTION
 ) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(`applicationattemptid`)$$
 
 
@@ -889,6 +897,7 @@ delimiter $$
 CREATE TABLE `yarn_nextheartbeat` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `nextheartbeat` INT NULL,
+  `pendingeventid` INT,
   PRIMARY KEY (`rmnodeid`),
   CONSTRAINT `rmnodeid`
     FOREIGN KEY (`rmnodeid`)

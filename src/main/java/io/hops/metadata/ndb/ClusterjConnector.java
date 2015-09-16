@@ -72,6 +72,7 @@ import io.hops.metadata.ndb.dalimpl.hdfs.ReplicaClusterj;
 import io.hops.metadata.ndb.dalimpl.hdfs.ReplicaUnderConstructionClusterj;
 import io.hops.metadata.ndb.dalimpl.hdfs.UnderReplicatedBlockClusterj;
 import io.hops.metadata.ndb.dalimpl.hdfs.VariableClusterj;
+import io.hops.metadata.ndb.dalimpl.yarn.NextHeartbeatClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.YarnVariablesClusterJ;
 import io.hops.metadata.ndb.mysqlserver.MysqlServerConnector;
 import io.hops.metadata.ndb.wrapper.HopsSession;
@@ -418,6 +419,7 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
         LocalityLevelDataAccess.class,
         RunnableAppsDataAccess.class,
         CSQueueDataAccess.class,
+        NextHeartbeatDataAccess.class,
         NodeHBResponseDataAccess.class);
   }
 

@@ -75,6 +75,12 @@ public class ContainerStatusClusterJ implements
     int getexitstatus();
 
     void setexitstatus(int exitstatus);
+    
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
+
+    void setpendingeventid(int pedingeventid);
+    
 
   }
 
@@ -140,14 +146,16 @@ public class ContainerStatusClusterJ implements
     csDTO.setdiagnostics(hopCS.getDiagnostics());
     csDTO.setexitstatus(hopCS.getExitstatus());
     csDTO.setrmnodeid(hopCS.getRMNodeId());
+    csDTO.setpendingeventid(hopCS.getPendingEventId());
     return csDTO;
   }
 
   private static ContainerStatus createHopContainerStatus(
-      ContainerStatusDTO csDTO) {
-    ContainerStatus hop =
-        new ContainerStatus(csDTO.getcontainerid(), csDTO.getstate(),
-            csDTO.getdiagnostics(), csDTO.getexitstatus(), csDTO.getrmnodeid());
+          ContainerStatusDTO csDTO) {
+    ContainerStatus hop = new ContainerStatus(csDTO.getcontainerid(), csDTO.
+            getstate(),
+            csDTO.getdiagnostics(), csDTO.getexitstatus(), csDTO.getrmnodeid(),
+            csDTO.getpendingeventid());
     return hop;
   }
 
@@ -159,5 +167,16 @@ public class ContainerStatusClusterJ implements
       map.put(hop.getContainerid(), hop);
     }
     return map;
+  }
+
+  public static List<ContainerStatus> createList(
+          List<ContainerStatusDTO> results) {
+    List<ContainerStatus> list
+            = new ArrayList<ContainerStatus>();
+    for (ContainerStatusDTO persistable : results) {
+      ContainerStatus hop = createHopContainerStatus(persistable);
+      list.add(hop);
+    }
+    return list;
   }
 }

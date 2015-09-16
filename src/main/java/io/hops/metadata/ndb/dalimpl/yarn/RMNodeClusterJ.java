@@ -110,7 +110,12 @@ public class RMNodeClusterJ
     int getuciId();
 
     void setuciId(int uciId);
+    
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
 
+    void setpendingeventid(int pendingeventid);
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -210,6 +215,7 @@ public class RMNodeClusterJ
     rmDTO.setovercommittimeout(hopRMNode.getOvercommittimeout());
     rmDTO.setnodemanagerversion(hopRMNode.getNodemanagerVersion());
     rmDTO.setuciId(hopRMNode.getUciId());
+    rmDTO.setpendingeventid(hopRMNode.getPendingEventId());
     return rmDTO;
   }
 
@@ -225,6 +231,6 @@ public class RMNodeClusterJ
         rmDTO.getHttpaddress(), rmDTO.getHealthreport(),
         rmDTO.getLasthealthreporttime(), rmDTO.getcurrentstate(),
         rmDTO.getnodemanagerversion(), rmDTO.getovercommittimeout(),
-        rmDTO.getuciId());
+        rmDTO.getuciId(),rmDTO.getpendingeventid());
   }
 }

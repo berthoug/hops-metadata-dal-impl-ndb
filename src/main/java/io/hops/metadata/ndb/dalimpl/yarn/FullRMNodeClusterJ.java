@@ -35,7 +35,6 @@ import io.hops.metadata.yarn.entity.UpdatedContainerInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
 
@@ -71,47 +70,48 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
         session.newInstance(NodeClusterJ.NodeDTO.class, nodeId);
     nodeDTO = session.load(nodeDTO);
     components.add(nodeDTO);
-
+ 
     NodeHBResponseClusterJ.NodeHBResponseDTO nodeHBResponseDTO = session.
-        newInstance(NodeHBResponseClusterJ.NodeHBResponseDTO.class, nodeId);
+            newInstance(NodeHBResponseClusterJ.NodeHBResponseDTO.class, nodeId);
     if (nodeHBResponseDTO != null) {
       nodeHBResponseDTO = session.load(nodeHBResponseDTO);
       components.add(nodeHBResponseDTO);
     }
     List<JustLaunchedContainers> hopJustLaunchedContainers = justLaunchedDA.
-        findByRMNode(nodeId);
+            findByRMNode(nodeId);
     List<ContainerStatusClusterJ.ContainerStatusDTO> containerStatusDTOs =
         new ArrayList<ContainerStatusClusterJ.ContainerStatusDTO>();
     if (hopJustLaunchedContainers != null) {
       for (JustLaunchedContainers hop : hopJustLaunchedContainers) {
         Object[] pk = new Object[]{hop.getContainerId(), hop.getRmnodeid()};
         ContainerStatusClusterJ.ContainerStatusDTO containerStatusDTO = session.
-            newInstance(ContainerStatusClusterJ.ContainerStatusDTO.class, pk);
+                newInstance(ContainerStatusClusterJ.ContainerStatusDTO.class, pk);
         containerStatusDTO = session.load(containerStatusDTO);
         containerStatusDTOs.add(containerStatusDTO);
       }
     }
 
-    Map<Integer, List<UpdatedContainerInfo>> hopUpdatedContainerInfo =
-        updatedContainerDA.findByRMNode(nodeId);
+    List<UpdatedContainerInfo> hopUpdatedContainerInfo
+            = updatedContainerDA.findByRMNodeList(nodeId);
     if (hopUpdatedContainerInfo != null) {
-      for (Integer uciId : hopUpdatedContainerInfo.keySet()) {
-        for (UpdatedContainerInfo hop : hopUpdatedContainerInfo.get(uciId)) {
+      
+        for (UpdatedContainerInfo hop : hopUpdatedContainerInfo) {
           Object[] pk = new Object[]{hop.getContainerId(), hop.getRmnodeid()};
           ContainerStatusClusterJ.ContainerStatusDTO containerStatusDTO =
               session.
                   newInstance(ContainerStatusClusterJ.ContainerStatusDTO.class,
-                      pk);
+                          pk);
           containerStatusDTO = session.load(containerStatusDTO);
           containerStatusDTOs.add(containerStatusDTO);
         }
       }
-    }
-    Resource hopResource = resourceDA
-        .findEntry(nodeId, Resource.TOTAL_CAPABILITY, Resource.RMNODE);
+    
+    Resource hopResource = resourceDA.findEntry(nodeId,
+            Resource.TOTAL_CAPABILITY,
+            Resource.RMNODE);
 
     List<ContainerId> hopContainerIdsToClean = containerToCleanDA.
-        findByRMNode(nodeId);
+            findByRMNode(nodeId);
 
     List<FinishedApplications> hopFinishedApplications =
         finishedApplicationsDA.findByRMNode(nodeId);
@@ -120,6 +120,7 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
     Node hopNode = null;
     NodeHBResponse hopNodeHBResponse = null;
     NextHeartbeat hopNextHeartbeat = null;
+      
     for (RMNodeComponentDTO comp : components) {
       if (comp instanceof RMNodeClusterJ.RMNodeDTO) {
         hopRMNode =
@@ -138,23 +139,22 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
         }
       } else if (comp instanceof NodeClusterJ.NodeDTO) {
         hopNode = NodeClusterJ.
-            createHopNode((NodeClusterJ.NodeDTO) comp);
+                createHopNode((NodeClusterJ.NodeDTO) comp);
       } else if (comp instanceof NodeHBResponseClusterJ.NodeHBResponseDTO) {
         hopNodeHBResponse = NodeHBResponseClusterJ.
-            createHopNodeHBResponse(
-                (NodeHBResponseClusterJ.NodeHBResponseDTO) comp);
+                createHopNodeHBResponse(
+                        (NodeHBResponseClusterJ.NodeHBResponseDTO) comp);
       } else if (comp instanceof NextHeartbeatClusterJ.NextHeartbeatDTO) {
         hopNextHeartbeat = NextHeartbeatClusterJ.createHopNextHeartbeat(
-            (NextHeartbeatClusterJ.NextHeartbeatDTO) comp);
+                (NextHeartbeatClusterJ.NextHeartbeatDTO) comp);
       }
     }
-
     
     RMNodeComps result = new RMNodeComps(hopRMNode, hopNextHeartbeat, hopNode,
         hopNodeHBResponse, hopResource, hopJustLaunchedContainers,
         hopUpdatedContainerInfo, hopContainerIdsToClean,
         hopFinishedApplications,
-        ContainerStatusClusterJ.createMap(containerStatusDTOs));
+        ContainerStatusClusterJ.createList(containerStatusDTOs));
     session.release(components);
     session.release(containerStatusDTOs);
     session.release(nextHBDTO);

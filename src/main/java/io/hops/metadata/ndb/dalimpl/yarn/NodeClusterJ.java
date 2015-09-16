@@ -71,6 +71,12 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     String getParent();
 
     void setParent(String parent);
+    
+    @Column(name = PENDING_EVENT_ID)
+    int getpendingeventid();
+
+    void setpendingeventid(int pendingid);
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -136,6 +142,7 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     nodeDTO.setLocation(hopNode.getLocation());
     nodeDTO.setLevel(hopNode.getLevel());
     nodeDTO.setParent(hopNode.getParent());
+    nodeDTO.setpendingeventid(hopNode.getPendingEventId());
     return nodeDTO;
   }
 
@@ -149,7 +156,8 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
    */
   public static Node createHopNode(NodeDTO nodeDTO) {
     return new Node(nodeDTO.getnodeid(), nodeDTO.getName(), nodeDTO.
-        getLocation(), nodeDTO.getLevel(), nodeDTO.getParent());
+            getLocation(), nodeDTO.getLevel(), nodeDTO.getParent(), nodeDTO.
+            getpendingeventid());
   }
 
   private Map<String, Node> createMap(List<NodeDTO> results) {
