@@ -62,11 +62,6 @@ public class JustLaunchedContainersClusterJ
 
     void setcontainerid(String containerid);
     
-    @Column(name = PENDING_EVENT_ID)
-    int getpendingeventid();
-
-    void setpendingeventid(int pendingeventid);
-    
 
   }
 
@@ -154,7 +149,7 @@ public class JustLaunchedContainersClusterJ
   private JustLaunchedContainers createJustLaunchedContainers(
       JustLaunchedContainersDTO dto) {
     JustLaunchedContainers hop = new JustLaunchedContainers(dto.
-        getrmnodeid(), dto.getcontainerid(),dto.getpendingeventid());
+        getrmnodeid(), dto.getcontainerid());
     return hop;
   }
 
@@ -172,7 +167,6 @@ public class JustLaunchedContainersClusterJ
         session.newInstance(JustLaunchedContainersDTO.class);
     dto.setcontainerid(entry.getContainerId());
     dto.setrmnodeid(entry.getRmnodeid());
-    dto.setpendingeventid(entry.getPendingEventId());
     return dto;
   }
 

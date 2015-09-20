@@ -95,9 +95,9 @@ public class TestFullRMNodeClusterJ {
         final List<JustLaunchedContainers> hopJustLaunchedContainers
                 = new ArrayList<JustLaunchedContainers>();
         hopJustLaunchedContainers
-                .add(new JustLaunchedContainers("70", "container1", DEFAULT_PENDIND_ID));
+                .add(new JustLaunchedContainers("70", "container1"));
         hopJustLaunchedContainers
-                .add(new JustLaunchedContainers("70", "container2", DEFAULT_PENDIND_ID));
+                .add(new JustLaunchedContainers("70", "container2"));
 
         final List<UpdatedContainerInfo> hopUpdatedContainers
                 = new ArrayList<UpdatedContainerInfo>();
