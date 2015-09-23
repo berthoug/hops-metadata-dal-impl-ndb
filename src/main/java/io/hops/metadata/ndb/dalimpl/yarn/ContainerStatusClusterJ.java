@@ -151,10 +151,11 @@ public class ContainerStatusClusterJ implements
   }
 
   private static ContainerStatus createHopContainerStatus(
-      ContainerStatusDTO csDTO) {
-    ContainerStatus hop =
-        new ContainerStatus(csDTO.getcontainerid(), csDTO.getstate(),
-            csDTO.getdiagnostics(), csDTO.getexitstatus(),csDTO.getrmnodeid(),csDTO.getpendingeventid());
+          ContainerStatusDTO csDTO) {
+    ContainerStatus hop = new ContainerStatus(csDTO.getcontainerid(), csDTO.
+            getstate(),
+            csDTO.getdiagnostics(), csDTO.getexitstatus(), csDTO.getrmnodeid(),
+            csDTO.getpendingeventid());
     return hop;
   }
 
@@ -167,13 +168,14 @@ public class ContainerStatusClusterJ implements
     }
     return map;
   }
+
   public static List<ContainerStatus> createList(
           List<ContainerStatusDTO> results) {
     List<ContainerStatus> list
             = new ArrayList<ContainerStatus>();
     for (ContainerStatusDTO persistable : results) {
       ContainerStatus hop = createHopContainerStatus(persistable);
-      list.add( hop);
+      list.add(hop);
     }
     return list;
   }

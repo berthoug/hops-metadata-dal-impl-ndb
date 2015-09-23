@@ -147,8 +147,9 @@ public class FinishedApplicationsClusterJ
   }
 
   private FinishedApplications createHopFinishedApplications(
-      FinishedApplicationsDTO dto) {
-    return new FinishedApplications(dto.getrmnodeid(), dto.getapplicationid(),dto.getpendingeventid());
+          FinishedApplicationsDTO dto) {
+    return new FinishedApplications(dto.getrmnodeid(), dto.getapplicationid(),
+            dto.getpendingeventid());
   }
 
   private FinishedApplicationsDTO createPersistable(FinishedApplications hop,

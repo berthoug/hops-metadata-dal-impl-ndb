@@ -116,7 +116,6 @@ public class RMNodeClusterJ
 
     void setpendingeventid(int pendingeventid);
     
-
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();

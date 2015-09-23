@@ -156,7 +156,8 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
    */
   public static Node createHopNode(NodeDTO nodeDTO) {
     return new Node(nodeDTO.getnodeid(), nodeDTO.getName(), nodeDTO.
-        getLocation(), nodeDTO.getLevel(), nodeDTO.getParent(),nodeDTO.getpendingeventid());
+            getLocation(), nodeDTO.getLevel(), nodeDTO.getParent(), nodeDTO.
+            getpendingeventid());
   }
 
   private Map<String, Node> createMap(List<NodeDTO> results) {

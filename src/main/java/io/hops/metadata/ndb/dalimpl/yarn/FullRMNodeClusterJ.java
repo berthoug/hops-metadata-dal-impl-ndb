@@ -39,16 +39,16 @@ import java.util.List;
 public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
-  private final JustLaunchedContainersClusterJ justLaunchedDA
-          = new JustLaunchedContainersClusterJ();
+  private final JustLaunchedContainersClusterJ justLaunchedDA =
+      new JustLaunchedContainersClusterJ();
   private final ResourceClusterJ resourceDA = new ResourceClusterJ();
 
-  private final ContainerIdToCleanClusterJ containerToCleanDA
-          = new ContainerIdToCleanClusterJ();
-  private final FinishedApplicationsClusterJ finishedApplicationsDA
-          = new FinishedApplicationsClusterJ();
-  private final UpdatedContainerInfoClusterJ updatedContainerDA
-          = new UpdatedContainerInfoClusterJ();
+  private final ContainerIdToCleanClusterJ containerToCleanDA =
+      new ContainerIdToCleanClusterJ();
+  private final FinishedApplicationsClusterJ finishedApplicationsDA =
+      new FinishedApplicationsClusterJ();
+  private final UpdatedContainerInfoClusterJ updatedContainerDA =
+      new UpdatedContainerInfoClusterJ();
 
   @Override
   public RMNodeComps findByNodeId(String nodeId) throws StorageException {
@@ -56,22 +56,21 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
     HopsSession session = connector.obtainSession();
     List<RMNodeComponentDTO> components = new ArrayList<RMNodeComponentDTO>();
 
-    RMNodeClusterJ.RMNodeDTO rmnodeDTO = session.newInstance(
-            RMNodeClusterJ.RMNodeDTO.class, nodeId);
+    RMNodeClusterJ.RMNodeDTO rmnodeDTO =
+        session.newInstance(RMNodeClusterJ.RMNodeDTO.class, nodeId);
     rmnodeDTO = session.load(rmnodeDTO);
     components.add(rmnodeDTO);
 
-    NextHeartbeatClusterJ.NextHeartbeatDTO nextHBDTO = session.newInstance(
-            NextHeartbeatClusterJ.NextHeartbeatDTO.class, nodeId);
+    NextHeartbeatClusterJ.NextHeartbeatDTO nextHBDTO = session
+        .newInstance(NextHeartbeatClusterJ.NextHeartbeatDTO.class, nodeId);
     nextHBDTO = session.load(nextHBDTO);
     components.add(nextHBDTO);
 
-    NodeClusterJ.NodeDTO nodeDTO = session.newInstance(
-            NodeClusterJ.NodeDTO.class, nodeId);
+    NodeClusterJ.NodeDTO nodeDTO =
+        session.newInstance(NodeClusterJ.NodeDTO.class, nodeId);
     nodeDTO = session.load(nodeDTO);
     components.add(nodeDTO);
  
-
     NodeHBResponseClusterJ.NodeHBResponseDTO nodeHBResponseDTO = session.
             newInstance(NodeHBResponseClusterJ.NodeHBResponseDTO.class, nodeId);
     if (nodeHBResponseDTO != null) {
@@ -80,8 +79,8 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
     }
     List<JustLaunchedContainers> hopJustLaunchedContainers = justLaunchedDA.
             findByRMNode(nodeId);
-    List<ContainerStatusClusterJ.ContainerStatusDTO> containerStatusDTOs
-            = new ArrayList<ContainerStatusClusterJ.ContainerStatusDTO>();
+    List<ContainerStatusClusterJ.ContainerStatusDTO> containerStatusDTOs =
+        new ArrayList<ContainerStatusClusterJ.ContainerStatusDTO>();
     if (hopJustLaunchedContainers != null) {
       for (JustLaunchedContainers hop : hopJustLaunchedContainers) {
         Object[] pk = new Object[]{hop.getContainerId(), hop.getRmnodeid()};
@@ -98,8 +97,8 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
       
         for (UpdatedContainerInfo hop : hopUpdatedContainerInfo) {
           Object[] pk = new Object[]{hop.getContainerId(), hop.getRmnodeid()};
-          ContainerStatusClusterJ.ContainerStatusDTO containerStatusDTO
-                  = session.
+          ContainerStatusClusterJ.ContainerStatusDTO containerStatusDTO =
+              session.
                   newInstance(ContainerStatusClusterJ.ContainerStatusDTO.class,
                           pk);
           containerStatusDTO = session.load(containerStatusDTO);
@@ -114,8 +113,8 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
     List<ContainerId> hopContainerIdsToClean = containerToCleanDA.
             findByRMNode(nodeId);
 
-    List<FinishedApplications> hopFinishedApplications
-            = finishedApplicationsDA.findByRMNode(nodeId);
+    List<FinishedApplications> hopFinishedApplications =
+        finishedApplicationsDA.findByRMNode(nodeId);
 
     RMNode hopRMNode = null;
     Node hopNode = null;
@@ -124,8 +123,8 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
       
     for (RMNodeComponentDTO comp : components) {
       if (comp instanceof RMNodeClusterJ.RMNodeDTO) {
-        hopRMNode = RMNodeClusterJ.createHopRMNode(
-                (RMNodeClusterJ.RMNodeDTO) comp);
+        hopRMNode =
+            RMNodeClusterJ.createHopRMNode((RMNodeClusterJ.RMNodeDTO) comp);
         //If commandport is zero, node was not found so return null
         //This is due to ClusterJ issue with returning a DTO object even if
         //the row was not found in the DB!
@@ -149,7 +148,6 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
         hopNextHeartbeat = NextHeartbeatClusterJ.createHopNextHeartbeat(
                 (NextHeartbeatClusterJ.NextHeartbeatDTO) comp);
       }
-          
     }
     
     RMNodeComps result = new RMNodeComps(hopRMNode, hopNextHeartbeat, hopNode,
@@ -167,4 +165,3 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
   }
 
 }
-

@@ -88,6 +88,7 @@ public class ResourceRequestClusterJ implements
   }
 
   public static int add=0;
+  public static int totalSize=0;
   @Override
   public void addAll(Collection<ResourceRequest> toAdd)
       throws StorageException {
@@ -95,6 +96,7 @@ public class ResourceRequestClusterJ implements
     List<ResourceRequestDTO> toPersist = new ArrayList<ResourceRequestDTO>();
     for (ResourceRequest req : toAdd) {
       toPersist.add(createPersistable(req, session));
+      totalSize+=req.getResourcerequeststate().length;
     }
     add+=toPersist.size();
     session.savePersistentAll(toPersist);

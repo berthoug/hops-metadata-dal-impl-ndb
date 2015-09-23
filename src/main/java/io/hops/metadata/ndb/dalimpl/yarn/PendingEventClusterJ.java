@@ -96,38 +96,43 @@ public class PendingEventClusterJ
   }
 
   public static int add = 0;
+
   @Override
   public void addAll(Collection<PendingEvent> toAddPendingEvent)
-      throws StorageException {
+          throws StorageException {
     HopsSession session = connector.obtainSession();
-    List<PendingEventClusterJ.PendingEventDTO> toPersist = new ArrayList<PendingEventClusterJ.PendingEventDTO>();
-    for(PendingEvent pendEvent: toAddPendingEvent){
-      PendingEventClusterJ.PendingEventDTO pendingEventDTO = createPersistable(new PendingEvent(pendEvent.getRmnodeId(), pendEvent.
-            getType(), pendEvent.getStatus(), pendEvent.getId()), session);
+    List<PendingEventClusterJ.PendingEventDTO> toPersist
+            = new ArrayList<PendingEventClusterJ.PendingEventDTO>();
+    for (PendingEvent pendEvent : toAddPendingEvent) {
+      PendingEventClusterJ.PendingEventDTO pendingEventDTO = createPersistable(
+              new PendingEvent(pendEvent.getRmnodeId(), pendEvent.
+                      getType(), pendEvent.getStatus(), pendEvent.getId()),
+              session);
       toPersist.add(pendingEventDTO);
     }
-    add +=toPersist.size();
+    add += toPersist.size();
     session.savePersistentAll(toPersist);
 //    session.flush();
     session.release(toPersist);
   }
-  
+
   public static int remove = 0;
+
   @Override
   public void removeAll(Collection<PendingEvent> toRemovePendingEvents)
-      throws StorageException {
+          throws StorageException {
     HopsSession session = connector.obtainSession();
-    List<PendingEventClusterJ.PendingEventDTO> toRemove =
-        new ArrayList<PendingEventClusterJ.PendingEventDTO>();
-    for (PendingEvent pendEvent: toRemovePendingEvents) {
+    List<PendingEventClusterJ.PendingEventDTO> toRemove
+            = new ArrayList<PendingEventClusterJ.PendingEventDTO>();
+    for (PendingEvent pendEvent : toRemovePendingEvents) {
       toRemove.add(createPersistable(pendEvent, session));
     }
-    remove+=toRemove.size();
+    remove += toRemove.size();
     session.deletePersistentAll(toRemove);
 //    session.flush();
     session.release(toRemove);
   }
-  
+
   @Override
   public void prepare(Collection<PendingEvent> modified,
       Collection<PendingEvent> removed) throws StorageException {

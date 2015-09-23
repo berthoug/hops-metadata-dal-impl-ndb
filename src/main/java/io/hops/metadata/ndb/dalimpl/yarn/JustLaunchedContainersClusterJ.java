@@ -61,8 +61,6 @@ public class JustLaunchedContainersClusterJ
     String getcontainerid();
 
     void setcontainerid(String containerid);
-    
-
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
