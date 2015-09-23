@@ -142,7 +142,7 @@ public class FinishedApplicationsClusterJ
     }
     remove+=toRemove.size();
     session.deletePersistentAll(toRemove);
-//    session.flush();
+    session.flush();
     session.release(toRemove);
   }
 

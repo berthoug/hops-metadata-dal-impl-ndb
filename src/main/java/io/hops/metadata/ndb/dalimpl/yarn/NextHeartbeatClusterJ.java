@@ -94,6 +94,8 @@ public class NextHeartbeatClusterJ
   }
 
   public static int add = 0;
+  public static int remove =0;
+  
   @Override
   public void updateAll(List<NextHeartbeat> toUpdate)
           throws StorageException {
@@ -115,8 +117,8 @@ public class NextHeartbeatClusterJ
     add += toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
-    session.flush();
     session.deletePersistentAll(toRemove);
+    remove += toRemove.size();
     session.release(toRemove);
   }
 

@@ -76,7 +76,7 @@ public class JustLaunchedContainersClusterJ
     }
     add+=toModify.size();
     session.savePersistentAll(toModify);
-//    session.flush();
+    session.flush();
     session.release(toModify);
   }
 
