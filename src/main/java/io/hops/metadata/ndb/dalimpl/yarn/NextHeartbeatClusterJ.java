@@ -102,8 +102,7 @@ public class NextHeartbeatClusterJ
     List<NextHeartbeatDTO> toRemove = new ArrayList<NextHeartbeatDTO>();
 
     for (NextHeartbeat hb : toUpdate) {
-      NextHeartbeatDTO hbDTO = createPersistable(new NextHeartbeat(hb.
-              getRmnodeid(), hb.isNextheartbeat(), hb.getPendingEventId()),
+      NextHeartbeatDTO hbDTO = createPersistable(hb,
               session);
 
       if (hb.isNextheartbeat()) {
