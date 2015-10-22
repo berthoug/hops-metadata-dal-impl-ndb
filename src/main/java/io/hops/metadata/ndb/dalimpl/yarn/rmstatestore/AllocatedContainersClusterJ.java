@@ -65,6 +65,7 @@ public static final Log LOG = LogFactory.getLog(AllocatedContainersClusterJ.clas
           StorageException {
     long start = System.currentTimeMillis();
     HopsSession session = connector.obtainSession();
+    session.flush();
     List<AllocatedContainerDTO> toPersist
             = new ArrayList<AllocatedContainerDTO>();
     for (AllocateResponse resp : entries) {

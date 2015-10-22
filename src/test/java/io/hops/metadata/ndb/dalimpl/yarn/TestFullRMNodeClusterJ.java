@@ -79,6 +79,10 @@ public class TestFullRMNodeClusterJ {
   }
 
   @Test
+  public void testNothing() throws StorageException, IOException {
+    
+  }
+  @Test
   public void testFindByNodeId() throws StorageException, IOException {
     //TODO: Add test for nextheartbeat
     //fill the database with a RMNode

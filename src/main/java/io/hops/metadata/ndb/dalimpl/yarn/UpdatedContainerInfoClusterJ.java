@@ -79,8 +79,8 @@ public class UpdatedContainerInfoClusterJ
   @Override
   public Map<Integer, List<UpdatedContainerInfo>> findByRMNode(String rmnodeid)
           throws StorageException {
-    LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - START:"
-            + rmnodeid);
+    LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - START:" +
+        rmnodeid);
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
 
@@ -92,8 +92,8 @@ public class UpdatedContainerInfoClusterJ
     HopsQuery<UpdatedContainerInfoDTO> query = session.createQuery(dobj);
     query.setParameter(RMNODEID, rmnodeid);
     List<UpdatedContainerInfoDTO> queryResults = query.getResultList();
-    LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - FINISH:"
-            + rmnodeid);
+    LOG.debug("HOP :: ClusterJ UpdatedContainerInfo.findByRMNode - FINISH:" +
+        rmnodeid);
     Map<Integer, List<UpdatedContainerInfo>> result = null;
     if (queryResults != null && !queryResults.isEmpty()) {
       result = createUpdatedContainerInfoMap(queryResults);
@@ -148,35 +148,33 @@ public class UpdatedContainerInfoClusterJ
     return createMap(results);
   }
 
-  public static int add = 0;
-
+  public static int add=0;
   @Override
   public void addAll(Collection<UpdatedContainerInfo> containers)
           throws StorageException {
     HopsSession session = connector.obtainSession();
-    List<UpdatedContainerInfoDTO> toModify
-            = new ArrayList<UpdatedContainerInfoDTO>();
+    List<UpdatedContainerInfoDTO> toModify =
+        new ArrayList<UpdatedContainerInfoDTO>();
     for (UpdatedContainerInfo entry : containers) {
       toModify.add(createPersistable(entry, session));
     }
-    add += toModify.size();
+    add+=toModify.size();
     session.savePersistentAll(toModify);
 //    session.flush();
     session.release(toModify);
   }
 
-  public static int remove = 0;
-
+  public static int remove=0;
   @Override
   public void removeAll(Collection<UpdatedContainerInfo> containers)
           throws StorageException {
     HopsSession session = connector.obtainSession();
-    List<UpdatedContainerInfoDTO> toRemove
-            = new ArrayList<UpdatedContainerInfoDTO>();
+    List<UpdatedContainerInfoDTO> toRemove =
+        new ArrayList<UpdatedContainerInfoDTO>();
     for (UpdatedContainerInfo entry : containers) {
       toRemove.add(createPersistable(entry, session));
     }
-    remove += toRemove.size();
+    remove+=toRemove.size();
     session.deletePersistentAll(toRemove);
 //    session.flush();
     session.release(toRemove);
@@ -184,8 +182,8 @@ public class UpdatedContainerInfoClusterJ
 
   private UpdatedContainerInfoDTO createPersistable(UpdatedContainerInfo hop,
           HopsSession session) throws StorageException {
-    UpdatedContainerInfoDTO dto
-            = session.newInstance(UpdatedContainerInfoDTO.class);
+    UpdatedContainerInfoDTO dto =
+        session.newInstance(UpdatedContainerInfoDTO.class);
     dto.setrmnodeid(hop.getRmnodeid());
     dto.setcontainerid(hop.getContainerId());
     dto.setupdatedcontainerinfoid(hop.getUpdatedContainerInfoId());
@@ -207,8 +205,8 @@ public class UpdatedContainerInfoClusterJ
 
   private Map<Integer, List<UpdatedContainerInfo>> createUpdatedContainerInfoMap(
           List<UpdatedContainerInfoDTO> list) {
-    Map<Integer, List<UpdatedContainerInfo>> updatedContainerInfos
-            = new HashMap<Integer, List<UpdatedContainerInfo>>();
+    Map<Integer, List<UpdatedContainerInfo>> updatedContainerInfos =
+        new HashMap<Integer, List<UpdatedContainerInfo>>();
     for (UpdatedContainerInfoDTO persistable : list) {
       if (!updatedContainerInfos.containsKey(persistable.
               getupdatedcontainerinfoid())) {
@@ -235,16 +233,16 @@ public class UpdatedContainerInfoClusterJ
 
   private Map<String, Map<Integer, List<UpdatedContainerInfo>>> createMap(
           List<UpdatedContainerInfoDTO> results) {
-    Map<String, Map<Integer, List<UpdatedContainerInfo>>> map
-            = new HashMap<String, Map<Integer, List<UpdatedContainerInfo>>>();
+    Map<String, Map<Integer, List<UpdatedContainerInfo>>> map =
+        new HashMap<String, Map<Integer, List<UpdatedContainerInfo>>>();
     for (UpdatedContainerInfoDTO persistable : results) {
       UpdatedContainerInfo hop = createHopUpdatedContainerInfo(persistable);
       if (map.get(hop.getRmnodeid()) == null) {
         map.put(hop.getRmnodeid(),
                 new HashMap<Integer, List<UpdatedContainerInfo>>());
       }
-      if (map.get(hop.getRmnodeid()).get(hop.getUpdatedContainerInfoId())
-              == null) {
+      if (map.get(hop.getRmnodeid()).get(hop.getUpdatedContainerInfoId()) ==
+          null) {
         map.get(hop.getRmnodeid()).put(hop.getUpdatedContainerInfoId(),
                 new ArrayList<UpdatedContainerInfo>());
       }

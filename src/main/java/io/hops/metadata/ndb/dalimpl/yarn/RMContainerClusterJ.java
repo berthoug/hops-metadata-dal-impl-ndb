@@ -36,10 +36,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class RMContainerClusterJ
     implements TablesDef.RMContainerTableDef, RMContainerDataAccess<RMContainer> {
-
+private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
   @PersistenceCapable(table = TABLE_NAME)
   public interface RMContainerDTO {
 
@@ -128,19 +132,27 @@ public class RMContainerClusterJ
     return result;
   }
 
-  public static int add =0;
+  public static AtomicInteger add = new AtomicInteger(0);
   @Override
-  public void addAll(Collection<RMContainer> toAdd) throws StorageException {
+  public void addAll(Collection<RMContainer> toAdd , LinkedBlockingQueue<String> logs , int id) throws StorageException {
     HopsSession session = connector.obtainSession();
-
+    session.flush();
     List<RMContainerDTO> toPersist =
-        new ArrayList<RMContainerDTO>();
+        new ArrayList<RMContainerDTO>(toAdd.size());
+    logs.add("handle 3 5 1 1 " + id + " (" + toAdd.size() + ")");
+    int i=0;
     for (RMContainer hop : toAdd) {
+      i++;
+      if(i%10==0)
+      logs.add("handle 3 5 1 1 1 " + id + " (" + toAdd.size() + ")" + i);
       toPersist.add(createPersistable(hop, session));
     }
-    add+=toPersist.size();
+    logs.add("handle 3 5 1 2 " + id);
+    add.addAndGet(toPersist.size());
     session.savePersistentAll(toPersist);
+    logs.add("handle 3 5 1 3 " + id);
     session.flush();
+    logs.add("handle 3 5 1 4 " + id);
     session.release(toPersist);
   }
 
@@ -177,7 +189,7 @@ public class RMContainerClusterJ
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
     RMContainerDTO dto = createPersistable(rmcontainer, session);
-    add++;
+    add.incrementAndGet();
     session.savePersistent(dto);
     session.flush();
     session.release(dto);
@@ -203,6 +215,7 @@ public class RMContainerClusterJ
 
   private RMContainerDTO createPersistable(RMContainer hop, HopsSession session)
       throws StorageException {
+    try{
     RMContainerClusterJ.RMContainerDTO rMContainerDTO =
         session.newInstance(RMContainerClusterJ.RMContainerDTO.class);
 
@@ -221,6 +234,13 @@ public class RMContainerClusterJ
     rMContainerDTO.setreservedvcores(hop.getReservedVCores());
 
     return rMContainerDTO;
+    }catch(StorageException e ){
+      LOG.error("Exception should not happen here: " + e, e);
+      throw e;
+    }catch(Exception e){
+      LOG.error("Exception should not happen here: " + e, e);
+    }
+    return null;
   }
 
   private Map<String, RMContainer> createMap(List<RMContainerDTO> results) {

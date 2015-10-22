@@ -119,6 +119,7 @@ import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.AllocateResponseClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.AllocatedContainersClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.ApplicationAttemptStateClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.ApplicationStateClusterJ;
+import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.CompletedContainersStatusClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.DelegationKeyClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.DelegationTokenClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.rmstatestore.RMStateVersionClusterJ;
@@ -169,6 +170,7 @@ import io.hops.metadata.yarn.dal.rmstatestore.AllocateResponseDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.AllocatedContainersDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationAttemptStateDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationStateDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.CompletedContainersStatusDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationKeyDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationTokenDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.RMStateVersionDataAccess;
@@ -186,8 +188,8 @@ import java.util.Properties;
 
 public class NdbStorageFactory implements DalStorageFactory {
 
-  private Map<Class, EntityDataAccess> dataAccessMap
-          = new HashMap<Class, EntityDataAccess>();
+  private Map<Class, EntityDataAccess> dataAccessMap =
+      new HashMap<Class, EntityDataAccess>();
 
   @Override
   public void setConfiguration(Properties conf)
@@ -308,6 +310,9 @@ public class NdbStorageFactory implements DalStorageFactory {
             .put(AllocateResponseDataAccess.class, new AllocateResponseClusterJ());
     dataAccessMap
             .put(AllocatedContainersDataAccess.class, new AllocatedContainersClusterJ());
+    dataAccessMap.
+            put(CompletedContainersStatusDataAccess.class,
+                    new CompletedContainersStatusClusterJ());
     dataAccessMap.put(PendingEventDataAccess.class, new PendingEventClusterJ());
     dataAccessMap
             .put(BlockChecksumDataAccess.class, new BlockChecksumClusterj());
@@ -342,8 +347,7 @@ public class NdbStorageFactory implements DalStorageFactory {
   }
 
   Map<String, Integer> yarnStats = new HashMap<String, Integer>();
-
-  private void initYarnStats() {
+  private void initYarnStats(){
     yarnStats.put("AppSchedulingInfoBlacklisAdd",
             AppSchedulingInfoBlacklistClusterJ.add);
     yarnStats.put("AppSchedulingInfoBlacklisRemove",
@@ -402,7 +406,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("QueueMetricsClusterJAdd",
             QueueMetricsClusterJ.add);
     yarnStats.put("RMContainerClusterJAdd",
-            RMContainerClusterJ.add);
+            RMContainerClusterJ.add.get());
     yarnStats.put("RMContainerClusterJRemove",
             RMContainerClusterJ.remove);
     yarnStats.put("RMContextActiveNodesClusterJAdd",
@@ -419,6 +423,10 @@ public class NdbStorageFactory implements DalStorageFactory {
             RMNodeClusterJ.add);
     yarnStats.put("RMNodeClusterJRemove",
             RMNodeClusterJ.remove);
+    yarnStats.put("PendingEventClusterJAdd",
+            PendingEventClusterJ.add);
+    yarnStats.put("PendingEventClusterJRemove",
+            PendingEventClusterJ.remove);
     yarnStats.put("ResourceClusterJAdd",
             ResourceClusterJ.add);
     yarnStats.put("ResourceClusterJRemove",
@@ -482,6 +490,7 @@ public class NdbStorageFactory implements DalStorageFactory {
 
   }
 
+  
   public String printYarnState() {
     int value = 0;
     String result = "";
@@ -552,6 +561,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     value = ContainerStatusClusterJ.add - yarnStats.get("ContainerStatusAdd");
     yarnStats.put("ContainerStatusAdd", ContainerStatusClusterJ.add);
     result = result.concat(value + "\n");
+
 
     result = result.concat("FiCaSchedulerAppLastScheduledContainer:\t");
     result = result.concat("\tadd: ");
@@ -691,6 +701,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             NextHeartbeatClusterJ.remove);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("NodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = NodeClusterJ.add - yarnStats.get(
@@ -699,6 +710,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             NodeClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("NodeHBResponseClusterJ:\t");
     result = result.concat("\tadd: ");
     value = NodeHBResponseClusterJ.add - yarnStats.get(
@@ -719,6 +731,7 @@ public class NdbStorageFactory implements DalStorageFactory {
       result = result.concat(value + "\n");
     }
 
+    
     result = result.concat("QueueMetricsClusterJ:\t");
     result = result.concat("\tadd: ");
     value = QueueMetricsClusterJ.add - yarnStats.get(
@@ -727,12 +740,13 @@ public class NdbStorageFactory implements DalStorageFactory {
             QueueMetricsClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("RMContainerClusterJ:\t");
     result = result.concat("\tadd: ");
-    value = RMContainerClusterJ.add - yarnStats.get(
+    value = RMContainerClusterJ.add.get() - yarnStats.get(
             "RMContainerClusterJAdd");
     yarnStats.put("RMContainerClusterJAdd",
-            RMContainerClusterJ.add);
+            RMContainerClusterJ.add.get());
     result = result.concat(value + "\t");
     result = result.concat("\tremove: ");
     value = RMContainerClusterJ.remove - yarnStats.get(
@@ -777,6 +791,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             RMLoadClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("RMNodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMNodeClusterJ.add - yarnStats.get(
@@ -791,6 +806,21 @@ public class NdbStorageFactory implements DalStorageFactory {
             RMNodeClusterJ.remove);
     result = result.concat(value + "\n");
 
+    result = result.concat("PendingEventClusterJ:\t");
+    result = result.concat("\tadd: ");
+    value = PendingEventClusterJ.add - yarnStats.get(
+            "PendingEventClusterJAdd");
+    yarnStats.put("PendingEventClusterJAdd",
+            PendingEventClusterJ.add);
+    result = result.concat(value + "\t");
+    result = result.concat("\tremove: ");
+    value = PendingEventClusterJ.remove - yarnStats.get(
+            "PendingEventClusterJRemove");
+    yarnStats.put("PendingEventClusterJRemove",
+            PendingEventClusterJ.remove);
+    result = result.concat(value + "\n");
+    
+    
     result = result.concat("ResourceClusterJ:\t");
     result = result.concat("\tadd: ");
     value = ResourceClusterJ.add - yarnStats.get(
@@ -867,6 +897,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             YarnVariablesClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("AllocateResponseClusterJ:\t");
     result = result.concat("\tadd: ");
     value = AllocateResponseClusterJ.add - yarnStats.get(
@@ -959,6 +990,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             RMStateVersionClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("RPCClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RPCClusterJ.add - yarnStats.get(
@@ -981,6 +1013,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             RanNodeClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("SecretMamagerKeysClusterJ:\t");
     result = result.concat("\tadd: ");
     value = SecretMamagerKeysClusterJ.add - yarnStats.get(
@@ -1003,6 +1036,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             SequenceNumberClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     result = result.concat("UpdatedNodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = UpdatedNodeClusterJ.add - yarnStats.get(
@@ -1011,6 +1045,7 @@ public class NdbStorageFactory implements DalStorageFactory {
             UpdatedNodeClusterJ.add);
     result = result.concat(value + "\n");
 
+    
     return result;
   }
 }

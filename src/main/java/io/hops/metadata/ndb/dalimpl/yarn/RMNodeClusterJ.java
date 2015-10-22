@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,15 +153,26 @@ public class RMNodeClusterJ
 
   public static int add=0;
   @Override
-  public void addAll(Collection<RMNode> toAdd) throws StorageException {
+  public void addAll(List<RMNode> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
+        session.flush();
     List<RMNodeDTO> toPersist = new ArrayList<RMNodeDTO>();
+    Collections.sort(toAdd);
     for (RMNode req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
     add+=toPersist.size();
     session.savePersistentAll(toPersist);
-//    session.flush();
+    try{
+    session.flush();
+    }catch(StorageException ex){
+      String nodeList = "";
+      for(RMNode node:toAdd){
+        nodeList = nodeList + node.getNodeId().toString() +", ";
+      }
+      LOG.error("exception while commiting nodes: " + nodeList, ex);
+      throw ex;
+    }
     session.release(toPersist);
   }
 

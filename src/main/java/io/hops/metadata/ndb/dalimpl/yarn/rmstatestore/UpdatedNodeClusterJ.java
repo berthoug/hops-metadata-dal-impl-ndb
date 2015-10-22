@@ -23,10 +23,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class UpdatedNodeClusterJ implements
     TablesDef.UpdatedNodeTableDef, UpdatedNodeDataAccess<UpdatedNode> {
-
+  private static final Log LOG = LogFactory.getLog(UpdatedNodeClusterJ.class);
   @PersistenceCapable(table = TABLE_NAME)
   public interface UpdatedNodeDTO {
 

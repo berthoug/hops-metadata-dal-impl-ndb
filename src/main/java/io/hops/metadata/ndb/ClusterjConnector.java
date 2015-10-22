@@ -114,6 +114,7 @@ import io.hops.metadata.yarn.dal.rmstatestore.AllocateResponseDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.AllocatedContainersDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationAttemptStateDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationStateDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.CompletedContainersStatusDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationKeyDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.DelegationTokenDataAccess;
 import io.hops.metadata.yarn.dal.rmstatestore.RMStateVersionDataAccess;
@@ -414,7 +415,7 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
         RMContextActiveNodesDataAccess.class,
         UpdatedContainerInfoDataAccess.class, YarnLeDescriptorDataAccess.class,
         SecretMamagerKeysDataAccess.class, AllocateResponseDataAccess.class,
-        AllocatedContainersDataAccess.class,
+        AllocatedContainersDataAccess.class, CompletedContainersStatusDataAccess.class,
         RMLoadDataAccess.class, PendingEventDataAccess.class,
         LocalityLevelDataAccess.class,
         RunnableAppsDataAccess.class,
@@ -608,6 +609,8 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.AllocateResponseTableDef.TABLE_NAME);
           } else if (e == AllocatedContainersDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.AllocatedContainersTableDef.TABLE_NAME);
+          } else if (e == CompletedContainersStatusDataAccess.class) {
+            truncate(transactional, io.hops.metadata.yarn.TablesDef.CompletedContainersStatusTableDef.TABLE_NAME);
           } else if (e == DelegationKeyDataAccess.class) {
             truncate(transactional, io.hops.metadata.yarn.TablesDef.DelegationKeyTableDef.TABLE_NAME);
           } else if (e == DelegationTokenDataAccess.class) {
@@ -655,6 +658,7 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
         }
         MysqlServerConnector.truncateTable(transactional,
             "hdfs_path_memcached");
+        MysqlServerConnector.waitEnd();
         return true;
 
       } catch (SQLException ex) {

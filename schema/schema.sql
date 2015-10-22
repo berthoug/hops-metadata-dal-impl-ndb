@@ -556,7 +556,6 @@ delimiter $$
 CREATE TABLE `yarn_justlaunchedcontainers` (
   `rmnodeid` VARCHAR(45) NOT NULL,
   `containerid` VARCHAR(45) NOT NULL,
-  `pendingeventid` INT,
   PRIMARY KEY (`containerid`, `rmnodeid`),
   INDEX `rmnodeid_idx` (`rmnodeid` ASC),
   CONSTRAINT `rmnodeid`
@@ -872,6 +871,23 @@ CONSTRAINT `appandresponseid`
 
 delimiter $$
 
+CREATE TABLE `yarn_completed_containers_status` (
+  `applicationattemptid` VARCHAR(45) NOT NULL,
+ `containerid` VARCHAR(45) NOT NULL,
+ `responseid` INT NOT NULL,
+ `status` varbinary(1000),
+PRIMARY KEY (`applicationattemptid`, `containerid`,`responseid`),
+INDEX `applicationattemptid` (`applicationattemptid` ASC),
+INDEX `responseid` (`responseid` ASC),
+CONSTRAINT `appandresponseid`
+    FOREIGN KEY (`applicationattemptid`)
+    REFERENCES `yarn_allocate_response` (`applicationattemptid`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(responseid)$$
+
+delimiter $$
+
 CREATE TABLE `yarn_allocated_nmtokens` (
   `applicationattemptid` VARCHAR(45) NOT NULL,
  `nmtoken` VARBINARY(1000) NOT NULL,
@@ -911,8 +927,8 @@ delimiter $$
 CREATE TABLE `yarn_pendingevents` (
   `id` INT NOT NULL,
   `rmnodeid` VARCHAR(45) NOT NULL,
-  `type` TINYINT NULL,
-  `status` TINYINT NULL,
+  `type` INT NULL,
+  `status` INT NULL,
   `last_hb` INT NULL,
   PRIMARY KEY (`id`, `rmnodeid`))
 ENGINE = ndbcluster DEFAULT CHARSET=latin1$$

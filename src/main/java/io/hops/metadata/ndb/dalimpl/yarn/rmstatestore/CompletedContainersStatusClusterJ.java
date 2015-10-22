@@ -16,7 +16,7 @@ import io.hops.metadata.ndb.wrapper.HopsQueryBuilder;
 import io.hops.metadata.ndb.wrapper.HopsQueryDomainType;
 import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
-import io.hops.metadata.yarn.dal.rmstatestore.AllocatedContainersDataAccess;
+import io.hops.metadata.yarn.dal.rmstatestore.CompletedContainersStatusDataAccess;
 import io.hops.metadata.yarn.entity.rmstatestore.AllocateResponse;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,12 +26,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class AllocatedContainersClusterJ implements
-        TablesDef.AllocatedContainersTableDef,
-        AllocatedContainersDataAccess<AllocateResponse> {
-public static final Log LOG = LogFactory.getLog(AllocatedContainersClusterJ.class);
+public class CompletedContainersStatusClusterJ implements
+        TablesDef.CompletedContainersStatusTableDef,
+        CompletedContainersStatusDataAccess<AllocateResponse> {
+public static final Log LOG = LogFactory.getLog(CompletedContainersStatusClusterJ.class);
   @PersistenceCapable(table = TABLE_NAME)
-  public interface AllocatedContainerDTO {
+  public interface CompletedContainerDTO {
 
     @PrimaryKey
     @Column(name = APPLICATIONATTEMPTID)
@@ -50,6 +50,11 @@ public static final Log LOG = LogFactory.getLog(AllocatedContainersClusterJ.clas
     int getresponseid();
     
     void setresponseid(int id);
+    
+    @Column(name = STATUS)
+    byte[] getStatus();
+    
+    void setStatus(byte[] status);
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -65,21 +70,22 @@ public static final Log LOG = LogFactory.getLog(AllocatedContainersClusterJ.clas
           StorageException {
     long start = System.currentTimeMillis();
     HopsSession session = connector.obtainSession();
-    List<AllocatedContainerDTO> toPersist
-            = new ArrayList<AllocatedContainerDTO>();
+    List<CompletedContainerDTO> toPersist
+            = new ArrayList<CompletedContainerDTO>();
+    session.flush();
     for (AllocateResponse resp : entries) {
       //put new values
       toPersist.addAll(createPersistable(resp, session));
       //remove old values
     HopsQueryBuilder qb = session.getQueryBuilder();
-      HopsQueryDomainType<AllocatedContainerDTO> dobj = qb.
-              createQueryDefinition(AllocatedContainerDTO.class);
+      HopsQueryDomainType<CompletedContainerDTO> dobj = qb.
+              createQueryDefinition(CompletedContainerDTO.class);
       HopsPredicate pred1 = dobj.get(APPLICATIONATTEMPTID).equal(dobj.param(
               APPLICATIONATTEMPTID));
       dobj.where(pred1);
       HopsPredicate pred2 = dobj.get(RESPONSEID).equal(dobj.param(RESPONSEID));
       dobj.where(pred2);
-      HopsQuery<AllocatedContainerDTO> query = session.createQuery(dobj);
+      HopsQuery<CompletedContainerDTO> query = session.createQuery(dobj);
       query.setParameter(APPLICATIONATTEMPTID, resp.getApplicationattemptid());
       query.setParameter(RESPONSEID, resp.getResponseId()-1);
       remove ++;
@@ -99,46 +105,47 @@ public static final Log LOG = LogFactory.getLog(AllocatedContainersClusterJ.clas
     }
   }
 
-  public Map<String, List<String>> getAll() throws StorageException {
+  public Map<String, List<byte[]>> getAll() throws StorageException {
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
-    HopsQueryDomainType<AllocatedContainerDTO> dobj = qb.createQueryDefinition(
-            AllocatedContainerDTO.class);
-    HopsQuery<AllocatedContainerDTO> query = session.createQuery(dobj);
-    List<AllocatedContainerDTO> queryResults = query.getResultList();
-    Map<String, List<String>> result = createHopAllocatedContainersMap(
+    HopsQueryDomainType<CompletedContainerDTO> dobj = qb.createQueryDefinition(
+            CompletedContainerDTO.class);
+    HopsQuery<CompletedContainerDTO> query = session.createQuery(dobj);
+    List<CompletedContainerDTO> queryResults = query.getResultList();
+    Map<String, List<byte[]>> result = createHopCompletedContainersMap(
             queryResults);
     session.release(queryResults);
     return result;
   }
 
-  private List<AllocatedContainerDTO> createPersistable(AllocateResponse hop,
+  private List<CompletedContainerDTO> createPersistable(AllocateResponse hop,
           HopsSession session) throws StorageException {
-    List<AllocatedContainerDTO> result = new ArrayList<AllocatedContainerDTO>();
-    for (String containerId : hop.getAllocatedContainers()) {
-      AllocatedContainerDTO allocatedContainerDTO = session.newInstance(
-              AllocatedContainerDTO.class);
-      allocatedContainerDTO.setapplicationattemptid(hop.
+    List<CompletedContainerDTO> result = new ArrayList<CompletedContainerDTO>();
+    for (String containerId : hop.getCompletedContainersStatus().keySet()) {
+      CompletedContainerDTO completedContainerDTO = session.newInstance(
+              CompletedContainerDTO.class);
+      completedContainerDTO.setapplicationattemptid(hop.
               getApplicationattemptid());
-      allocatedContainerDTO.setcontainerid(containerId);
-      allocatedContainerDTO.setresponseid(hop.getResponseId());
-      result.add(allocatedContainerDTO);
+      completedContainerDTO.setcontainerid(containerId);
+      completedContainerDTO.setresponseid(hop.getResponseId());
+      completedContainerDTO.setStatus(hop.getCompletedContainersStatus().get(containerId));
+      result.add(completedContainerDTO);
     }
     return result;
   }
 
-  private Map<String, List<String>> createHopAllocatedContainersMap(
-          List<AllocatedContainerDTO> list) throws StorageException {
-    Map<String, List<String>> allocatedContainersMap
-            = new HashMap<String, List<String>>();
+  private Map<String, List<byte[]>> createHopCompletedContainersMap(
+          List<CompletedContainerDTO> list) throws StorageException {
+    Map<String, List<byte[]>> allocatedContainersMap
+            = new HashMap<String, List<byte[]>>();
 
-    for (AllocatedContainerDTO dto : list) {
+    for (CompletedContainerDTO dto : list) {
       if (allocatedContainersMap.get(dto.getapplicationattemptid()) == null) {
         allocatedContainersMap.put(dto.getapplicationattemptid(),
-                new ArrayList<String>());
+                new ArrayList<byte[]>());
       }
       allocatedContainersMap.get(dto.getapplicationattemptid()).add(dto.
-              getcontainerid());
+              getStatus());
     }
     return allocatedContainersMap;
   }

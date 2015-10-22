@@ -75,6 +75,7 @@ public class AllocateResponseClusterJ implements
   public void update(Collection<AllocateResponse> toAdd)
       throws StorageException {
     HopsSession session = connector.obtainSession();
+    session.flush();
     List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
     for (AllocateResponse req : toAdd) {
       toPersist.add(createPersistable(req, session));
@@ -87,11 +88,11 @@ public class AllocateResponseClusterJ implements
 
   public static int remove=0;
   @Override
-  public void removeAll(Collection<AllocateResponse> toAdd)
+  public void removeAll(Collection<AllocateResponse> toRemove)
       throws StorageException {
     HopsSession session = connector.obtainSession();
     List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
-    for (AllocateResponse req : toAdd) {
+    for (AllocateResponse req : toRemove) {
       AllocateResponseDTO persistable = session
           .newInstance(AllocateResponseDTO.class);
       persistable.setapplicationattemptid(req.getApplicationattemptid());
