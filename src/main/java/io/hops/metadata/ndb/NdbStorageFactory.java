@@ -186,12 +186,12 @@ import java.util.Properties;
 
 public class NdbStorageFactory implements DalStorageFactory {
 
-  private Map<Class, EntityDataAccess> dataAccessMap =
-      new HashMap<Class, EntityDataAccess>();
+  private Map<Class, EntityDataAccess> dataAccessMap
+          = new HashMap<Class, EntityDataAccess>();
 
   @Override
   public void setConfiguration(Properties conf)
-      throws StorageInitializtionException {
+          throws StorageInitializtionException {
     try {
       ClusterjConnector.getInstance().setConfiguration(conf);
       MysqlServerConnector.getInstance().setConfiguration(conf);
@@ -204,120 +204,120 @@ public class NdbStorageFactory implements DalStorageFactory {
   private void initDataAccessMap() {
     initYarnStats();
     dataAccessMap
-        .put(RMStateVersionDataAccess.class, new RMStateVersionClusterJ());
+            .put(RMStateVersionDataAccess.class, new RMStateVersionClusterJ());
     dataAccessMap
-        .put(ApplicationStateDataAccess.class, new ApplicationStateClusterJ());
+            .put(ApplicationStateDataAccess.class, new ApplicationStateClusterJ());
     dataAccessMap.put(UpdatedNodeDataAccess.class, new UpdatedNodeClusterJ());
     dataAccessMap.put(ApplicationAttemptStateDataAccess.class,
-        new ApplicationAttemptStateClusterJ());
+            new ApplicationAttemptStateClusterJ());
     dataAccessMap.put(RanNodeDataAccess.class, new RanNodeClusterJ());
     dataAccessMap
-        .put(DelegationTokenDataAccess.class, new DelegationTokenClusterJ());
+            .put(DelegationTokenDataAccess.class, new DelegationTokenClusterJ());
     dataAccessMap
-        .put(SequenceNumberDataAccess.class, new SequenceNumberClusterJ());
+            .put(SequenceNumberDataAccess.class, new SequenceNumberClusterJ());
     dataAccessMap
-        .put(DelegationKeyDataAccess.class, new DelegationKeyClusterJ());
+            .put(DelegationKeyDataAccess.class, new DelegationKeyClusterJ());
     dataAccessMap
-        .put(YarnVariablesDataAccess.class, new YarnVariablesClusterJ());
+            .put(YarnVariablesDataAccess.class, new YarnVariablesClusterJ());
     dataAccessMap.put(RPCDataAccess.class, new RPCClusterJ());
     dataAccessMap.put(QueueMetricsDataAccess.class, new QueueMetricsClusterJ());
     dataAccessMap.put(FiCaSchedulerNodeDataAccess.class,
-        new FiCaSchedulerNodeClusterJ());
+            new FiCaSchedulerNodeClusterJ());
     dataAccessMap.put(ResourceDataAccess.class, new ResourceClusterJ());
     dataAccessMap.put(NodeDataAccess.class, new NodeClusterJ());
     dataAccessMap.put(ResourceDataAccess.class, new ResourceClusterJ());
     dataAccessMap.put(RMNodeDataAccess.class, new RMNodeClusterJ());
     dataAccessMap.put(RMContextActiveNodesDataAccess.class,
-        new RMContextActiveNodesClusterJ());
+            new RMContextActiveNodesClusterJ());
     dataAccessMap.put(RMContextInactiveNodesDataAccess.class,
-        new RMContextInactiveNodesClusterJ());
+            new RMContextInactiveNodesClusterJ());
     dataAccessMap
-        .put(ContainerStatusDataAccess.class, new ContainerStatusClusterJ());
+            .put(ContainerStatusDataAccess.class, new ContainerStatusClusterJ());
     dataAccessMap
-        .put(NodeHBResponseDataAccess.class, new NodeHBResponseClusterJ());
+            .put(NodeHBResponseDataAccess.class, new NodeHBResponseClusterJ());
     dataAccessMap.put(UpdatedContainerInfoDataAccess.class,
-        new UpdatedContainerInfoClusterJ());
+            new UpdatedContainerInfoClusterJ());
     dataAccessMap.put(ContainerIdToCleanDataAccess.class,
-        new ContainerIdToCleanClusterJ());
+            new ContainerIdToCleanClusterJ());
     dataAccessMap.put(JustLaunchedContainersDataAccess.class,
-        new JustLaunchedContainersClusterJ());
+            new JustLaunchedContainersClusterJ());
     dataAccessMap.put(LaunchedContainersDataAccess.class,
-        new LaunchedContainersClusterJ());
+            new LaunchedContainersClusterJ());
     dataAccessMap.put(FinishedApplicationsDataAccess.class,
-        new FinishedApplicationsClusterJ());
+            new FinishedApplicationsClusterJ());
     dataAccessMap.put(SchedulerApplicationDataAccess.class,
-        new SchedulerApplicationClusterJ());
+            new SchedulerApplicationClusterJ());
     dataAccessMap.put(FiCaSchedulerAppNewlyAllocatedContainersDataAccess.class,
-        new FiCaSchedulerAppNewlyAllocatedContainersClusterJ());
+            new FiCaSchedulerAppNewlyAllocatedContainersClusterJ());
     dataAccessMap.put(FiCaSchedulerAppSchedulingOpportunitiesDataAccess.class,
-        new FiCaSchedulerAppSchedulingOpportunitiesClusterJ());
+            new FiCaSchedulerAppSchedulingOpportunitiesClusterJ());
     dataAccessMap.put(FiCaSchedulerAppLastScheduledContainerDataAccess.class,
-        new FiCaSchedulerAppLastScheduledContainerClusterJ());
+            new FiCaSchedulerAppLastScheduledContainerClusterJ());
     dataAccessMap.put(FiCaSchedulerAppLiveContainersDataAccess.class,
-        new FiCaSchedulerAppLiveContainersClusterJ());
+            new FiCaSchedulerAppLiveContainersClusterJ());
     dataAccessMap.put(FiCaSchedulerAppReservedContainersDataAccess.class,
-        new FiCaSchedulerAppReservedContainersClusterJ());
+            new FiCaSchedulerAppReservedContainersClusterJ());
     dataAccessMap.put(FiCaSchedulerAppReservationsDataAccess.class,
-        new FiCaSchedulerAppReservationsClusterJ());
+            new FiCaSchedulerAppReservationsClusterJ());
     dataAccessMap.put(RMContainerDataAccess.class, new RMContainerClusterJ());
     dataAccessMap.put(ContainerDataAccess.class, new ContainerClusterJ());
     dataAccessMap.put(AppSchedulingInfoDataAccess.class,
-        new AppSchedulingInfoClusterJ());
+            new AppSchedulingInfoClusterJ());
     dataAccessMap.put(AppSchedulingInfoBlacklistDataAccess.class,
-        new AppSchedulingInfoBlacklistClusterJ());
+            new AppSchedulingInfoBlacklistClusterJ());
     dataAccessMap
-        .put(ResourceRequestDataAccess.class, new ResourceRequestClusterJ());
+            .put(ResourceRequestDataAccess.class, new ResourceRequestClusterJ());
     dataAccessMap.put(BlockInfoDataAccess.class, new BlockInfoClusterj());
     dataAccessMap.put(PendingBlockDataAccess.class, new PendingBlockClusterj());
     dataAccessMap.put(ReplicaUnderConstructionDataAccess.class,
-        new ReplicaUnderConstructionClusterj());
+            new ReplicaUnderConstructionClusterj());
     dataAccessMap.put(INodeDataAccess.class, new INodeClusterj());
     dataAccessMap
-        .put(INodeAttributesDataAccess.class, new INodeAttributesClusterj());
+            .put(INodeAttributesDataAccess.class, new INodeAttributesClusterj());
     dataAccessMap.put(LeaseDataAccess.class, new LeaseClusterj());
     dataAccessMap.put(LeasePathDataAccess.class, new LeasePathClusterj());
     dataAccessMap.put(OngoingSubTreeOpsDataAccess.class, new OnGoingSubTreeOpsClusterj());
     dataAccessMap
-        .put(HdfsLeDescriptorDataAccess.class, new HdfsLeaderClusterj());
+            .put(HdfsLeDescriptorDataAccess.class, new HdfsLeaderClusterj());
     dataAccessMap
-        .put(YarnLeDescriptorDataAccess.class, new YarnLeaderClusterj());
+            .put(YarnLeDescriptorDataAccess.class, new YarnLeaderClusterj());
     dataAccessMap.put(ReplicaDataAccess.class, new ReplicaClusterj());
     dataAccessMap
-        .put(CorruptReplicaDataAccess.class, new CorruptReplicaClusterj());
+            .put(CorruptReplicaDataAccess.class, new CorruptReplicaClusterj());
     dataAccessMap
-        .put(ExcessReplicaDataAccess.class, new ExcessReplicaClusterj());
+            .put(ExcessReplicaDataAccess.class, new ExcessReplicaClusterj());
     dataAccessMap
-        .put(InvalidateBlockDataAccess.class, new InvalidatedBlockClusterj());
+            .put(InvalidateBlockDataAccess.class, new InvalidatedBlockClusterj());
     dataAccessMap.put(UnderReplicatedBlockDataAccess.class,
-        new UnderReplicatedBlockClusterj());
+            new UnderReplicatedBlockClusterj());
     dataAccessMap.put(VariableDataAccess.class, new VariableClusterj());
     dataAccessMap.put(StorageIdMapDataAccess.class, new StorageIdMapClusterj());
     dataAccessMap
-        .put(EncodingStatusDataAccess.class, new EncodingStatusClusterj() {
-        });
+            .put(EncodingStatusDataAccess.class, new EncodingStatusClusterj() {
+            });
     dataAccessMap.put(BlockLookUpDataAccess.class, new BlockLookUpClusterj());
     dataAccessMap
-        .put(FSSchedulerNodeDataAccess.class, new FSSchedulerNodeClusterJ());
+            .put(FSSchedulerNodeDataAccess.class, new FSSchedulerNodeClusterJ());
     dataAccessMap.put(SafeBlocksDataAccess.class, new SafeBlocksClusterj());
     dataAccessMap.put(MisReplicatedRangeQueueDataAccess.class,
-        new MisReplicatedRangeQueueClusterj());
+            new MisReplicatedRangeQueueClusterj());
     dataAccessMap.put(QuotaUpdateDataAccess.class, new QuotaUpdateClusterj());
     dataAccessMap.put(SecretMamagerKeysDataAccess.class,
-        new SecretMamagerKeysClusterJ());
+            new SecretMamagerKeysClusterJ());
     dataAccessMap
-        .put(AllocateResponseDataAccess.class, new AllocateResponseClusterJ());
+            .put(AllocateResponseDataAccess.class, new AllocateResponseClusterJ());
     dataAccessMap
-        .put(AllocatedContainersDataAccess.class, new AllocatedContainersClusterJ());
+            .put(AllocatedContainersDataAccess.class, new AllocatedContainersClusterJ());
     dataAccessMap.put(PendingEventDataAccess.class, new PendingEventClusterJ());
     dataAccessMap
-        .put(BlockChecksumDataAccess.class, new BlockChecksumClusterj());
+            .put(BlockChecksumDataAccess.class, new BlockChecksumClusterj());
     dataAccessMap
-        .put(NextHeartbeatDataAccess.class, new NextHeartbeatClusterJ());
+            .put(NextHeartbeatDataAccess.class, new NextHeartbeatClusterJ());
     dataAccessMap.put(RMLoadDataAccess.class, new RMLoadClusterJ());
     dataAccessMap.put(FullRMNodeDataAccess.class, new FullRMNodeClusterJ());
     dataAccessMap.put(MetadataLogDataAccess.class, new MetadataLogClusterj());
     dataAccessMap.put(AccessTimeLogDataAccess.class,
-        new AccessTimeLogClusterj());
+            new AccessTimeLogClusterj());
     dataAccessMap.put(SizeLogDataAccess.class, new SizeLogClusterj());
     dataAccessMap.put(EncodingJobsDataAccess.class, new EncodingJobsClusterj());
     dataAccessMap.put(RepairJobsDataAccess.class, new RepairJobsClusterj());
@@ -340,9 +340,10 @@ public class NdbStorageFactory implements DalStorageFactory {
   public EntityDataAccess getDataAccess(Class type) {
     return dataAccessMap.get(type);
   }
-  
+
   Map<String, Integer> yarnStats = new HashMap<String, Integer>();
-  private void initYarnStats(){
+
+  private void initYarnStats() {
     yarnStats.put("AppSchedulingInfoBlacklisAdd",
             AppSchedulingInfoBlacklistClusterJ.add);
     yarnStats.put("AppSchedulingInfoBlacklisRemove",
@@ -391,6 +392,8 @@ public class NdbStorageFactory implements DalStorageFactory {
             LaunchedContainersClusterJ.remove);
     yarnStats.put("NextHeartbeatClusterJAdd",
             NextHeartbeatClusterJ.add);
+    yarnStats.put("NextHeartbeatClusterJRemove",
+            NextHeartbeatClusterJ.remove);
     yarnStats.put("NodeClusterJAdd",
             NodeClusterJ.add);
     yarnStats.put("NodeHBResponseClusterJAdd",
@@ -423,7 +426,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("ResourceRequestClusterJAdd",
             ResourceRequestClusterJ.add);
     yarnStats.put("RequestSize",
-              NodeHBResponseClusterJ.totalSize);
+            NodeHBResponseClusterJ.totalSize);
     yarnStats.put("ResourceRequestClusterJRemove",
             ResourceRequestClusterJ.remove);
     yarnStats.put("SchedulerApplicationClusterJAdd",
@@ -476,10 +479,9 @@ public class NdbStorageFactory implements DalStorageFactory {
             SequenceNumberClusterJ.add);
     yarnStats.put("UpdatedNodeClusterJAdd",
             UpdatedNodeClusterJ.add);
-    
+
   }
-  
-  
+
   public String printYarnState() {
     int value = 0;
     String result = "";
@@ -550,7 +552,6 @@ public class NdbStorageFactory implements DalStorageFactory {
     value = ContainerStatusClusterJ.add - yarnStats.get("ContainerStatusAdd");
     yarnStats.put("ContainerStatusAdd", ContainerStatusClusterJ.add);
     result = result.concat(value + "\n");
- 
 
     result = result.concat("FiCaSchedulerAppLastScheduledContainer:\t");
     result = result.concat("\tadd: ");
@@ -675,56 +676,58 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("LaunchedContainersClusterJRemove",
             LaunchedContainersClusterJ.remove);
     result = result.concat(value + "\n");
-    
-        result = result.concat("NextHeartbeatClusterJ:\t");
+
+    result = result.concat("NextHeartbeatClusterJ:\t");
     result = result.concat("\tadd: ");
     value = NextHeartbeatClusterJ.add - yarnStats.get(
             "NextHeartbeatClusterJAdd");
     yarnStats.put("NextHeartbeatClusterJAdd",
             NextHeartbeatClusterJ.add);
+    result = result.concat(value + "\t");
+    result = result.concat("\tremove: ");
+    value = NextHeartbeatClusterJ.remove - yarnStats.get(
+            "NextHeartbeatClusterJRemove");
+    yarnStats.put("NextHeartbeatClusterJRemove",
+            NextHeartbeatClusterJ.remove);
     result = result.concat(value + "\n");
- 
-    
-            result = result.concat("NodeClusterJ:\t");
+
+    result = result.concat("NodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = NodeClusterJ.add - yarnStats.get(
             "NodeClusterJAdd");
     yarnStats.put("NodeClusterJAdd",
             NodeClusterJ.add);
     result = result.concat(value + "\n");
- 
-    
-                result = result.concat("NodeHBResponseClusterJ:\t");
+
+    result = result.concat("NodeHBResponseClusterJ:\t");
     result = result.concat("\tadd: ");
     value = NodeHBResponseClusterJ.add - yarnStats.get(
             "NodeHBResponseClusterJAdd");
     yarnStats.put("NodeHBResponseClusterJAdd",
             NodeHBResponseClusterJ.add);
-    
+
     if (value != 0) {
       int lastSecondTotalResponseSize = NodeHBResponseClusterJ.totalSize
               - yarnStats.get("nodeHbResponseSize");
       int avgLastSecondTotalResponseSize = lastSecondTotalResponseSize / value;
       yarnStats.put("nodeHbResponseSize",
               NodeHBResponseClusterJ.totalSize);
-      
+
       result = result.concat(value + " (avg size: "
               + avgLastSecondTotalResponseSize + ")\n");
     } else {
       result = result.concat(value + "\n");
     }
- 
-    
-                result = result.concat("QueueMetricsClusterJ:\t");
+
+    result = result.concat("QueueMetricsClusterJ:\t");
     result = result.concat("\tadd: ");
     value = QueueMetricsClusterJ.add - yarnStats.get(
             "QueueMetricsClusterJAdd");
     yarnStats.put("QueueMetricsClusterJAdd",
             QueueMetricsClusterJ.add);
     result = result.concat(value + "\n");
- 
-    
-                    result = result.concat("RMContainerClusterJ:\t");
+
+    result = result.concat("RMContainerClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMContainerClusterJ.add - yarnStats.get(
             "RMContainerClusterJAdd");
@@ -737,8 +740,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RMContainerClusterJRemove",
             RMContainerClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                        result = result.concat("RMContextActiveNodesClusterJ:\t");
+
+    result = result.concat("RMContextActiveNodesClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMContextActiveNodesClusterJ.add - yarnStats.get(
             "RMContextActiveNodesClusterJAdd");
@@ -751,8 +754,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RMContextActiveNodesClusterJRemove",
             RMContextActiveNodesClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                        result = result.concat("RMContextInactiveNodesClusterJ:\t");
+
+    result = result.concat("RMContextInactiveNodesClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMContextInactiveNodesClusterJ.add - yarnStats.get(
             "RMContextInactiveNodesClusterJAdd");
@@ -765,17 +768,16 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RMContextInactiveNodesClusterJRemove",
             RMContextInactiveNodesClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                        result = result.concat("RMLoadClusterJ:\t");
+
+    result = result.concat("RMLoadClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMLoadClusterJ.add - yarnStats.get(
             "RMLoadClusterJAdd");
     yarnStats.put("RMLoadClusterJAdd",
             RMLoadClusterJ.add);
     result = result.concat(value + "\n");
-  
-    
-                        result = result.concat("RMNodeClusterJ:\t");
+
+    result = result.concat("RMNodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMNodeClusterJ.add - yarnStats.get(
             "RMNodeClusterJAdd");
@@ -788,8 +790,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RMNodeClusterJRemove",
             RMNodeClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                        result = result.concat("ResourceClusterJ:\t");
+
+    result = result.concat("ResourceClusterJ:\t");
     result = result.concat("\tadd: ");
     value = ResourceClusterJ.add - yarnStats.get(
             "ResourceClusterJAdd");
@@ -802,21 +804,21 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("ResourceClusterJRemove",
             ResourceClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                        result = result.concat("ResourceRequestClusterJ:\t");
+
+    result = result.concat("ResourceRequestClusterJ:\t");
     result = result.concat("\tadd: ");
     value = ResourceRequestClusterJ.add - yarnStats.get(
             "ResourceRequestClusterJAdd");
     yarnStats.put("ResourceRequestClusterJAdd",
             ResourceRequestClusterJ.add);
-       
+
     if (value != 0) {
       int lastSecondTotalRequestSize = ResourceRequestClusterJ.totalSize
               - yarnStats.get("RequestSize");
       int avgLastSecondTotalRequestSize = lastSecondTotalRequestSize / value;
       yarnStats.put("RequestSize",
               ResourceRequestClusterJ.totalSize);
-      
+
       result = result.concat(value + " (avg size: "
               + avgLastSecondTotalRequestSize + ")\t");
     } else {
@@ -828,8 +830,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("ResourceRequestClusterJRemove",
             ResourceRequestClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                        result = result.concat("SchedulerApplicationClusterJ:\t");
+
+    result = result.concat("SchedulerApplicationClusterJ:\t");
     result = result.concat("\tadd: ");
     value = SchedulerApplicationClusterJ.add - yarnStats.get(
             "SchedulerApplicationClusterJAdd");
@@ -842,8 +844,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("SchedulerApplicationClusterJRemove",
             SchedulerApplicationClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                            result = result.concat("UpdatedContainerInfoClusterJ:\t");
+
+    result = result.concat("UpdatedContainerInfoClusterJ:\t");
     result = result.concat("\tadd: ");
     value = UpdatedContainerInfoClusterJ.add - yarnStats.get(
             "UpdatedContainerInfoClusterJAdd");
@@ -856,17 +858,16 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("UpdatedContainerInfoClusterJRemove",
             UpdatedContainerInfoClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                            result = result.concat("YarnVariablesClusterJ:\t");
+
+    result = result.concat("YarnVariablesClusterJ:\t");
     result = result.concat("\tadd: ");
     value = YarnVariablesClusterJ.add - yarnStats.get(
             "YarnVariablesClusterJAdd");
     yarnStats.put("YarnVariablesClusterJAdd",
             YarnVariablesClusterJ.add);
     result = result.concat(value + "\n");
- 
-    
-                            result = result.concat("AllocateResponseClusterJ:\t");
+
+    result = result.concat("AllocateResponseClusterJ:\t");
     result = result.concat("\tadd: ");
     value = AllocateResponseClusterJ.add - yarnStats.get(
             "AllocateResponseClusterJAdd");
@@ -879,8 +880,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("AllocateResponseClusterJRemove",
             AllocateResponseClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                            result = result.concat("AllocatedContainersClusterJ:\t");
+
+    result = result.concat("AllocatedContainersClusterJ:\t");
     result = result.concat("\tadd: ");
     value = AllocatedContainersClusterJ.add - yarnStats.get(
             "AllocatedContainersClusterJAdd");
@@ -893,8 +894,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("AllocatedContainersClusterJRemove",
             AllocatedContainersClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                            result = result.concat("ApplicationAttemptStateClusterJ:\t");
+
+    result = result.concat("ApplicationAttemptStateClusterJ:\t");
     result = result.concat("\tadd: ");
     value = AllocatedContainersClusterJ.add - yarnStats.get(
             "AllocatedContainersClusterJAdd");
@@ -907,8 +908,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("AllocatedContainersClusterJRemove",
             AllocatedContainersClusterJ.remove);
     result = result.concat(value + "\n");
-    
-                            result = result.concat("ApplicationStateClusterJ:\t");
+
+    result = result.concat("ApplicationStateClusterJ:\t");
     result = result.concat("\tadd: ");
     value = AllocatedContainersClusterJ.add - yarnStats.get(
             "AllocatedContainersClusterJAdd");
@@ -921,7 +922,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("AllocatedContainersClusterJRemove",
             AllocatedContainersClusterJ.remove);
     result = result.concat(value + "\n");
-    
+
     result = result.concat("DelegationKeyClusterJ:\t");
     result = result.concat("\tadd: ");
     value = DelegationKeyClusterJ.add - yarnStats.get(
@@ -935,7 +936,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("DelegationKeyClusterJRemove",
             DelegationKeyClusterJ.remove);
     result = result.concat(value + "\n");
-    
+
     result = result.concat("DelegationTokenClusterJ:\t");
     result = result.concat("\tadd: ");
     value = DelegationTokenClusterJ.add - yarnStats.get(
@@ -949,7 +950,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("DelegationTokenClusterJRemove",
             DelegationTokenClusterJ.remove);
     result = result.concat(value + "\n");
-    
+
     result = result.concat("RMStateVersionClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RMStateVersionClusterJ.add - yarnStats.get(
@@ -957,8 +958,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RMStateVersionClusterJAdd",
             RMStateVersionClusterJ.add);
     result = result.concat(value + "\n");
- 
-    
+
     result = result.concat("RPCClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RPCClusterJ.add - yarnStats.get(
@@ -972,7 +972,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RPCClusterJRemove",
             RPCClusterJ.remove);
     result = result.concat(value + "\n");
-    
+
     result = result.concat("RanNodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = RanNodeClusterJ.add - yarnStats.get(
@@ -980,8 +980,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("RanNodeClusterJAdd",
             RanNodeClusterJ.add);
     result = result.concat(value + "\n");
- 
-    
+
     result = result.concat("SecretMamagerKeysClusterJ:\t");
     result = result.concat("\tadd: ");
     value = SecretMamagerKeysClusterJ.add - yarnStats.get(
@@ -995,7 +994,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("SecretMamagerKeysClusterJRemove",
             SecretMamagerKeysClusterJ.remove);
     result = result.concat(value + "\n");
-    
+
     result = result.concat("SequenceNumberClusterJ:\t");
     result = result.concat("\tadd: ");
     value = SequenceNumberClusterJ.add - yarnStats.get(
@@ -1003,8 +1002,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("SequenceNumberClusterJAdd",
             SequenceNumberClusterJ.add);
     result = result.concat(value + "\n");
-  
-    
+
     result = result.concat("UpdatedNodeClusterJ:\t");
     result = result.concat("\tadd: ");
     value = UpdatedNodeClusterJ.add - yarnStats.get(
@@ -1012,8 +1010,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     yarnStats.put("UpdatedNodeClusterJAdd",
             UpdatedNodeClusterJ.add);
     result = result.concat(value + "\n");
- 
-    
+
     return result;
   }
 }
