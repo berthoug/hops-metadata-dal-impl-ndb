@@ -135,7 +135,6 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
   
   private static final ExecutorService executorService =
       Executors.newFixedThreadPool(7);
-  
   private static AtomicInteger curentFormats = new AtomicInteger(0);
   
   public static void truncateTable(final boolean transactional,
@@ -164,7 +163,7 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
     });
     while (curentFormats.get() >= 7) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(100);
       } catch (InterruptedException ex) {
         Logger.getLogger(MysqlServerConnector.class.getName()).
                 log(Level.SEVERE, null, ex);
@@ -173,16 +172,13 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
   }
   
   public static void waitEnd() {
-    System.out.println("start waiting " + curentFormats.get());
     while (curentFormats.get() > 0) {
       try {
-        Thread.sleep(1000);
-        System.out.println("still waiting " + curentFormats.get());
+        Thread.sleep(100);
       } catch (InterruptedException ex) {
         System.out.println(ex);
       }
     }
-    System.out.println("finish waiting " + curentFormats.get());
   }
   
   public static void truncateTable(String tableName, int limit)

@@ -28,6 +28,7 @@ import io.hops.metadata.yarn.entity.JustLaunchedContainers;
 import io.hops.metadata.yarn.entity.NextHeartbeat;
 import io.hops.metadata.yarn.entity.Node;
 import io.hops.metadata.yarn.entity.NodeHBResponse;
+import io.hops.metadata.yarn.entity.PendingEvent;
 import io.hops.metadata.yarn.entity.RMNode;
 import io.hops.metadata.yarn.entity.RMNodeComps;
 import io.hops.metadata.yarn.entity.Resource;
@@ -42,7 +43,8 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
   private final JustLaunchedContainersClusterJ justLaunchedDA =
       new JustLaunchedContainersClusterJ();
   private final ResourceClusterJ resourceDA = new ResourceClusterJ();
-
+  private final PendingEventClusterJ pendingEventDA = new PendingEventClusterJ();
+  
   private final ContainerIdToCleanClusterJ containerToCleanDA =
       new ContainerIdToCleanClusterJ();
   private final FinishedApplicationsClusterJ finishedApplicationsDA =
@@ -109,7 +111,7 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
     Resource hopResource = resourceDA.findEntry(nodeId,
             Resource.TOTAL_CAPABILITY,
             Resource.RMNODE);
-
+    
     List<ContainerId> hopContainerIdsToClean = containerToCleanDA.
             findByRMNode(nodeId);
 
@@ -148,10 +150,12 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
         hopNextHeartbeat = NextHeartbeatClusterJ.createHopNextHeartbeat(
                 (NextHeartbeatClusterJ.NextHeartbeatDTO) comp);
       }
+    
     }
+    PendingEvent hopPendingEvent = pendingEventDA.findEntry(hopRMNode.getPendingEventId(), nodeId);
     
     RMNodeComps result = new RMNodeComps(hopRMNode, hopNextHeartbeat, hopNode,
-        hopNodeHBResponse, hopResource, hopJustLaunchedContainers,
+        hopNodeHBResponse, hopResource, hopPendingEvent, hopJustLaunchedContainers,
         hopUpdatedContainerInfo, hopContainerIdsToClean,
         hopFinishedApplications,
         ContainerStatusClusterJ.createList(containerStatusDTOs));

@@ -163,6 +163,23 @@ public class PendingEventClusterJ
     return result;
   }
 
+  
+  public PendingEvent findEntry(int pendingEventId, String nodeId)
+      throws StorageException {
+    HopsSession session = connector.obtainSession();
+    PendingEventDTO pendingEventDTO;
+    Object[] pk = new Object[3];
+    pk[0] = pendingEventId;
+    pk[1] = nodeId;
+    pendingEventDTO = session.find(PendingEventDTO.class, pk);
+    PendingEvent result = null;
+    if (pendingEventDTO != null) {
+      result = new PendingEvent(pendingEventDTO.getrmnodeid(), pendingEventDTO.
+            getType(), pendingEventDTO.getStatus(), pendingEventDTO.getId());
+    }
+    session.release(pendingEventDTO);
+    return result;
+  }
   /**
    * <p/>
    *
