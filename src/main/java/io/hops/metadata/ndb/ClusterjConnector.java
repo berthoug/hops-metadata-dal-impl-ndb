@@ -75,7 +75,6 @@ import io.hops.metadata.ndb.dalimpl.hdfs.ReplicaClusterj;
 import io.hops.metadata.ndb.dalimpl.hdfs.ReplicaUnderConstructionClusterj;
 import io.hops.metadata.ndb.dalimpl.hdfs.UnderReplicatedBlockClusterj;
 import io.hops.metadata.ndb.dalimpl.hdfs.VariableClusterj;
-import io.hops.metadata.ndb.dalimpl.yarn.NextHeartbeatClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.YarnVariablesClusterJ;
 import io.hops.metadata.ndb.mysqlserver.MysqlServerConnector;
 import io.hops.metadata.ndb.wrapper.HopsSession;
@@ -230,29 +229,7 @@ public class ClusterjConnector implements StorageConnector<DBSession> {
       returnSession(dbError);
     }
   }
-
-    /**
-   * Commit a transaction.
-   *
-   * @throws io.hops.exception.StorageException
-   */
-  @Override
-  public void flush() throws StorageException {
-    HopsSession session = null;
-    boolean dbError = false;
-    try {
-      session = obtainSession();
-      HopsTransaction tx = session.currentTransaction();
-      if (!tx.isActive()) {
-        throw new StorageException("The transaction is not began!");
-      }
-      session.flush();
-    } catch (StorageException e) {
-      dbError = true;
-      throw e;
-    } 
-  }
-  
+ 
   /**
    * It rolls back only when the transaction is active.
    */

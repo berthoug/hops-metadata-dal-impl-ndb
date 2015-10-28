@@ -66,25 +66,21 @@ public class PreemptionMapClusterJ implements TablesDef.PreemptionMapTableDef,
   @Override
   public List<PreemptionMap> findById(String appAttemptId) throws
           StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
 
-      HopsQueryDomainType<PreemptionMapClusterJ.PreemptionMapDTO> dobj = qb.
-              createQueryDefinition(PreemptionMapClusterJ.PreemptionMapDTO.class);
-      HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
-              "schedulerapp_id"));
-      dobj.where(pred1);
-      HopsQuery<PreemptionMapClusterJ.PreemptionMapDTO> query = session.
-              createQuery(dobj);
-      query.setParameter("schedulerapp_id", appAttemptId);
+    HopsQueryDomainType<PreemptionMapClusterJ.PreemptionMapDTO> dobj = qb.
+            createQueryDefinition(PreemptionMapClusterJ.PreemptionMapDTO.class);
+    HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
+            "schedulerapp_id"));
+    dobj.where(pred1);
+    HopsQuery<PreemptionMapClusterJ.PreemptionMapDTO> query = session.
+            createQuery(dobj);
+    query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<PreemptionMapClusterJ.PreemptionMapDTO> results = query.
-              getResultList();
-      return createPreemtionMapList(results);
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<PreemptionMapClusterJ.PreemptionMapDTO> results = query.
+            getResultList();
+    return createPreemtionMapList(results);
   }
 
   @Override
@@ -104,19 +100,15 @@ public class PreemptionMapClusterJ implements TablesDef.PreemptionMapTableDef,
   @Override
   public void addAll(Collection<PreemptionMap> modified) throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (modified != null) {
-        List<PreemptionMapClusterJ.PreemptionMapDTO> toModify
-                = new ArrayList<PreemptionMapClusterJ.PreemptionMapDTO>();
-        for (PreemptionMap hop : modified) {
-          PreemptionMapClusterJ.PreemptionMapDTO persistable
-                  = createPersistable(hop, session);
-          toModify.add(persistable);
-        }
-        session.savePersistentAll(toModify);
+    if (modified != null) {
+      List<PreemptionMapClusterJ.PreemptionMapDTO> toModify
+              = new ArrayList<PreemptionMapClusterJ.PreemptionMapDTO>();
+      for (PreemptionMap hop : modified) {
+        PreemptionMapClusterJ.PreemptionMapDTO persistable
+                = createPersistable(hop, session);
+        toModify.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistentAll(toModify);
     }
   }
 
@@ -124,21 +116,17 @@ public class PreemptionMapClusterJ implements TablesDef.PreemptionMapTableDef,
   public void removeAll(Collection<PreemptionMap> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<PreemptionMapClusterJ.PreemptionMapDTO> toRemove
-                = new ArrayList<PreemptionMapClusterJ.PreemptionMapDTO>();
-        for (PreemptionMap hop : removed) {
-          Object[] objarr = new Object[2];
-          objarr[0] = hop.getSchedulerappId();
-          objarr[1] = hop.getRmcontainerId();
-          toRemove.add(session.newInstance(
-                  PreemptionMapClusterJ.PreemptionMapDTO.class, objarr));
-        }
-        session.deletePersistentAll(toRemove);
+    if (removed != null) {
+      List<PreemptionMapClusterJ.PreemptionMapDTO> toRemove
+              = new ArrayList<PreemptionMapClusterJ.PreemptionMapDTO>();
+      for (PreemptionMap hop : removed) {
+        Object[] objarr = new Object[2];
+        objarr[0] = hop.getSchedulerappId();
+        objarr[1] = hop.getRmcontainerId();
+        toRemove.add(session.newInstance(
+                PreemptionMapClusterJ.PreemptionMapDTO.class, objarr));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
     }
   }
 

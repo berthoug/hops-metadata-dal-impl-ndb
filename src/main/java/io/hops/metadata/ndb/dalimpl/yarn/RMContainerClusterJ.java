@@ -93,24 +93,24 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
 
     void setexitstatus(int exitstatus);
 
-      @Column(name = RESERVED_NODE_ID)
+    @Column(name = RESERVED_NODE_ID)
     String getreservednodeid();
 
     void setreservednodeid(String reservednodeid);
 
-        @Column(name = RESERVED_PRIORITY)
+    @Column(name = RESERVED_PRIORITY)
     int getreservedpriority();
 
     void setreservedpriority(int reservedpriority);
-    
-        @Column(name = RESERVED_MEMORY)
+
+    @Column(name = RESERVED_MEMORY)
     int getreservedmemory();
-    
+
     void setreservedmemory(int reservedmemory);
-    
-        @Column(name = RESERVED_VCORES)
+
+    @Column(name = RESERVED_VCORES)
     int getreservedvcores();
-    
+
     void setreservedvcores(int reservedvcores);
   }
 
@@ -132,31 +132,20 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
     return result;
   }
 
-  public static AtomicInteger add = new AtomicInteger(0);
   @Override
-  public void addAll(Collection<RMContainer> toAdd , LinkedBlockingQueue<String> logs , int id) throws StorageException {
+  public void addAll(Collection<RMContainer> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.flush();
+
     List<RMContainerDTO> toPersist =
         new ArrayList<RMContainerDTO>(toAdd.size());
-    logs.add("handle 3 5 1 1 " + id + " (" + toAdd.size() + ")");
-    int i=0;
     for (RMContainer hop : toAdd) {
-      i++;
-      if(i%10==0)
-      logs.add("handle 3 5 1 1 1 " + id + " (" + toAdd.size() + ")" + i);
       toPersist.add(createPersistable(hop, session));
     }
-    logs.add("handle 3 5 1 2 " + id);
-    add.addAndGet(toPersist.size());
     session.savePersistentAll(toPersist);
-    logs.add("handle 3 5 1 3 " + id);
     session.flush();
-    logs.add("handle 3 5 1 4 " + id);
     session.release(toPersist);
   }
 
-  public static int remove = 0;
   @Override
   public void removeAll(Collection<RMContainer> toRemove)
       throws StorageException {
@@ -168,7 +157,6 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
           newInstance(RMContainerClusterJ.RMContainerDTO.class, hop.
               getContainerIdID()));
     }
-    remove += toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }
@@ -180,7 +168,6 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
     RMContainerDTO dto = session.
           newInstance(RMContainerClusterJ.RMContainerDTO.class, toRemove.
               getContainerIdID());
-    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }
@@ -189,7 +176,6 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
   public void add(RMContainer rmcontainer) throws StorageException {
     HopsSession session = connector.obtainSession();
     RMContainerDTO dto = createPersistable(rmcontainer, session);
-    add.incrementAndGet();
     session.savePersistent(dto);
     session.flush();
     session.release(dto);
@@ -215,7 +201,6 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
 
   private RMContainerDTO createPersistable(RMContainer hop, HopsSession session)
       throws StorageException {
-    try{
     RMContainerClusterJ.RMContainerDTO rMContainerDTO =
         session.newInstance(RMContainerClusterJ.RMContainerDTO.class);
 
@@ -234,13 +219,6 @@ private static final Log LOG = LogFactory.getLog(RMContainerClusterJ.class);
     rMContainerDTO.setreservedvcores(hop.getReservedVCores());
 
     return rMContainerDTO;
-    }catch(StorageException e ){
-      LOG.error("Exception should not happen here: " + e, e);
-      throw e;
-    }catch(Exception e){
-      LOG.error("Exception should not happen here: " + e, e);
-    }
-    return null;
   }
 
   private Map<String, RMContainer> createMap(List<RMContainerDTO> results) {

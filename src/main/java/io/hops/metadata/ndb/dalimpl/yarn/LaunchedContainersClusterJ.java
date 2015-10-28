@@ -80,7 +80,7 @@ public class LaunchedContainersClusterJ implements
     return result;
   }
 
-  public static int add=0;
+
   @Override
   public void addAll(Collection<LaunchedContainers> toAdd)
       throws StorageException {
@@ -90,12 +90,10 @@ public class LaunchedContainersClusterJ implements
     for (LaunchedContainers id : toAdd) {
       toPersist.add(createPersistable(id, session));
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }
 
-  public static int remove =0;
   @Override
   public void removeAll(Collection<LaunchedContainers> toRemove)
       throws StorageException {
@@ -108,7 +106,6 @@ public class LaunchedContainersClusterJ implements
       persistable.setcontaineridid(hopContainerId.getContainerIdID());
       toPersist.add(persistable);
     }
-    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }

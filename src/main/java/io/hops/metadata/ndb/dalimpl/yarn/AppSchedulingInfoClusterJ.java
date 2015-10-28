@@ -101,7 +101,7 @@ public class AppSchedulingInfoClusterJ implements
     return result;
   }
 
-  public static int add=0;
+  
   @Override
   public void addAll(Collection<AppSchedulingInfo> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -109,13 +109,11 @@ public class AppSchedulingInfoClusterJ implements
     for(AppSchedulingInfo info: toAdd){
      toPersist.add(createPersistable(info, session));
     }
-    add += toPersist.size();
     session.savePersistentAll(toPersist);
     session.flush();
     session.release(toPersist);
   }
   
-  public static int remove =0;
   public void removeAll(Collection<AppSchedulingInfo> toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
     List<AppSchedulingInfoDTO> toPersist = new ArrayList<AppSchedulingInfoDTO>();
@@ -123,7 +121,6 @@ public class AppSchedulingInfoClusterJ implements
      toPersist.add(session
         .newInstance(AppSchedulingInfoDTO.class, info.getSchedulerAppId()));
     }
-    remove += toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }

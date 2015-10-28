@@ -66,32 +66,27 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
   public List<FiCaSchedulerAppSchedulingOpportunities> findById(
           String appAttemptId)
           throws StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
 
-      HopsQueryDomainType<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> dobj
-              = qb.createQueryDefinition(
-                      FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO.class);
-      HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
-              "schedulerapp_id"));
-      dobj.where(pred1);
-      HopsQuery<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> query
-              = session.createQuery(dobj);
-      query.setParameter("schedulerapp_id", appAttemptId);
+    HopsQueryDomainType<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> dobj
+            = qb.createQueryDefinition(
+                    FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO.class);
+    HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
+            "schedulerapp_id"));
+    dobj.where(pred1);
+    HopsQuery<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> query
+            = session.createQuery(dobj);
+    query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> queryResults
-              = query.getResultList();
-      List<FiCaSchedulerAppSchedulingOpportunities> result =
-              createSchedulingOpportunitiesList(queryResults);
-      session.release(queryResults);
-      return result;
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO> queryResults
+            = query.getResultList();
+    List<FiCaSchedulerAppSchedulingOpportunities> result
+            = createSchedulingOpportunitiesList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
-  public static int add =0;
   @Override
   public void addAll(
           Collection<FiCaSchedulerAppSchedulingOpportunities> modified)
@@ -105,13 +100,11 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
                   = createPersistable(hop, session);
           toAdd.add(persistable);
         }
-        add+=toAdd.size();
         session.savePersistentAll(toAdd);
         session.release(toAdd);
       }
   }
 
-  public static int remove =0;
   @Override
   public void removeAll(
           Collection<FiCaSchedulerAppSchedulingOpportunities> removed)
@@ -128,7 +121,6 @@ public class FiCaSchedulerAppSchedulingOpportunitiesClusterJ implements
                   FiCaSchedulerAppSchedulingOpportunitiesClusterJ.SchedulerAppSchedulingOpportunitiesDTO.class,
                   objarr));
         }
-        remove += toRemove.size();
         session.deletePersistentAll(toRemove);
         session.release(toRemove);
       }

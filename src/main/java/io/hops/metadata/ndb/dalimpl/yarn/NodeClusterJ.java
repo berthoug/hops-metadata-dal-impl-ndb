@@ -111,7 +111,7 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     session.release(queryResults);
     return result;
   }
-  public static int add=0;
+
   @Override
   public void addAll(Collection<Node> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -119,9 +119,7 @@ public class NodeClusterJ implements TablesDef.NodeTableDef, NodeDataAccess<Node
     for (Node node : toAdd) {
       toPersist.add(createPersistable(node, session));
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
-//    session.flush();
     session.release(toPersist);
   }
 

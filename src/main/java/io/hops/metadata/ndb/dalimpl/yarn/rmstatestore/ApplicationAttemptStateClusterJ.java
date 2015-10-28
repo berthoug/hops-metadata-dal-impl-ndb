@@ -128,7 +128,6 @@ public class ApplicationAttemptStateClusterJ
     session.savePersistent(createPersistable(entry, session));
   }
 
-  public static int add =0;
   @Override
   public void addAll(Collection<ApplicationAttemptState> toAdd)
       throws StorageException {
@@ -138,12 +137,10 @@ public class ApplicationAttemptStateClusterJ
     for (ApplicationAttemptState req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }
 
-  public static int remove =0;
   @Override
   public void removeAll(Collection<ApplicationAttemptState> removed)
       throws StorageException {
@@ -158,7 +155,6 @@ public class ApplicationAttemptStateClusterJ
           ApplicationAttemptStateClusterJ.ApplicationAttemptStateDTO.class,
           objarr));
     }
-    remove+=toRemove.size();
     session.deletePersistentAll(toRemove);
     session.release(toRemove);
   }

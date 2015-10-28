@@ -66,32 +66,27 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
   public List<FiCaSchedulerAppLastScheduledContainer> findById(
           String appAttemptId)
           throws StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
 
-      HopsQueryDomainType<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> dobj
-              = qb.createQueryDefinition(
-                      FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO.class);
-      HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
-              "schedulerapp_id"));
-      dobj.where(pred1);
-      HopsQuery<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> query
-              = session.createQuery(dobj);
-      query.setParameter("schedulerapp_id", appAttemptId);
+    HopsQueryDomainType<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> dobj
+            = qb.createQueryDefinition(
+                    FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO.class);
+    HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
+            "schedulerapp_id"));
+    dobj.where(pred1);
+    HopsQuery<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> query
+            = session.createQuery(dobj);
+    query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> queryResults
-              = query.getResultList();
-      List<FiCaSchedulerAppLastScheduledContainer> result =
-              createReservationsList(queryResults);
-      session.release(queryResults);
-      return result;
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO> queryResults
+            = query.getResultList();
+    List<FiCaSchedulerAppLastScheduledContainer> result
+            = createReservationsList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
-  public static int add = 0;
   @Override
   public void addAll(Collection<FiCaSchedulerAppLastScheduledContainer> modified)
           throws StorageException {
@@ -105,13 +100,11 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
                   = createPersistable(hop, session);
           toAdd.add(persistable);
         }
-        add+= toAdd.size();
         session.savePersistentAll(toAdd);
         session.release(toAdd);
       }
   }
 
-  public static int remove = 0;
   @Override
   public void removeAll(
           Collection<FiCaSchedulerAppLastScheduledContainer> removed)
@@ -128,7 +121,6 @@ public class FiCaSchedulerAppLastScheduledContainerClusterJ implements
                   FiCaSchedulerAppLastScheduledContainerClusterJ.SchedulerAppLastScheduledContainerDTO.class,
                   objarr));
         }
-        remove +=toRemove.size();
         session.deletePersistentAll(toRemove);
         session.release(toRemove);
       }

@@ -54,14 +54,11 @@ public class RMLoadClusterJ implements TablesDef.RMLoadTableDef, RMLoadDataAcces
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  public static int add=0;
   @Override
   public void update(Load entry) throws StorageException {
     HopsSession session = connector.obtainSession();
     RMLoadDTO dto = createPersistable(entry, session);
-    add++;
     session.savePersistent(dto);
-//    session.flush();
     session.release(dto);
   }
 

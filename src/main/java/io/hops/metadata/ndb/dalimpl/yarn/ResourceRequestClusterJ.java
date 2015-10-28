@@ -87,8 +87,6 @@ public class ResourceRequestClusterJ implements
     return result;
   }
 
-  public static int add=0;
-  public static int totalSize=0;
   @Override
   public void addAll(Collection<ResourceRequest> toAdd)
       throws StorageException {
@@ -96,14 +94,11 @@ public class ResourceRequestClusterJ implements
     List<ResourceRequestDTO> toPersist = new ArrayList<ResourceRequestDTO>();
     for (ResourceRequest req : toAdd) {
       toPersist.add(createPersistable(req, session));
-      totalSize+=req.getResourcerequeststate().length;
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }
 
-  public static int remove=0;
   @Override
   public void removeAll(Collection<ResourceRequest> toRemove)
       throws StorageException {
@@ -116,7 +111,6 @@ public class ResourceRequestClusterJ implements
       pk[2] = hop.getName();
       toPersist.add(session.newInstance(ResourceRequestDTO.class, pk));
     }
-    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }

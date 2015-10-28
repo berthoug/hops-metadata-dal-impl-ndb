@@ -64,7 +64,7 @@ public class JustLaunchedContainersClusterJ
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
-  public static int add=0;
+
   @Override
   public void addAll(Collection<JustLaunchedContainers> containers)
       throws StorageException {
@@ -74,13 +74,11 @@ public class JustLaunchedContainersClusterJ
     for (JustLaunchedContainers hop : containers) {
       toModify.add(createPersistable(hop, session));
     }
-    add+=toModify.size();
     session.savePersistentAll(toModify);
     session.flush();
     session.release(toModify);
   }
 
-  public static int remove =0;
   @Override
   public void removeAll(Collection<JustLaunchedContainers> containers)
       throws StorageException {
@@ -94,7 +92,6 @@ public class JustLaunchedContainersClusterJ
       toRemove
           .add(session.newInstance(JustLaunchedContainersDTO.class, objarr));
     }
-    remove +=toRemove.size();
     session.deletePersistentAll(toRemove);
 //    session.flush();
     session.release(toRemove);

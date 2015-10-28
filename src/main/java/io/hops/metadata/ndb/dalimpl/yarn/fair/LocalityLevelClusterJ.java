@@ -63,43 +63,35 @@ public class LocalityLevelClusterJ implements TablesDef.LocalityLevelTableDef,
   @Override
   public List<LocalityLevel> findById(String appAttemptId) throws
           StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
 
-      HopsQueryDomainType<LocalityLevelClusterJ.LocalityLevelDTO> dobj = qb.
-              createQueryDefinition(LocalityLevelClusterJ.LocalityLevelDTO.class);
-      HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
-              "schedulerapp_id"));
-      dobj.where(pred1);
-      HopsQuery<LocalityLevelClusterJ.LocalityLevelDTO> query = session.
-              createQuery(dobj);
-      query.setParameter("schedulerapp_id", appAttemptId);
+    HopsQueryDomainType<LocalityLevelClusterJ.LocalityLevelDTO> dobj = qb.
+            createQueryDefinition(LocalityLevelClusterJ.LocalityLevelDTO.class);
+    HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
+            "schedulerapp_id"));
+    dobj.where(pred1);
+    HopsQuery<LocalityLevelClusterJ.LocalityLevelDTO> query = session.
+            createQuery(dobj);
+    query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<LocalityLevelClusterJ.LocalityLevelDTO> results = query.
-              getResultList();
-      return createLocalityLevelList(results);
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<LocalityLevelClusterJ.LocalityLevelDTO> results = query.
+            getResultList();
+    return createLocalityLevelList(results);
   }
 
   @Override
   public void addAll(Collection<LocalityLevel> modified) throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (modified != null) {
-        List<LocalityLevelClusterJ.LocalityLevelDTO> toModify
-                = new ArrayList<LocalityLevelClusterJ.LocalityLevelDTO>();
-        for (LocalityLevel hop : modified) {
-          LocalityLevelClusterJ.LocalityLevelDTO persistable
-                  = createPersistable(hop, session);
-          toModify.add(persistable);
-        }
-        session.savePersistentAll(toModify);
+    if (modified != null) {
+      List<LocalityLevelClusterJ.LocalityLevelDTO> toModify
+              = new ArrayList<LocalityLevelClusterJ.LocalityLevelDTO>();
+      for (LocalityLevel hop : modified) {
+        LocalityLevelClusterJ.LocalityLevelDTO persistable
+                = createPersistable(hop, session);
+        toModify.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistentAll(toModify);
     }
   }
 
@@ -107,21 +99,17 @@ public class LocalityLevelClusterJ implements TablesDef.LocalityLevelTableDef,
   public void removeAll(Collection<LocalityLevel> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<LocalityLevelClusterJ.LocalityLevelDTO> toRemove
-                = new ArrayList<LocalityLevelClusterJ.LocalityLevelDTO>();
-        for (LocalityLevel hop : removed) {
-          Object[] objarr = new Object[2];
-          objarr[0] = hop.getSchedulerappId();
-          objarr[1] = hop.getPriorityId();
-          toRemove.add(session.newInstance(
-                  LocalityLevelClusterJ.LocalityLevelDTO.class, objarr));
-        }
-        session.deletePersistentAll(toRemove);
+    if (removed != null) {
+      List<LocalityLevelClusterJ.LocalityLevelDTO> toRemove
+              = new ArrayList<LocalityLevelClusterJ.LocalityLevelDTO>();
+      for (LocalityLevel hop : removed) {
+        Object[] objarr = new Object[2];
+        objarr[0] = hop.getSchedulerappId();
+        objarr[1] = hop.getPriorityId();
+        toRemove.add(session.newInstance(
+                LocalityLevelClusterJ.LocalityLevelDTO.class, objarr));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
     }
   }
 

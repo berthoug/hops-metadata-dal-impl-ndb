@@ -78,7 +78,6 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     }
     LOG.debug("HOP :: ClusterJ NodeHBResponse.findById.session_null - FINISH:" +
         rmnodeId);
-//    session.flush();
     session.release(nodeHBresponseDTO);
     return result;
   }
@@ -99,8 +98,7 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     session.release(queryResults);
     return result;
   }
-  public static int add =0;
-  public static int totalSize =0;
+
   @Override
   public void addAll(Collection<NodeHBResponse> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
@@ -108,9 +106,7 @@ public class NodeHBResponseClusterJ implements TablesDef.NodeHBResponseTableDef,
     for(NodeHBResponse response: toAdd){
       NodeHBResponseDTO dto = createPersistable(response, session);
       toPersist.add(dto);
-      totalSize+= response.getResponse().length;
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }

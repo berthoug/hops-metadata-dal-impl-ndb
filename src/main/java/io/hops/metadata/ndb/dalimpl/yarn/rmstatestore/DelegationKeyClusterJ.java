@@ -57,46 +57,37 @@ public class DelegationKeyClusterJ
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  public static int remove=0;
   @Override
   public void remove(DelegationKey removed) throws StorageException {
     HopsSession session = connector.obtainSession();
     DelegationKeyDTO dto = session
         .newInstance(DelegationKeyClusterJ.DelegationKeyDTO.class,
             removed.getKey());
-    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }
 
-  public static int add=0;
   @Override
   public void createDTMasterKeyEntry(DelegationKey hopDelegationKey)
       throws StorageException {
     HopsSession session = connector.obtainSession();
     DelegationKeyDTO dto = createPersistable(hopDelegationKey, session);
-    add++;
     session.savePersistent(dto);
     session.release(dto);
   }
 
   @Override
   public List<DelegationKey> getAll() throws StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
-      HopsQueryDomainType<DelegationKeyDTO> dobj =
-          qb.createQueryDefinition(DelegationKeyDTO.class);
-      HopsQuery<DelegationKeyDTO> query = session.createQuery(dobj);
-      List<DelegationKeyDTO> queryResults = query.getResultList();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsQueryDomainType<DelegationKeyDTO> dobj = qb.createQueryDefinition(
+            DelegationKeyDTO.class);
+    HopsQuery<DelegationKeyDTO> query = session.createQuery(dobj);
+    List<DelegationKeyDTO> queryResults = query.getResultList();
 
-      List<DelegationKey> result = createHopDelegationKeyList(queryResults);
-      session.release(queryResults);
-      return result;
-
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<DelegationKey> result = createHopDelegationKeyList(queryResults);
+    session.release(queryResults);
+    return result;
 
   }
 

@@ -25,7 +25,6 @@ import io.hops.StorageConnector;
 import io.hops.exception.StorageException;
 import io.hops.metadata.common.EntityDataAccess;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,7 +37,6 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -137,30 +135,34 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
   
   private static final ExecutorService executorService =
       Executors.newFixedThreadPool(7);
+  
   private static AtomicInteger curentFormats = new AtomicInteger(0);
   
-  public static void truncateTable(final boolean transactional,final String tableName)
-      throws StorageException, SQLException {
-    int nb = curentFormats.incrementAndGet();
+  public static void truncateTable(final boolean transactional,
+          final String tableName)
+          throws StorageException, SQLException {
+    curentFormats.incrementAndGet();
     executorService.execute(new Runnable() {
 
       @Override
       public void run() {
         boolean flag = true;
-        while(flag){
-        try {
-          truncateTable(transactional, tableName, -1);
-          flag = false;
-           curentFormats.decrementAndGet();
-        } catch (StorageException ex) {
-          System.out.println(tableName + " " + ex.getMessage());
-        } catch (SQLException ex) {
-          System.out.println(ex.getMessage());
-        }
+        int count = 0;
+        while (flag && count < 100) {
+          count++;
+          try {
+            truncateTable(transactional, tableName, -1);
+            flag = false;
+            curentFormats.decrementAndGet();
+          } catch (StorageException ex) {
+            System.out.println(tableName + " " + ex.getMessage());
+          } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+          }
         }
       }
     });
-    while(curentFormats.get()>=7){
+    while (curentFormats.get() >= 7) {
       try {
         Thread.sleep(1000);
       } catch (InterruptedException ex) {
@@ -170,11 +172,11 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
     }
   }
   
-  public static void waitEnd(){
+  public static void waitEnd() {
     System.out.println("start waiting " + curentFormats.get());
-    while(curentFormats.get()>0){
+    while (curentFormats.get() > 0) {
       try {
-        Thread.sleep(10000);
+        Thread.sleep(1000);
         System.out.println("still waiting " + curentFormats.get());
       } catch (InterruptedException ex) {
         System.out.println(ex);
@@ -208,7 +210,7 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
               System.out.println("Still formating " + tableName);
             }
             PreparedStatement s = conn.prepareStatement(
-                "delete from " + tableName + " limit 100");
+                    "delete from " + tableName + " limit 1000");
             nbrows = s.executeUpdate();
           } while (nbrows > 0);
         }
@@ -229,11 +231,6 @@ public class MysqlServerConnector implements StorageConnector<Connection> {
 
   @Override
   public void commit() throws StorageException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-    @Override
-  public void flush() throws StorageException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
   

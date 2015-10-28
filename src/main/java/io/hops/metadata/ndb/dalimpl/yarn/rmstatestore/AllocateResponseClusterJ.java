@@ -70,23 +70,19 @@ public class AllocateResponseClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  public static int add =0;
   @Override
   public void update(Collection<AllocateResponse> toAdd)
       throws StorageException {
     HopsSession session = connector.obtainSession();
-    session.flush();
     List<AllocateResponseDTO> toPersist = new ArrayList<AllocateResponseDTO>();
     for (AllocateResponse req : toAdd) {
       toPersist.add(createPersistable(req, session));
     }
-    add +=toPersist.size();
     session.savePersistentAll(toPersist);
     session.flush();
     session.release(toPersist);
   }
 
-  public static int remove=0;
   @Override
   public void removeAll(Collection<AllocateResponse> toRemove)
       throws StorageException {
@@ -99,7 +95,6 @@ public class AllocateResponseClusterJ implements
       persistable.setresponseid(req.getResponseId());
       toPersist.add(persistable);
     }
-    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
       session.release(toPersist);
   }

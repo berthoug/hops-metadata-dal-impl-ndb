@@ -72,23 +72,19 @@ public class SecretMamagerKeysClusterJ implements
     return result;
   }
 
-  public static int add =0;
   @Override
   public void add(SecretMamagerKey toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     SecretMamagerKeysDTO dto = createPersistable(toAdd, session);
-    add++;
     session.savePersistent(dto);
     session.release(dto);
   }
 
-  public static int remove=0;
   @Override
   public void remove(SecretMamagerKey toRemove) throws StorageException {
     HopsSession session = connector.obtainSession();
     SecretMamagerKeysDTO dto = 
         session.newInstance(SecretMamagerKeysDTO.class, toRemove.getKeyType());
-    remove++;
     session.deletePersistent(dto);
     session.release(dto);
   }

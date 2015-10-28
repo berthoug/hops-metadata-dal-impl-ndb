@@ -66,7 +66,7 @@ public class AppSchedulableClusterJ implements TablesDef.AppSchedulableTableDef,
               AppSchedulableClusterJ.AppSchedulableDTO.class, id);
     }
     if (appSchedulableDTO == null) {
-      throw new StorageException("HOP :: Error while retrieving row");
+      return null;
     }
 
     return createAppSchedulable(appSchedulableDTO);
@@ -76,19 +76,15 @@ public class AppSchedulableClusterJ implements TablesDef.AppSchedulableTableDef,
   public void addAll(Collection<AppSchedulable> modified) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (modified != null) {
-        List<AppSchedulableClusterJ.AppSchedulableDTO> toModify
-                = new ArrayList<AppSchedulableClusterJ.AppSchedulableDTO>();
-        for (AppSchedulable hop : modified) {
-          AppSchedulableClusterJ.AppSchedulableDTO persistable
-                  = createPersistable(hop, session);
-          toModify.add(persistable);
-        }
-        session.savePersistentAll(toModify);
+    if (modified != null) {
+      List<AppSchedulableClusterJ.AppSchedulableDTO> toModify
+              = new ArrayList<AppSchedulableClusterJ.AppSchedulableDTO>();
+      for (AppSchedulable hop : modified) {
+        AppSchedulableClusterJ.AppSchedulableDTO persistable
+                = createPersistable(hop, session);
+        toModify.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistentAll(toModify);
     }
   }
 
@@ -96,20 +92,16 @@ public class AppSchedulableClusterJ implements TablesDef.AppSchedulableTableDef,
   public void removeAll(Collection<AppSchedulable> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<AppSchedulableClusterJ.AppSchedulableDTO> toRemove
-                = new ArrayList<AppSchedulableClusterJ.AppSchedulableDTO>();
-        for (AppSchedulable hop : removed) {
-          AppSchedulableClusterJ.AppSchedulableDTO persistable = session.
-                  newInstance(AppSchedulableClusterJ.AppSchedulableDTO.class,
-                          hop.getSchedulerAppId());
-          toRemove.add(persistable);
-        }
-        session.deletePersistentAll(toRemove);
+    if (removed != null) {
+      List<AppSchedulableClusterJ.AppSchedulableDTO> toRemove
+              = new ArrayList<AppSchedulableClusterJ.AppSchedulableDTO>();
+      for (AppSchedulable hop : removed) {
+        AppSchedulableClusterJ.AppSchedulableDTO persistable = session.
+                newInstance(AppSchedulableClusterJ.AppSchedulableDTO.class,
+                        hop.getSchedulerAppId());
+        toRemove.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
     }
   }
 

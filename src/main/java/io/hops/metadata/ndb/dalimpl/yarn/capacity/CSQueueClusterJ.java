@@ -130,34 +130,26 @@ public class CSQueueClusterJ implements TablesDef.CSQueueTableDef,
   @Override
   public void addAll(Collection<CSQueue> modified) throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (modified != null) {
-        List<CSQueueDTO> toModify = new ArrayList<CSQueueDTO>(modified.size());
-        for (CSQueue hop : modified) {
-          toModify.add(createPersistable(hop, session));
-        }
-        session.savePersistentAll(toModify);
-        session.release(toModify);
+    if (modified != null) {
+      List<CSQueueDTO> toModify = new ArrayList<CSQueueDTO>(modified.size());
+      for (CSQueue hop : modified) {
+        toModify.add(createPersistable(hop, session));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistentAll(toModify);
+      session.release(toModify);
     }
   }
 
   @Override
   public void removeAll(Collection<CSQueue> removed) throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<CSQueueDTO> toRemove = new ArrayList<CSQueueDTO>(removed.size());
-        for (CSQueue hop : removed) {
-          toRemove.add(session.newInstance(CSQueueClusterJ.CSQueueDTO.class));
-        }
-        session.deletePersistentAll(toRemove);
-        session.release(toRemove);
+    if (removed != null) {
+      List<CSQueueDTO> toRemove = new ArrayList<CSQueueDTO>(removed.size());
+      for (CSQueue hop : removed) {
+        toRemove.add(session.newInstance(CSQueueClusterJ.CSQueueDTO.class));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
+      session.release(toRemove);
     }
   }
 

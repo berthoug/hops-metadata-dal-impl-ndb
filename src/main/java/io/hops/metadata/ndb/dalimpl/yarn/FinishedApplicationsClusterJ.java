@@ -114,7 +114,6 @@ public class FinishedApplicationsClusterJ
       return result;
   }
 
-  public static int add=0;
   @Override
   public void addAll(Collection<FinishedApplications> applications)
       throws StorageException {
@@ -124,13 +123,11 @@ public class FinishedApplicationsClusterJ
     for (FinishedApplications entry : applications) {
       toModify.add(createPersistable(entry, session));
     }
-    add+=toModify.size();
     session.savePersistentAll(toModify);
     session.flush();
     session.release(toModify);
   }
 
-  public static int remove=0;
   @Override
   public void removeAll(Collection<FinishedApplications> applications)
       throws StorageException {
@@ -140,7 +137,6 @@ public class FinishedApplicationsClusterJ
     for (FinishedApplications entry : applications) {
       toRemove.add(createPersistable(entry, session));
     }
-    remove+=toRemove.size();
     session.deletePersistentAll(toRemove);
     session.flush();
     session.release(toRemove);

@@ -75,22 +75,15 @@ public class ContainerClusterJ
     return result;
   }
 
-  public static int add =0;
-  public static int totalPersistableSize =0;
-  public static int totalContainerSize=0;
   @Override
   public void addAll(Collection<Container> toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     List<ContainerDTO> toPersist = new ArrayList<ContainerDTO>();
     for (Container container : toAdd) {
       ContainerDTO persistable = createPersistable(container, session);
-      totalPersistableSize += persistable.getcontainerstate().length;
-      totalContainerSize+= container.getContainerState().length;
       toPersist.add(persistable);
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
-//    session.flush();
     session.release(toPersist);
   }
 

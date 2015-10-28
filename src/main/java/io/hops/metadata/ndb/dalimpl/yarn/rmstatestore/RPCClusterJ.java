@@ -90,18 +90,15 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
     return result;
   }
 
-  public static int add=0;
   @Override
   public void add(io.hops.metadata.yarn.entity.appmasterrpc.RPC toAdd)
       throws StorageException {
     HopsSession session = connector.obtainSession();
     RPCDTO dto = createPersistable(toAdd, session);
-    add++;
     session.savePersistent(dto);
     session.release(dto);
   }
 
-  public static int remove=0;
   @Override
   public void removeAll(List<io.hops.metadata.yarn.entity.appmasterrpc.RPC> toRemove)
       throws StorageException {
@@ -112,7 +109,6 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
       toRemoveDTO.setrpcid(rpc.getRPCId());
       dtoToRemove.add(toRemoveDTO);
     }
-    remove+=dtoToRemove.size();
     session
         .deletePersistentAll(dtoToRemove);
     session.release(dtoToRemove);
@@ -120,20 +116,16 @@ public class RPCClusterJ implements TablesDef.RPCTableDef, RPCDataAccess<RPC> {
 
   @Override
   public List<io.hops.metadata.yarn.entity.appmasterrpc.RPC> getAll()
-      throws StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
-      HopsQueryDomainType<RPCClusterJ.RPCDTO> dobj = qb.
-          createQueryDefinition(RPCClusterJ.RPCDTO.class);
-      HopsQuery<RPCClusterJ.RPCDTO> query = session.createQuery(dobj);
-      List<RPCClusterJ.RPCDTO> queryResults = query.getResultList();
-      List<RPC> result = createHopRPCList(queryResults);
-      session.release(queryResults);
-      return result;
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+          throws StorageException {
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsQueryDomainType<RPCClusterJ.RPCDTO> dobj = qb.
+            createQueryDefinition(RPCClusterJ.RPCDTO.class);
+    HopsQuery<RPCClusterJ.RPCDTO> query = session.createQuery(dobj);
+    List<RPCClusterJ.RPCDTO> queryResults = query.getResultList();
+    List<RPC> result = createHopRPCList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   private io.hops.metadata.yarn.entity.appmasterrpc.RPC createHopRPC(

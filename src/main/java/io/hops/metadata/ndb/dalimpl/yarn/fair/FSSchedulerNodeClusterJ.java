@@ -77,7 +77,7 @@ public class FSSchedulerNodeClusterJ implements
           session.find(FSSchedulerNodeClusterJ.FSSchedulerNodeDTO.class, id);
     }
     if (fsschedulernodeDTO == null) {
-      throw new StorageException("HOP :: Error while retrieving row");
+      return null;
     }
 
     return createHopFSSchedulerNode(fsschedulernodeDTO);
@@ -87,39 +87,32 @@ public class FSSchedulerNodeClusterJ implements
   public void addAll(Collection<FSSchedulerNode> modified) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (modified != null) {
-        List<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO> toModify
-                = new ArrayList<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO>();
-        for (FSSchedulerNode hop : modified) {
-          FSSchedulerNodeClusterJ.FSSchedulerNodeDTO persistable
-                  = createPersistable(hop, session);
-          toModify.add(persistable);
-        }
-        session.savePersistentAll(toModify);
+    if (modified != null) {
+      List<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO> toModify
+              = new ArrayList<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO>();
+      for (FSSchedulerNode hop : modified) {
+        FSSchedulerNodeClusterJ.FSSchedulerNodeDTO persistable
+                = createPersistable(hop, session);
+        toModify.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistentAll(toModify);
     }
   }
 
+  @Override
   public void removeAll(Collection<FSSchedulerNode> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO> toRemove
-                = new ArrayList<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO>();
-        for (FSSchedulerNode hop : removed) {
-          FSSchedulerNodeClusterJ.FSSchedulerNodeDTO persistable = session
-                  .newInstance(FSSchedulerNodeClusterJ.FSSchedulerNodeDTO.class,
-                          hop.getRmnodeid());
-          toRemove.add(persistable);
-        }
-        session.deletePersistentAll(toRemove);
+    if (removed != null) {
+      List<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO> toRemove
+              = new ArrayList<FSSchedulerNodeClusterJ.FSSchedulerNodeDTO>();
+      for (FSSchedulerNode hop : removed) {
+        FSSchedulerNodeClusterJ.FSSchedulerNodeDTO persistable = session
+                .newInstance(FSSchedulerNodeClusterJ.FSSchedulerNodeDTO.class,
+                        hop.getRmnodeid());
+        toRemove.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
     }
   }
 

@@ -60,12 +60,10 @@ public class SequenceNumberClusterJ implements TablesDef.SequenceNumberTableDef,
     return result;
   }
 
-  public static int add=0;
   @Override
   public void add(SequenceNumber toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     SequenceNumberDTO dto = createPersistable(toAdd, session);
-    add++;
     session.savePersistent(dto);
     session.release(dto);
   }

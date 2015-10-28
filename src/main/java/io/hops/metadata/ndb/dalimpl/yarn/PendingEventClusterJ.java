@@ -95,8 +95,6 @@ public class PendingEventClusterJ
     session.release(dto);
   }
 
-  public static int add = 0;
-
   @Override
   public void addAll(Collection<PendingEvent> toAddPendingEvent)
           throws StorageException {
@@ -110,13 +108,10 @@ public class PendingEventClusterJ
               session);
       toPersist.add(pendingEventDTO);
     }
-    add += toPersist.size();
     session.savePersistentAll(toPersist);
-//    session.flush();
     session.release(toPersist);
   }
 
-  public static int remove = 0;
 
   @Override
   public void removeAll(Collection<PendingEvent> toRemovePendingEvents)
@@ -127,43 +122,9 @@ public class PendingEventClusterJ
     for (PendingEvent pendEvent : toRemovePendingEvents) {
       toRemove.add(createPersistable(pendEvent, session));
     }
-    remove += toRemove.size();
     session.deletePersistentAll(toRemove);
 //    session.flush();
     session.release(toRemove);
-  }
-
-  @Override
-  public void prepare(Collection<PendingEvent> modified,
-      Collection<PendingEvent> removed) throws StorageException {
-    HopsSession session = connector.obtainSession();
-    if (removed != null && !removed.isEmpty()) {
-      LOG.debug(
-          "HOP :: ClusterJ PendingEvent.prepare.remove - START:" + removed);
-      List<PendingEventDTO> toRemove = new ArrayList<PendingEventDTO>();
-      for (PendingEvent hop : removed) {
-        toRemove.add(session
-            .newInstance(PendingEventDTO.class, new Object[]{hop.getId(), hop.
-                getRmnodeId()}));
-      }
-      session.deletePersistentAll(toRemove);
-      session.release(toRemove);
-      LOG.debug(
-          "HOP :: ClusterJ PendingEvent.prepare.remove - FINISH:" + removed);
-    }
-    if (modified != null && !modified.isEmpty()) {
-      LOG.debug(
-          "HOP :: ClusterJ PendingEvent.prepare.modify - START:" + modified);
-      List<PendingEventDTO> toModify = new ArrayList<PendingEventDTO>();
-      for (PendingEvent hop : modified) {
-        toModify.add(createPersistable(hop, session));
-      }
-      session.savePersistentAll(toModify);
-      session.release(toModify);
-      LOG.debug(
-          "HOP :: ClusterJ PendingEvent.prepare.modify - FINISH:" + modified);
-    }
-    session.flush();
   }
 
   @Override

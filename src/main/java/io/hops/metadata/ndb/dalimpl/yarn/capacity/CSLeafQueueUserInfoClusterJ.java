@@ -129,18 +129,14 @@ public class CSLeafQueueUserInfoClusterJ implements
   public void addAll(Collection<CSLeafQueueUserInfo> modified) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (modified != null) {
-        List<CSLeafQueueUserInfoDTO> toModify
-                = new ArrayList<CSLeafQueueUserInfoDTO>(modified.size());
-        for (CSLeafQueueUserInfo hop : modified) {
-          toModify.add(createPersistable(hop, session));
-        }
-        session.savePersistentAll(toModify);
-        session.release(toModify);
+    if (modified != null) {
+      List<CSLeafQueueUserInfoDTO> toModify
+              = new ArrayList<CSLeafQueueUserInfoDTO>(modified.size());
+      for (CSLeafQueueUserInfo hop : modified) {
+        toModify.add(createPersistable(hop, session));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistentAll(toModify);
+      session.release(toModify);
     }
   }
 
@@ -148,20 +144,16 @@ public class CSLeafQueueUserInfoClusterJ implements
   public void removeAll(Collection<CSLeafQueueUserInfo> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<CSLeafQueueUserInfoDTO> toRemove
-                = new ArrayList<CSLeafQueueUserInfoDTO>(removed.size());
-        for (CSLeafQueueUserInfo hop : removed) {
-          toRemove.add(session.newInstance(
-                  CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO.class, hop.
-                  getUserName()));
-        }
-        session.deletePersistentAll(toRemove);
-        session.release(toRemove);
+    if (removed != null) {
+      List<CSLeafQueueUserInfoDTO> toRemove
+              = new ArrayList<CSLeafQueueUserInfoDTO>(removed.size());
+      for (CSLeafQueueUserInfo hop : removed) {
+        toRemove.add(session.newInstance(
+                CSLeafQueueUserInfoClusterJ.CSLeafQueueUserInfoDTO.class, hop.
+                getUserName()));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
+      session.release(toRemove);
     }
   }
 

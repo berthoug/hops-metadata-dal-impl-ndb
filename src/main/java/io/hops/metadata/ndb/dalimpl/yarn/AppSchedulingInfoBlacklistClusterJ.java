@@ -77,7 +77,6 @@ public class AppSchedulingInfoBlacklistClusterJ
     return result;
   }
 
-  public static int add=0;
   @Override
   public void addAll(Collection<AppSchedulingInfoBlacklist> toAdd)
       throws StorageException {
@@ -89,12 +88,10 @@ public class AppSchedulingInfoBlacklistClusterJ
           persistable = createPersistable(hop, session);
       toPersist.add(persistable);
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }
   
-  public static int remove = 0;
   @Override
   public void removeAll(Collection<AppSchedulingInfoBlacklist> toRemove)
       throws StorageException {
@@ -109,7 +106,6 @@ public class AppSchedulingInfoBlacklistClusterJ
           AppSchedulingInfoBlacklistClusterJ.AppSchedulingInfoBlacklistDTO.class,
           objarr));
     }
-    remove+=toPersist.size();
     session.deletePersistentAll(toPersist);
     session.release(toPersist);
   }

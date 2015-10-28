@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 public class FiCaSchedulerAppReservedContainersClusterJ
-    implements TablesDef.FiCaSchedulerAppReservedContainersTableDef,
-    FiCaSchedulerAppReservedContainersDataAccess<FiCaSchedulerAppReservedContainers> {
+        implements TablesDef.FiCaSchedulerAppReservedContainersTableDef,
+        FiCaSchedulerAppReservedContainersDataAccess<FiCaSchedulerAppReservedContainers> {
 
   @PersistenceCapable(table = TABLE_NAME)
   public interface FiCaSchedulerAppReservedContainersDTO {
@@ -70,64 +70,60 @@ public class FiCaSchedulerAppReservedContainersClusterJ
 
   @Override
   public FiCaSchedulerAppReservedContainers findById(int id)
-      throws StorageException {
+          throws StorageException {
     HopsSession session = connector.obtainSession();
 
-    FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO
-        fiCaSchedulerAppReservedContainersDTO = null;
+    FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO fiCaSchedulerAppReservedContainersDTO
+            = null;
     if (session != null) {
       fiCaSchedulerAppReservedContainersDTO = session.find(
-          FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO.class,
-          id);
+              FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO.class,
+              id);
     }
     if (fiCaSchedulerAppReservedContainersDTO == null) {
-      throw new StorageException("HOP :: Error while retrieving row");
+      return null;
     }
 
-    FiCaSchedulerAppReservedContainers result = 
-            createHopFiCaSchedulerAppReservedContainers(
+    FiCaSchedulerAppReservedContainers result
+            = createHopFiCaSchedulerAppReservedContainers(
                     fiCaSchedulerAppReservedContainersDTO);
     session.release(fiCaSchedulerAppReservedContainersDTO);
     return result;
   }
-  
+
   @Override
   public void addAll(Collection<FiCaSchedulerAppReservedContainers> modified)
           throws StorageException {
     HopsSession session = connector.obtainSession();
-      if (modified != null) {
-        List<FiCaSchedulerAppReservedContainersDTO> toAdd
-                = new ArrayList<FiCaSchedulerAppReservedContainersDTO>();
-        for (FiCaSchedulerAppReservedContainers hop : modified) {
-          FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO persistable
-                  = createPersistable(hop, session);
-          toAdd.add(persistable);
-        }
-        session.savePersistentAll(toAdd);
-        session.release(toAdd);
+    if (modified != null) {
+      List<FiCaSchedulerAppReservedContainersDTO> toAdd
+              = new ArrayList<FiCaSchedulerAppReservedContainersDTO>();
+      for (FiCaSchedulerAppReservedContainers hop : modified) {
+        FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO persistable
+                = createPersistable(hop, session);
+        toAdd.add(persistable);
       }
+      session.savePersistentAll(toAdd);
+      session.release(toAdd);
+    }
   }
 
   @Override
   public void removeAll(Collection<FiCaSchedulerAppReservedContainers> removed)
           throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<FiCaSchedulerAppReservedContainersDTO> toRemove
-                = new ArrayList<FiCaSchedulerAppReservedContainersDTO>();
-        for (FiCaSchedulerAppReservedContainers hop : removed) {
-          FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO persistable
-                  = session.newInstance(
-                          FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO.class,
-                          hop.getSchedulerapp_id());
-          toRemove.add(persistable);
-        }
-        session.deletePersistentAll(toRemove);
-        session.release(toRemove);
+    if (removed != null) {
+      List<FiCaSchedulerAppReservedContainersDTO> toRemove
+              = new ArrayList<FiCaSchedulerAppReservedContainersDTO>();
+      for (FiCaSchedulerAppReservedContainers hop : removed) {
+        FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO persistable
+                = session.newInstance(
+                        FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO.class,
+                        hop.getSchedulerapp_id());
+        toRemove.add(persistable);
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
+      session.release(toRemove);
     }
   }
 
@@ -145,33 +141,34 @@ public class FiCaSchedulerAppReservedContainersClusterJ
     List<FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO> queryResults
             = query.
             getResultList();
-    Map<String, List<FiCaSchedulerAppReservedContainers>> result = createMap(queryResults);
+    Map<String, List<FiCaSchedulerAppReservedContainers>> result = createMap(
+            queryResults);
     session.release(queryResults);
     return result;
   }
 
   private FiCaSchedulerAppReservedContainers createHopFiCaSchedulerAppReservedContainers(
-      FiCaSchedulerAppReservedContainersDTO fiCaSchedulerAppReservedContainersDTO) {
+          FiCaSchedulerAppReservedContainersDTO fiCaSchedulerAppReservedContainersDTO) {
     return new FiCaSchedulerAppReservedContainers(
-        fiCaSchedulerAppReservedContainersDTO.getschedulerappid(),
-        fiCaSchedulerAppReservedContainersDTO.getpriorityid(),
-        fiCaSchedulerAppReservedContainersDTO.getnodeid(),
-        fiCaSchedulerAppReservedContainersDTO.getrmcontainerid());
+            fiCaSchedulerAppReservedContainersDTO.getschedulerappid(),
+            fiCaSchedulerAppReservedContainersDTO.getpriorityid(),
+            fiCaSchedulerAppReservedContainersDTO.getnodeid(),
+            fiCaSchedulerAppReservedContainersDTO.getrmcontainerid());
   }
 
   private FiCaSchedulerAppReservedContainersDTO createPersistable(
-      FiCaSchedulerAppReservedContainers hop, HopsSession session)
-      throws StorageException {
-    FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO
-        fiCaSchedulerAppReservedContainersDTO = session.newInstance(
-        FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO.class);
+          FiCaSchedulerAppReservedContainers hop, HopsSession session)
+          throws StorageException {
+    FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO fiCaSchedulerAppReservedContainersDTO
+            = session.newInstance(
+                    FiCaSchedulerAppReservedContainersClusterJ.FiCaSchedulerAppReservedContainersDTO.class);
 
     fiCaSchedulerAppReservedContainersDTO
-        .setschedulerappid(hop.getSchedulerapp_id());
+            .setschedulerappid(hop.getSchedulerapp_id());
     fiCaSchedulerAppReservedContainersDTO.setpriorityid(hop.getPriority_id());
     fiCaSchedulerAppReservedContainersDTO.setnodeid(hop.getNodeid());
     fiCaSchedulerAppReservedContainersDTO
-        .setrmcontainerid(hop.getRmcontainer_id());
+            .setrmcontainerid(hop.getRmcontainer_id());
 
     return fiCaSchedulerAppReservedContainersDTO;
   }
@@ -192,4 +189,3 @@ public class FiCaSchedulerAppReservedContainersClusterJ
     return map;
   }
 }
-

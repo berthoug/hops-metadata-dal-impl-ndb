@@ -74,12 +74,10 @@ public class YarnVariablesClusterJ
     return result;
   }
 
-  public static int add=0;
   @Override
   public void add(YarnVariables toAdd) throws StorageException {
     HopsSession session = connector.obtainSession();
     YarnVariablesDTO dto = createPersistable(toAdd, session);
-    add++;
     session.savePersistent(dto);
     session.release(dto);
   }

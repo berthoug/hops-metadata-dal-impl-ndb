@@ -65,29 +65,24 @@ public class FiCaSchedulerAppReservationsClusterJ implements
   @Override
   public List<SchedulerAppReservations> findById(String appAttemptId) throws
           StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
 
-      HopsQueryDomainType<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> dobj
-              = qb.createQueryDefinition(
-                      FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO.class);
-      HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
-              "schedulerapp_id"));
-      dobj.where(pred1);
-      HopsQuery<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> query
-              = session.createQuery(dobj);
-      query.setParameter("schedulerapp_id", appAttemptId);
+    HopsQueryDomainType<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> dobj
+            = qb.createQueryDefinition(
+                    FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO.class);
+    HopsPredicate pred1 = dobj.get("schedulerapp_id").equal(dobj.param(
+            "schedulerapp_id"));
+    dobj.where(pred1);
+    HopsQuery<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> query
+            = session.createQuery(dobj);
+    query.setParameter("schedulerapp_id", appAttemptId);
 
-      List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> queryResults
-              = query.getResultList();
-      List<SchedulerAppReservations> result = 
-              createReservationsList(queryResults);
-      session.release(queryResults);
-      return result;
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<FiCaSchedulerAppReservationsClusterJ.SchedulerAppReservationsDTO> queryResults
+            = query.getResultList();
+    List<SchedulerAppReservations> result = createReservationsList(queryResults);
+    session.release(queryResults);
+    return result;
   }
 
   public static int add=0;

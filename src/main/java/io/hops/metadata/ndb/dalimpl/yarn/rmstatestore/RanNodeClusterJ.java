@@ -46,7 +46,6 @@ public class RanNodeClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  public static int add=0;
   @Override
   public void addAll(Collection<Map<Integer, RanNode>> toAdd)
           throws StorageException {
@@ -57,7 +56,6 @@ public class RanNodeClusterJ implements
         toPersist.add(createPersistable(n, session));
       }
     }
-    add+=toPersist.size();
     session.savePersistentAll(toPersist);
     session.release(toPersist);
   }

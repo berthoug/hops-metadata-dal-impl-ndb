@@ -62,39 +62,31 @@ public class RunnableAppsClusterJ implements TablesDef.RunnableAppsTableDef,
 
   @Override
   public List<RunnableApps> findById(String queuename) throws StorageException {
-    try {
-      HopsSession session = connector.obtainSession();
-      HopsQueryBuilder qb = session.getQueryBuilder();
+    HopsSession session = connector.obtainSession();
+    HopsQueryBuilder qb = session.getQueryBuilder();
 
-      HopsQueryDomainType<RunnableAppsClusterJ.RunnableAppsDTO> dobj = qb.
-              createQueryDefinition(RunnableAppsClusterJ.RunnableAppsDTO.class);
-      HopsPredicate pred1 = dobj.get("queuename").equal(dobj.param("queuename"));
-      dobj.where(pred1);
-      HopsQuery<RunnableAppsClusterJ.RunnableAppsDTO> query = session.
-              createQuery(dobj);
-      query.setParameter("queuename", queuename);
+    HopsQueryDomainType<RunnableAppsClusterJ.RunnableAppsDTO> dobj = qb.
+            createQueryDefinition(RunnableAppsClusterJ.RunnableAppsDTO.class);
+    HopsPredicate pred1 = dobj.get("queuename").equal(dobj.param("queuename"));
+    dobj.where(pred1);
+    HopsQuery<RunnableAppsClusterJ.RunnableAppsDTO> query = session.
+            createQuery(dobj);
+    query.setParameter("queuename", queuename);
 
-      List<RunnableAppsClusterJ.RunnableAppsDTO> results = query.getResultList();
-      return createRunnableAppsList(results);
-    } catch (Exception e) {
-      throw new StorageException(e);
-    }
+    List<RunnableAppsClusterJ.RunnableAppsDTO> results = query.getResultList();
+    return createRunnableAppsList(results);
   }
 
   @Override
   public void add(RunnableApps modified) throws StorageException {
     HopsSession session = connector.obtainSession();
-    try {
 
-      if (modified != null) {
+    if (modified != null) {
 
-        RunnableAppsClusterJ.RunnableAppsDTO persistable = createPersistable(
-                modified, session);
+      RunnableAppsClusterJ.RunnableAppsDTO persistable = createPersistable(
+              modified, session);
 
-        session.savePersistent(persistable);
-      }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.savePersistent(persistable);
     }
   }
 
@@ -102,21 +94,17 @@ public class RunnableAppsClusterJ implements TablesDef.RunnableAppsTableDef,
   public void removeAll(Collection<RunnableApps> removed) throws
           StorageException {
     HopsSession session = connector.obtainSession();
-    try {
-      if (removed != null) {
-        List<RunnableAppsClusterJ.RunnableAppsDTO> toRemove
-                = new ArrayList<RunnableAppsClusterJ.RunnableAppsDTO>();
-        for (RunnableApps hop : removed) {
-          Object[] objarr = new Object[2];
-          objarr[0] = hop.getQueuename();
-          objarr[1] = hop.getSchedulerapp_id();
-          toRemove.add(session.newInstance(
-                  RunnableAppsClusterJ.RunnableAppsDTO.class, objarr));
-        }
-        session.deletePersistentAll(toRemove);
+    if (removed != null) {
+      List<RunnableAppsClusterJ.RunnableAppsDTO> toRemove
+              = new ArrayList<RunnableAppsClusterJ.RunnableAppsDTO>();
+      for (RunnableApps hop : removed) {
+        Object[] objarr = new Object[2];
+        objarr[0] = hop.getQueuename();
+        objarr[1] = hop.getSchedulerapp_id();
+        toRemove.add(session.newInstance(
+                RunnableAppsClusterJ.RunnableAppsDTO.class, objarr));
       }
-    } catch (Exception e) {
-      throw new StorageException(e);
+      session.deletePersistentAll(toRemove);
     }
   }
 

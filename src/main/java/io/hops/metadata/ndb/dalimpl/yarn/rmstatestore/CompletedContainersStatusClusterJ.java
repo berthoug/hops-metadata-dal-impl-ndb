@@ -59,16 +59,9 @@ public static final Log LOG = LogFactory.getLog(CompletedContainersStatusCluster
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  public static int add =0;
-  public static int remove =0;
   
-  static double nbPersist =0;
-  static double tt1=0;
-  static double tt2=0;
-  static double tt3 = 0;
   public void update(Collection<AllocateResponse> entries) throws
           StorageException {
-    long start = System.currentTimeMillis();
     HopsSession session = connector.obtainSession();
     List<CompletedContainerDTO> toPersist
             = new ArrayList<CompletedContainerDTO>();
@@ -88,21 +81,10 @@ public static final Log LOG = LogFactory.getLog(CompletedContainersStatusCluster
       HopsQuery<CompletedContainerDTO> query = session.createQuery(dobj);
       query.setParameter(APPLICATIONATTEMPTID, resp.getApplicationattemptid());
       query.setParameter(RESPONSEID, resp.getResponseId()-1);
-      remove ++;
       query.deletePersistentAll();
     }
-      tt2 = tt2 + System.currentTimeMillis() - start;
-      add+=toPersist.size();
     session.savePersistentAll(toPersist);
-    tt3 = tt3 + System.currentTimeMillis() - start;
     session.release(toPersist);
-    nbPersist++;
-      if(nbPersist%100 == 0){
-        double avgt1 = tt1/nbPersist;
-        double avgt2 = tt2/nbPersist;
-        double avgt3 = tt3/nbPersist;
-        LOG.info("allocated containers update avg time: " + avgt1 + ", " + avgt2 + ", " + avgt3);
-    }
   }
 
   public Map<String, List<byte[]>> getAll() throws StorageException {
