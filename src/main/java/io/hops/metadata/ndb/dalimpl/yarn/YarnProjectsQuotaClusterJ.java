@@ -17,7 +17,8 @@ import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef.YarnProjectsQuotaTableDef;
 import static io.hops.metadata.yarn.TablesDef.YarnProjectsQuotaTableDef.TABLE_NAME;
 import static io.hops.metadata.yarn.TablesDef.YarnProjectsQuotaTableDef.PROJECTID;
-import static io.hops.metadata.yarn.TablesDef.YarnProjectsQuotaTableDef.CREDIT;
+import static io.hops.metadata.yarn.TablesDef.YarnProjectsQuotaTableDef.REMAINING_QUOTA;
+import static io.hops.metadata.yarn.TablesDef.YarnProjectsQuotaTableDef.TOTAL_USED_QUOTA;
 import io.hops.metadata.yarn.dal.YarnProjectsQuotaDataAccess;
 import io.hops.metadata.yarn.entity.YarnProjectsQuota;
 import java.util.ArrayList;
@@ -46,9 +47,13 @@ public class YarnProjectsQuotaClusterJ implements
         String getProjectid();
         void setProjectid(String projectid);
 
-        @Column(name = CREDIT)
-        int getCredit();        
-        void setCredit(int credit);      
+        @Column(name = REMAINING_QUOTA)
+        int getRemainingQuota();        
+        void setRemainingQuota(int credit);
+        
+        @Column(name = TOTAL_USED_QUOTA)
+        int getTotalUsedQuota();        
+        void setTotalUsedQuota(int credit);
 
     }
     
@@ -80,7 +85,7 @@ public class YarnProjectsQuotaClusterJ implements
     }
     
     private static YarnProjectsQuota createHopYarnProjectsQuota(YarnProjectsQuotaClusterJ.YarnProjectsQuotaDTO csDTO) {
-        YarnProjectsQuota hop = new YarnProjectsQuota(csDTO.getProjectid(), csDTO.getCredit());
+        YarnProjectsQuota hop = new YarnProjectsQuota(csDTO.getProjectid(), csDTO.getRemainingQuota(),csDTO.getTotalUsedQuota());
         return hop;
     } 
 
@@ -101,7 +106,9 @@ public class YarnProjectsQuotaClusterJ implements
         YarnProjectsQuotaDTO pqDTO = session.newInstance(YarnProjectsQuotaDTO.class);
         //Set values to persist new ContainerStatus
         pqDTO.setProjectid(hopPQ.getProjectid());
-        pqDTO.setCredit(hopPQ.getCredit());
+        pqDTO.setRemainingQuota(hopPQ.getRemainingQuota());
+        pqDTO.setTotalUsedQuota(hopPQ.getTotalUsedQuota());
+        
         return pqDTO;
         
     }

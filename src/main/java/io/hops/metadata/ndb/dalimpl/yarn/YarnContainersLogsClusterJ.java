@@ -19,11 +19,9 @@ import io.hops.metadata.yarn.TablesDef;
 import io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef;
 import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.TABLE_NAME;
 import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.CONTAINERID;
-import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.USER;
 import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.START;
 import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.STOP;
 import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.STATE;
-import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.COUNTED;
 import io.hops.metadata.yarn.dal.YarnContainersLogsDataAccess;
 import io.hops.metadata.yarn.entity.ContainerStatus;
 import io.hops.metadata.yarn.entity.YarnContainersLogs;
@@ -55,11 +53,6 @@ public class YarnContainersLogsClusterJ implements
         String getContainerid();
         void setContainerid(String containerid);
 
-
-        @Column(name = USER)
-        String getUser();
-        void setUser(String user);
-
         @Column(name = STATE)
         String getstate();
         void setstate(String state);
@@ -72,16 +65,11 @@ public class YarnContainersLogsClusterJ implements
         int getStop();        
         void setStop(int stop);    
         
-        @Column(name = COUNTED)
-        int getCounted();        
-        void setCounted(int stop);    
-        
 
     }
 
     private final ClusterjConnector connector = ClusterjConnector.getInstance();
-    
-    
+        
     @Override
     public Map<String, YarnContainersLogs> getAll() throws StorageException {
         LOG.info("HOP :: ClusterJ YarnContainersLogs.getAll - START");
@@ -108,7 +96,7 @@ public class YarnContainersLogsClusterJ implements
     }
     
     private static YarnContainersLogs createHopYarnContainersLogs(YarnContainersLogsClusterJ.YarnContainersLogsDTO csDTO) {
-        YarnContainersLogs hop = new YarnContainersLogs(csDTO.getContainerid(), csDTO.getstate(),csDTO.getUser(), csDTO.getStart(), csDTO.getStop(), csDTO.getCounted());
+        YarnContainersLogs hop = new YarnContainersLogs(csDTO.getContainerid(), csDTO.getstate(), csDTO.getStart(), csDTO.getStop());
         return hop;
     }
 
@@ -133,14 +121,10 @@ public class YarnContainersLogsClusterJ implements
         YarnContainersLogsDTO pqDTO = session.newInstance(YarnContainersLogsDTO.class);
         //Set values to persist new ContainerStatus
         pqDTO.setContainerid(hopPQ.getContainerid());
-        pqDTO.setCounted(hopPQ.getCounted());
         pqDTO.setStart(hopPQ.getStart());
         pqDTO.setStop(hopPQ.getStop());
-        pqDTO.setUser(hopPQ.getUser());
         pqDTO.setstate(hopPQ.getState());
         return pqDTO;
         
-    }
-
-    
+    }    
 }
