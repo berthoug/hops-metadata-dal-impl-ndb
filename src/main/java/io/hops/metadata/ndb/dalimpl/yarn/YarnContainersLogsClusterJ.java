@@ -25,6 +25,7 @@ import static io.hops.metadata.yarn.TablesDef.YarnContainersLogsTableDef.STATE;
 import io.hops.metadata.yarn.dal.YarnContainersLogsDataAccess;
 import io.hops.metadata.yarn.entity.ContainerStatus;
 import io.hops.metadata.yarn.entity.YarnContainersLogs;
+import io.hops.metadata.yarn.entity.YarnProjectsQuota;
 import java.util.ArrayList;
 
 import java.util.Collection;
@@ -54,16 +55,16 @@ public class YarnContainersLogsClusterJ implements
         void setContainerid(String containerid);
 
         @Column(name = STATE)
-        String getstate();
-        void setstate(String state);
+        int getstate();
+        void setstate(int state);
 
         @Column(name = START)
-        int getStart();        
-        void setStart(int start);
+        long getStart();        
+        void setStart(long start);
 
         @Column(name = STOP)
-        int getStop();        
-        void setStop(int stop);    
+        long getStop();        
+        void setStop(long stop);    
         
 
     }
@@ -101,8 +102,16 @@ public class YarnContainersLogsClusterJ implements
     }
 
     @Override
-    public void addAll(Collection<YarnContainersLogs> YarnContainersLogs) throws StorageException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addAll(Collection<YarnContainersLogs> YarnContainersLogsCollection) throws StorageException {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        HopsSession session = connector.obtainSession();
+        List<YarnContainersLogsClusterJ.YarnContainersLogsDTO> toAdd = new ArrayList<YarnContainersLogsClusterJ.YarnContainersLogsDTO>();
+        for (YarnContainersLogs _yarnContainersLogs : YarnContainersLogsCollection) {
+          toAdd.add(createPersistable(_yarnContainersLogs, session));
+        }
+        session.savePersistentAll(toAdd);
+    //    session.flush();
+        session.release(toAdd);
     }   
     
     @Override
