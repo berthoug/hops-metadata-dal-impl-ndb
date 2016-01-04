@@ -38,7 +38,7 @@ public class YarnProjectsQuotaClusterJ implements
     YarnProjectsQuotaDataAccess<YarnProjectsQuota>{
     
     private static final Log LOG = LogFactory.getLog(YarnProjectsQuotaClusterJ.class);
-    
+   
     @PersistenceCapable(table = TABLE_NAME)
     public interface YarnProjectsQuotaDTO {
 
@@ -59,6 +59,25 @@ public class YarnProjectsQuotaClusterJ implements
     
     private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+    @Override
+    public YarnProjectsQuota findEntry(String projectId) throws StorageException {
+       
+        LOG.debug("HOP :: ClusterJ YarnProjectsQuota.findById - START");
+        HopsSession session = connector.obtainSession();
+
+        YarnProjectsQuotaDTO uciDTO;
+        if (session != null) {
+          uciDTO = session.find(YarnProjectsQuotaDTO.class, projectId);
+          LOG.debug("HOP :: ClusterJ ContainerStatus.findById - FINISH");
+          if (uciDTO != null) {
+              YarnProjectsQuota result = createHopYarnProjectsQuota(uciDTO);
+              session.release(uciDTO);
+              return result;
+          }
+        }
+        return null;
+    }
+    
     @Override
     public Map<String, YarnProjectsQuota> getAll() throws StorageException {
         LOG.info("HOP :: ClusterJ YarnProjectsQuota.getAll - START");
