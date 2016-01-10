@@ -24,6 +24,7 @@ import io.hops.metadata.yarn.dal.YarnProjectsDailyCostDataAccess;
 import io.hops.metadata.yarn.entity.YarnProjectsDailyCost;
 import io.hops.metadata.yarn.entity.YarnProjectsDailyCost;
 import io.hops.metadata.yarn.entity.YarnProjectsDailyCost;
+import io.hops.metadata.yarn.entity.YarnProjectsDailyId;
 import java.util.ArrayList;
 
 import java.util.Collection;
@@ -70,7 +71,7 @@ public class YarnProjectsDailyCostClusterJ implements
     private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
     @Override
-    public Map<String, YarnProjectsDailyCost> getAll() throws StorageException {
+    public Map<YarnProjectsDailyId, YarnProjectsDailyCost> getAll() throws StorageException {
         LOG.info("HOP :: ClusterJ YarnProjectsDailyCost.getAll - START");
         HopsSession session = connector.obtainSession();
         HopsQueryBuilder qb = session.getQueryBuilder();
@@ -80,17 +81,16 @@ public class YarnProjectsDailyCostClusterJ implements
 
         List<YarnProjectsDailyCostClusterJ.YarnProjectsDailyCostDTO> queryResults = query.getResultList();
         LOG.info("HOP :: ClusterJ YarnProjectsDailyCost.getAll - STOP");
-        Map<String, YarnProjectsDailyCost> result = createMap(queryResults);
+        Map<YarnProjectsDailyId, YarnProjectsDailyCost> result = createMap(queryResults);
         session.release(queryResults);
         return result;
     }
     
-    public static Map<String, YarnProjectsDailyCost> createMap(List<YarnProjectsDailyCostClusterJ.YarnProjectsDailyCostDTO> results) {
-        Map<String, YarnProjectsDailyCost> map = new HashMap<String, YarnProjectsDailyCost>();
+    public static Map<YarnProjectsDailyId, YarnProjectsDailyCost> createMap(List<YarnProjectsDailyCostClusterJ.YarnProjectsDailyCostDTO> results) {
+        Map<YarnProjectsDailyId, YarnProjectsDailyCost> map = new HashMap<YarnProjectsDailyId, YarnProjectsDailyCost>();
         for (YarnProjectsDailyCostClusterJ.YarnProjectsDailyCostDTO persistable : results) {
           YarnProjectsDailyCost hop = createHopYarnProjectsDailyCost(persistable);
-          map.put(hop.getProjectName() + "#" + hop.getProjectUser() + "#" + hop.getDay(), hop);
-          
+          map.put(new YarnProjectsDailyId(hop.getProjectName(), hop.getProjectUser(), hop.getDay()), hop);          
         }
         return map;
     }
