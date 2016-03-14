@@ -166,7 +166,7 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
         hopNodeHBResponse, hopResource, hopPendingEvent, hopJustLaunchedContainers,
         hopUpdatedContainerInfo, hopContainerIdsToClean,
         hopFinishedApplications,
-        ContainerStatusClusterJ.createList(containerStatusDTOs), rmNodeId);
+        ContainerStatusClusterJ.createList(containerStatusDTOs), rmNodeId,null);
     session.release(components);
     session.release(containerStatusDTOs);
     session.release(nextHBDTO);

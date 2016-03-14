@@ -28,6 +28,9 @@ import io.hops.metadata.ndb.wrapper.HopsQueryBuilder;
 import io.hops.metadata.ndb.wrapper.HopsQueryDomainType;
 import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
+import static io.hops.metadata.yarn.TablesDef.ApplicationStateTableDef.BUDGETLIMIT;
+import static io.hops.metadata.yarn.TablesDef.ApplicationStateTableDef.SMSTATE;
+import static io.hops.metadata.yarn.TablesDef.ApplicationStateTableDef.TIMELIMIT;
 import io.hops.metadata.yarn.dal.rmstatestore.ApplicationStateDataAccess;
 import io.hops.metadata.yarn.entity.rmstatestore.ApplicationState;
 import io.hops.util.CompressionUtils;
@@ -68,8 +71,25 @@ public class ApplicationStateClusterJ implements
 
     @Column(name = SMSTATE)
     String getappsmstate();
-
+    
     void setappsmstate(String appstate);
+    
+    @Column(name = TIMELIMIT)
+    long gettimelimit();
+    
+    void settimelimit(long timelimit);
+    
+    @Column(name = BUDGETLIMIT)
+    float getbudgetlimit();
+    
+    void setbudgetlimit(float budgetlimit);
+    
+    @Column(name = PRICELIMIT)
+    float getpricelimit();
+    
+    void setpricelimit(float pricelimit);
+        
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -154,7 +174,7 @@ public class ApplicationStateClusterJ implements
         state = new ApplicationState(appStateDTO.getapplicationid(),
             CompressionUtils.decompress(appStateDTO.getappstate()), appStateDTO.
             getappuser(), appStateDTO.getappname(),
-            appStateDTO.getappsmstate());
+            appStateDTO.getappsmstate(),appStateDTO.gettimelimit(),appStateDTO.getbudgetlimit(),appStateDTO.getpricelimit() );
       } catch (IOException e) {
         throw new StorageException(e);
       } catch (DataFormatException e) {
@@ -189,6 +209,9 @@ public class ApplicationStateClusterJ implements
     appStateDTO.setappuser(hop.getUser());
     appStateDTO.setappname(hop.getName());
     appStateDTO.setappsmstate(hop.getState());
+    appStateDTO.settimelimit(hop.getTimeLimit());
+    appStateDTO.setbudgetlimit(hop.getBudgetLimit());
+    appStateDTO.setpricelimit(hop.getPriceLimit());
 
     return appStateDTO;
   }

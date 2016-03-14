@@ -15,6 +15,7 @@ import io.hops.metadata.ndb.wrapper.HopsQueryBuilder;
 import io.hops.metadata.ndb.wrapper.HopsQueryDomainType;
 import io.hops.metadata.ndb.wrapper.HopsSession;
 import io.hops.metadata.yarn.TablesDef;
+import static io.hops.metadata.yarn.TablesDef.ContainersLogsTableDef.EXITSTATUS;
 import io.hops.metadata.yarn.dal.ContainersLogsDataAccess;
 import io.hops.metadata.yarn.entity.ContainersLogs;
 
@@ -51,6 +52,15 @@ public class ContainersLogsClusterJ implements
     int getexitstatus();
 
     void setexitstatus(int exitstate);
+    
+    @Column(name = PRICE)
+    float getPrice();
+
+    void setPrice(float price);
+
+    
+
+    
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -126,6 +136,7 @@ public class ContainersLogsClusterJ implements
     clDTO.setstart(hopCL.getStart());
     clDTO.setstop(hopCL.getStop());
     clDTO.setexitstatus(hopCL.getExitstatus());
+    clDTO.setPrice(hopCL.getPrice());
     return clDTO;
   }
 
@@ -145,7 +156,8 @@ public class ContainersLogsClusterJ implements
             clDTO.getcontainerid(),
             clDTO.getstart(),
             clDTO.getstop(),
-            clDTO.getexitstatus()
+            clDTO.getexitstatus(), 
+            clDTO.getPrice()
     );
     return hop;
   }
