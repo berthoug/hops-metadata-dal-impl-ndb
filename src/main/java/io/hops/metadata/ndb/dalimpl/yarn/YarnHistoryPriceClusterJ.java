@@ -111,20 +111,6 @@ public class YarnHistoryPriceClusterJ implements
   @Override
   public void add(YarnHistoryPrice yarnHistoryPrice) throws StorageException {
     HopsSession session = connector.obtainSession();
-//<<<<<<< HEAD
-//    //List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> toAdd = new ArrayList<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO>();
-//    //for (YarnHistoryPrice _yarnProjectsQuota : yarnProjectsQuota) {
-//    //  toAdd.add(createPersistable(_yarnProjectsQuota, session));
-//    //}
-//    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO toAdd = createPersistable(yarnHistoryPrice, session);
-//    session.savePersistent(toAdd);
-//    //    session.flush();
-//    session.release(toAdd);
-//  }
-//  
-//  private YarnHistoryPriceClusterJ.YarnHistoryPriceDTO createPersistable(YarnHistoryPrice hopPQ,
-//          HopsSession session) throws StorageException {
-//    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO pqDTO = session.newInstance(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
     YarnHistoryPriceClusterJ.YarnHistoryPriceDTO toAdd = createPersistable(
             yarnHistoryPrice, session);
     session.savePersistent(toAdd);
@@ -136,7 +122,6 @@ public class YarnHistoryPriceClusterJ implements
           HopsSession session) throws StorageException {
     YarnHistoryPriceClusterJ.YarnHistoryPriceDTO pqDTO = session.newInstance(
             YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
-//>>>>>>> upstream/develop
     //Set values to persist new YarnHistoryPriceDTO    
     pqDTO.setTime(hopPQ.getTime());
     pqDTO.setPrice(hopPQ.getPrice());

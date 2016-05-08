@@ -36,21 +36,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-//public class YarnRunningPriceClusterJ implements
-//        YarnRunningPriceTableDef,
-//        YarnRunningPriceDataAccess<YarnRunningPrice>
-//{
-//  
-//  private static final Log LOG = LogFactory.getLog(YarnRunningPriceClusterJ.class);
-//=======
-
 public class YarnRunningPriceClusterJ implements
         YarnRunningPriceTableDef,
         YarnRunningPriceDataAccess<YarnRunningPrice> {
 
   private static final Log LOG = LogFactory.getLog(
           YarnRunningPriceClusterJ.class);
-//>>>>>>> upstream/develop
 
   @PersistenceCapable(table = TABLE_NAME)
   public interface YarnRunningPriceDTO {
@@ -72,15 +63,9 @@ public class YarnRunningPriceClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-//<<<<<<< HEAD
-//
-//  @Override
-//  public Map<Integer, YarnRunningPrice> getAll() throws StorageException {
-//=======
   @Override
   public Map<YarnRunningPrice.PriceType, YarnRunningPrice> getAll() throws
           StorageException {
-//>>>>>>> upstream/develop
     LOG.debug("HOP :: ClusterJ YarnRunningPrice.getAll - START");
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
@@ -94,16 +79,6 @@ public class YarnRunningPriceClusterJ implements
     List<YarnRunningPriceClusterJ.YarnRunningPriceDTO> queryResults = query.
             getResultList();
     LOG.debug("HOP :: ClusterJ YarnRunningPrice.getAll - STOP");
-//<<<<<<< HEAD
-//    Map<Integer, YarnRunningPrice> result = createMap(queryResults);
-//    session.release(queryResults);
-//    return result;
-//  }
-//  
-//  public static Map<Integer, YarnRunningPrice> createMap(
-//          List<YarnRunningPriceClusterJ.YarnRunningPriceDTO> results) {
-//    Map<Integer, YarnRunningPrice> map = new HashMap<Integer, YarnRunningPrice>();
-//=======
     Map<YarnRunningPrice.PriceType, YarnRunningPrice> result = createMap(
             queryResults);
     session.release(queryResults);
@@ -114,25 +89,17 @@ public class YarnRunningPriceClusterJ implements
           List<YarnRunningPriceClusterJ.YarnRunningPriceDTO> results) {
     Map<YarnRunningPrice.PriceType, YarnRunningPrice> map
             = new HashMap<YarnRunningPrice.PriceType, YarnRunningPrice>();
-//>>>>>>> upstream/develop
     for (YarnRunningPriceClusterJ.YarnRunningPriceDTO persistable : results) {
       YarnRunningPrice hop = createHopYarnRunningPrice(persistable);
       map.put(hop.getId(), hop);
     }
     return map;
   }
-//<<<<<<< HEAD
-//  
-//   private static YarnRunningPrice createHopYarnRunningPrice(
-//          YarnRunningPriceClusterJ.YarnRunningPriceDTO csDTO) {
-//    YarnRunningPrice hop = new YarnRunningPrice(csDTO.getId(), csDTO.
-//=======
 
   private static YarnRunningPrice createHopYarnRunningPrice(
           YarnRunningPriceClusterJ.YarnRunningPriceDTO csDTO) {
     YarnRunningPrice hop = new YarnRunningPrice(YarnRunningPrice.PriceType.
             valueOf(csDTO.getId()), csDTO.
-//>>>>>>> upstream/develop
             getTime(), csDTO.getPrice());
     return hop;
   }
@@ -140,23 +107,7 @@ public class YarnRunningPriceClusterJ implements
   @Override
   public void add(YarnRunningPrice yarnRunningPrice) throws StorageException {
     HopsSession session = connector.obtainSession();
-//<<<<<<< HEAD
-//    //List<YarnRunningPriceClusterJ.YarnRunningPriceDTO> toAdd = new ArrayList<YarnRunningPriceClusterJ.YarnRunningPriceDTO>();
-//    //for (YarnRunningPrice _yarnProjectsQuota : yarnProjectsQuota) {
-//    //  toAdd.add(createPersistable(_yarnProjectsQuota, session));
-//    //}
-//    YarnRunningPriceClusterJ.YarnRunningPriceDTO toAdd = createPersistable(yarnRunningPrice, session);
-//    session.savePersistent(toAdd);
-//    //    session.flush();
-//    session.release(toAdd);
-//  }
-//  
-//  private YarnRunningPriceClusterJ.YarnRunningPriceDTO createPersistable(YarnRunningPrice hopPQ,
-//          HopsSession session) throws StorageException {
-//    YarnRunningPriceClusterJ.YarnRunningPriceDTO pqDTO = session.newInstance(YarnRunningPriceClusterJ.YarnRunningPriceDTO.class);
-//    //Set values to persist new YarnRunningPriceDTO
-//    pqDTO.setId(hopPQ.getId());
-//=======
+
     YarnRunningPriceClusterJ.YarnRunningPriceDTO toAdd = createPersistable(
             yarnRunningPrice, session);
     session.savePersistent(toAdd);
@@ -170,7 +121,6 @@ public class YarnRunningPriceClusterJ implements
             YarnRunningPriceClusterJ.YarnRunningPriceDTO.class);
     //Set values to persist new YarnRunningPriceDTO
     pqDTO.setId(hopPQ.getId().name());
-//>>>>>>> upstream/develop
     pqDTO.setTime(hopPQ.getTime());
     pqDTO.setPrice(hopPQ.getPrice());
 

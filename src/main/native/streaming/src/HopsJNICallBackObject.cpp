@@ -491,11 +491,7 @@ void HopObject::BuildHopJavaObject(vector<NdbValues> & _refNdbValues) {
 			}
 		}
 			break;
-    case NdbDictionary::Column::Float: {
-			m_jniPtr->CallVoidMethod(m_callbackCalssObject, l_javaMethod,
-						_refNdbValues[i].getFLoatValue());
-		}
-			break;
+    
 		case NdbDictionary::Column::Binary:
 		case NdbDictionary::Column::Varbinary:
 		case NdbDictionary::Column::Longvarbinary: {
