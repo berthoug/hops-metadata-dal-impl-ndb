@@ -109,15 +109,17 @@ void HopsReturnObject::processNdbRecAttr(NdbRecAttr * _pNdbRectAttr) {
 		}
 			break;
     case NdbDictionary::Column::Float: {
+
     //std::cout << "\nNdbRecAttr Float get in Switch: "<< column_type << " --- "<< _pNdbRectAttr->getColumn()->getName() << std::endl;
 			l_stNdbValues.m_float = _pNdbRectAttr->float_value();
     std::cout << "\nNdbRecAttr Float got in Switch: "<< column_type << " --- "<< _pNdbRectAttr->float_value() << std::endl;
+
 		}
 			break;
 		default: {
 			std::cout << "[ReturnObject][FATAL_ERROR] Col name : "
 					<< _pNdbRectAttr->getColumn()->getName()
-					<< "Unsupported format received from db type :"
+					<< " Unsupported format received from db type :"
 					<< _pNdbRectAttr->getColumn()->getType() << std::endl;
 		}
 			break;

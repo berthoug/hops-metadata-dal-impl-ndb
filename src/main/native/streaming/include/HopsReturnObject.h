@@ -78,9 +78,11 @@ struct NdbValues {
 		}
 	}
 
+
   float getFloatValue() {
 		if (m_isThisNull)
 			return 0;
+
 		else {
 			return m_float;
 		}

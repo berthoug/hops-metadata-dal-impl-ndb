@@ -1,7 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Hops Database abstraction layer for storing the hops metadata in MySQL Cluster
+ * Copyright (C) 2015  hops.io
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package io.hops.metadata.ndb.dalimpl.yarn;
 
@@ -26,34 +39,32 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- *
- * @author rizvi
- */
 public class YarnHistoryPriceClusterJ implements
         TablesDef.YarnHistoryPriceTableDef,
-        YarnHistoryPriceDataAccess<YarnHistoryPrice>
-{
-  
-  private static final Log LOG = LogFactory.getLog(YarnHistoryPriceClusterJ.class);
+        YarnHistoryPriceDataAccess<YarnHistoryPrice> {
+
+  private static final Log LOG = LogFactory.getLog(
+          YarnHistoryPriceClusterJ.class);
+
+
   @PersistenceCapable(table = TABLE_NAME)
   public interface YarnHistoryPriceDTO {
 
     @PrimaryKey
     @Column(name = TIME)
     long getTime();
+
     void setTime(long time);
 
     @Column(name = PRICE)
     float getPrice();
+
     void setPrice(float price);
 
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
-  
-  
 
   @Override
   public Map<Long, YarnHistoryPrice> getAll() throws StorageException {
@@ -61,17 +72,24 @@ public class YarnHistoryPriceClusterJ implements
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
 
-    HopsQueryDomainType<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> dobj = qb.createQueryDefinition(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
-    HopsQuery<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> query = session.createQuery(dobj);
 
-    List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> queryResults = query.getResultList();
+    HopsQueryDomainType<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> dobj = qb.
+            createQueryDefinition(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
+    HopsQuery<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> query = session.
+            createQuery(dobj);
+
+    List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> queryResults = query.
+            getResultList();
+
     LOG.debug("HOP :: ClusterJ YarnHistoryPrice.getAll - STOP");
     Map<Long, YarnHistoryPrice> result = createMap(queryResults);
     session.release(queryResults);
     return result;
   }
-  
-  public static Map<Long, YarnHistoryPrice> createMap(List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> results) {
+
+  public static Map<Long, YarnHistoryPrice> createMap(
+          List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> results) {
+
     Map<Long, YarnHistoryPrice> map = new HashMap<Long, YarnHistoryPrice>();
     for (YarnHistoryPriceClusterJ.YarnHistoryPriceDTO persistable : results) {
       YarnHistoryPrice hop = createHopYarnHistoryPrice(persistable);
@@ -79,28 +97,46 @@ public class YarnHistoryPriceClusterJ implements
     }
     return map;
   }
-  
-   private static YarnHistoryPrice createHopYarnHistoryPrice(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO csDTO) {
-    YarnHistoryPrice hop = new YarnHistoryPrice(csDTO.getTime(), csDTO.getPrice());
+
+
+
+  private static YarnHistoryPrice createHopYarnHistoryPrice(
+          YarnHistoryPriceClusterJ.YarnHistoryPriceDTO csDTO) {
+    YarnHistoryPrice hop = new YarnHistoryPrice(csDTO.getTime(), csDTO.
+            getPrice());
+
     return hop;
   }
 
   @Override
   public void add(YarnHistoryPrice yarnHistoryPrice) throws StorageException {
     HopsSession session = connector.obtainSession();
-    //List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> toAdd = new ArrayList<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO>();
-    //for (YarnHistoryPrice _yarnProjectsQuota : yarnProjectsQuota) {
-    //  toAdd.add(createPersistable(_yarnProjectsQuota, session));
-    //}
-    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO toAdd = createPersistable(yarnHistoryPrice, session);
+//<<<<<<< HEAD
+//    //List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> toAdd = new ArrayList<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO>();
+//    //for (YarnHistoryPrice _yarnProjectsQuota : yarnProjectsQuota) {
+//    //  toAdd.add(createPersistable(_yarnProjectsQuota, session));
+//    //}
+//    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO toAdd = createPersistable(yarnHistoryPrice, session);
+//    session.savePersistent(toAdd);
+//    //    session.flush();
+//    session.release(toAdd);
+//  }
+//  
+//  private YarnHistoryPriceClusterJ.YarnHistoryPriceDTO createPersistable(YarnHistoryPrice hopPQ,
+//          HopsSession session) throws StorageException {
+//    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO pqDTO = session.newInstance(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
+    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO toAdd = createPersistable(
+            yarnHistoryPrice, session);
     session.savePersistent(toAdd);
-    //    session.flush();
     session.release(toAdd);
   }
-  
-  private YarnHistoryPriceClusterJ.YarnHistoryPriceDTO createPersistable(YarnHistoryPrice hopPQ,
+
+  private YarnHistoryPriceClusterJ.YarnHistoryPriceDTO createPersistable(
+          YarnHistoryPrice hopPQ,
           HopsSession session) throws StorageException {
-    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO pqDTO = session.newInstance(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
+    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO pqDTO = session.newInstance(
+            YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
+//>>>>>>> upstream/develop
     //Set values to persist new YarnHistoryPriceDTO    
     pqDTO.setTime(hopPQ.getTime());
     pqDTO.setPrice(hopPQ.getPrice());
@@ -108,5 +144,5 @@ public class YarnHistoryPriceClusterJ implements
     return pqDTO;
 
   }
-  
+
 }
