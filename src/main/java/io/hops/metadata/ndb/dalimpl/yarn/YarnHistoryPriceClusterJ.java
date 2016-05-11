@@ -46,6 +46,7 @@ public class YarnHistoryPriceClusterJ implements
   private static final Log LOG = LogFactory.getLog(
           YarnHistoryPriceClusterJ.class);
 
+
   @PersistenceCapable(table = TABLE_NAME)
   public interface YarnHistoryPriceDTO {
 
@@ -64,20 +65,22 @@ public class YarnHistoryPriceClusterJ implements
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
 
+
   @Override
   public Map<Long, YarnHistoryPrice> getAll() throws StorageException {
     LOG.debug("HOP :: ClusterJ YarnHistoryPrice.getAll - START");
     HopsSession session = connector.obtainSession();
     HopsQueryBuilder qb = session.getQueryBuilder();
 
+
     HopsQueryDomainType<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> dobj = qb.
-            createQueryDefinition(
-                    YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
+            createQueryDefinition(YarnHistoryPriceClusterJ.YarnHistoryPriceDTO.class);
     HopsQuery<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> query = session.
             createQuery(dobj);
 
     List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> queryResults = query.
             getResultList();
+
     LOG.debug("HOP :: ClusterJ YarnHistoryPrice.getAll - STOP");
     Map<Long, YarnHistoryPrice> result = createMap(queryResults);
     session.release(queryResults);
@@ -86,6 +89,7 @@ public class YarnHistoryPriceClusterJ implements
 
   public static Map<Long, YarnHistoryPrice> createMap(
           List<YarnHistoryPriceClusterJ.YarnHistoryPriceDTO> results) {
+
     Map<Long, YarnHistoryPrice> map = new HashMap<Long, YarnHistoryPrice>();
     for (YarnHistoryPriceClusterJ.YarnHistoryPriceDTO persistable : results) {
       YarnHistoryPrice hop = createHopYarnHistoryPrice(persistable);
@@ -94,10 +98,13 @@ public class YarnHistoryPriceClusterJ implements
     return map;
   }
 
+
+
   private static YarnHistoryPrice createHopYarnHistoryPrice(
           YarnHistoryPriceClusterJ.YarnHistoryPriceDTO csDTO) {
     YarnHistoryPrice hop = new YarnHistoryPrice(csDTO.getTime(), csDTO.
             getPrice());
+
     return hop;
   }
 

@@ -78,14 +78,15 @@ struct NdbValues {
 		}
 	}
 
-  float getFLoatValue() {
+
+  float getFloatValue() {
 		if (m_isThisNull)
-			return -1;
+			return 0;
 		else {
 			return m_float;
 		}
 	}
-  
+
 	const char * getByteArray() {
 		return m_zbyteArray;
 	}
