@@ -115,7 +115,6 @@ import io.hops.metadata.ndb.dalimpl.yarn.FiCaSchedulerAppLastScheduledContainerC
 import io.hops.metadata.ndb.dalimpl.yarn.FiCaSchedulerAppReservationsClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.capacity.FiCaSchedulerAppReservedContainersClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.FiCaSchedulerAppSchedulingOpportunitiesClusterJ;
-
 import io.hops.metadata.ndb.dalimpl.yarn.YarnApplicationsQuotaClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.YarnApplicationsToKillClusterJ;
 import io.hops.metadata.ndb.dalimpl.yarn.JustFinishedContainersClusterJ;
@@ -350,10 +349,8 @@ public class NdbStorageFactory implements DalStorageFactory {
     dataAccessMap.
             put(LocalityLevelDataAccess.class, new LocalityLevelClusterJ());
     dataAccessMap.put(RunnableAppsDataAccess.class, new RunnableAppsClusterJ());
-
     dataAccessMap.
             put(PreemptionMapDataAccess.class, new PreemptionMapClusterJ());
-
     dataAccessMap.put(UserDataAccess.class, new UserClusterj());
     dataAccessMap.put(GroupDataAccess.class, new GroupClusterj());
     dataAccessMap.put(UserGroupDataAccess.class, new UserGroupClusterj());
@@ -369,9 +366,7 @@ public class NdbStorageFactory implements DalStorageFactory {
     
     dataAccessMap.put(YarnRunningPriceDataAccess.class, new YarnRunningPriceClusterJ());
     dataAccessMap.put(YarnHistoryPriceDataAccess.class, new YarnHistoryPriceClusterJ());
-
     dataAccessMap.put(YarnApplicationsToKillDataAccess.class, new YarnApplicationsToKillClusterJ());    
-
   }
 
   @Override

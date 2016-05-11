@@ -424,14 +424,12 @@ void HopObject::FireNewClassMethod() {
 }
 
 void HopObject::BuildHopJavaObject(vector<NdbValues> & _refNdbValues) {
-  std::cout << "\nHopsJNICallBack _refNdbValues values size " << _refNdbValues.size() << std::endl;
 			
 	for (int i = 0; i < (int) _refNdbValues.size(); ++i) {
 		std::string l_sDatabaseColName(_refNdbValues[i].getColName());
 
 		jmethodID l_javaMethod =
 				m_mapClassMemberToJavaMethod[l_sDatabaseColName];
-		std::cout << "\nHopsJNICallBack values " << i << " - " <<_refNdbValues[i].getDataType() << std::endl;
     switch (_refNdbValues[i].getDataType()) {
 
 		case NdbDictionary::Column::Char:
@@ -455,7 +453,6 @@ void HopObject::BuildHopJavaObject(vector<NdbValues> & _refNdbValues) {
 		}
 			break;
 		case NdbDictionary::Column::Bigint: {
-      std::cout << "\nHopsJNICallBack getting bigint value " << _refNdbValues[i].getFloatValue() << std::endl;			
 			if (_refNdbValues[i].getInt64Value() != -1) {
 				m_jniPtr->CallVoidMethod(m_callbackCalssObject, l_javaMethod,
 						_refNdbValues[i].getInt64Value());
@@ -465,13 +462,6 @@ void HopObject::BuildHopJavaObject(vector<NdbValues> & _refNdbValues) {
 			}
 		}
     break;
-    case NdbDictionary::Column::Float: {
-      std::cout << "\nHopsJNICallBack getting float value " << _refNdbValues[i].getFloatValue() << std::endl;
-			m_jniPtr->CallVoidMethod(m_callbackCalssObject, l_javaMethod,
-						_refNdbValues[i].getFloatValue());
-      std::cout << "\nHopsJNICallBack got float value " << _refNdbValues[i].getFloatValue() << std::endl;
-		}
-			break;
 		case NdbDictionary::Column::Int: {
 			if (m_mapClassMemberBoolFields[l_sDatabaseColName]) {
 				//this is boolean field
@@ -491,7 +481,11 @@ void HopObject::BuildHopJavaObject(vector<NdbValues> & _refNdbValues) {
 			}
 		}
 			break;
-    
+    case NdbDictionary::Column::Float: {
+			m_jniPtr->CallVoidMethod(m_callbackCalssObject, l_javaMethod,
+						_refNdbValues[i].getFloatValue());
+		}
+			break;    
 		case NdbDictionary::Column::Binary:
 		case NdbDictionary::Column::Varbinary:
 		case NdbDictionary::Column::Longvarbinary: {

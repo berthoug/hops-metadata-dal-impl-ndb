@@ -66,7 +66,7 @@ public class YarnApplicationsToKillClusterJ implements
         LOG.debug("HOP :: ClusterJ YarnApplicationsToKill.getAll - START");
         HopsSession session = connector.obtainSession();
         HopsQueryBuilder qb = session.getQueryBuilder();
-
+//all of your code need to be formated
         HopsQueryDomainType<YarnApplicationsToKillClusterJ.YarnApplicationsToKillDTO> dobj= qb.createQueryDefinition(YarnApplicationsToKillClusterJ.YarnApplicationsToKillDTO.class);
         HopsQuery<YarnApplicationsToKillClusterJ.YarnApplicationsToKillDTO> query = session.createQuery(dobj);
 
