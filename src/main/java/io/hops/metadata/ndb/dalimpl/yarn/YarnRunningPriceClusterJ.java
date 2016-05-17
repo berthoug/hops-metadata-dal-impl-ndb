@@ -36,6 +36,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 public class YarnRunningPriceClusterJ implements
         YarnRunningPriceTableDef,
         YarnRunningPriceDataAccess<YarnRunningPrice> {
@@ -54,11 +55,14 @@ public class YarnRunningPriceClusterJ implements
 
     @Column(name = TIME)
     long getTime();
+
     void setTime(long time);
 
     @Column(name = PRICE)
     float getPrice();
+
     void setPrice(float price);
+
   }
 
   private final ClusterjConnector connector = ClusterjConnector.getInstance();
@@ -107,7 +111,6 @@ public class YarnRunningPriceClusterJ implements
   @Override
   public void add(YarnRunningPrice yarnRunningPrice) throws StorageException {
     HopsSession session = connector.obtainSession();
-
     YarnRunningPriceClusterJ.YarnRunningPriceDTO toAdd = createPersistable(
             yarnRunningPrice, session);
     session.savePersistent(toAdd);
@@ -127,6 +130,5 @@ public class YarnRunningPriceClusterJ implements
     return pqDTO;
 
   }
-
 
 }

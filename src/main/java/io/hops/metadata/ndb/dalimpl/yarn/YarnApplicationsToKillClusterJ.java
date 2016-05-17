@@ -19,8 +19,7 @@ import static io.hops.metadata.yarn.TablesDef.YarnApplicationsToKillTableDef.TAB
 import static io.hops.metadata.yarn.TablesDef.YarnApplicationsToKillTableDef.APPLICATIONID;
 import static io.hops.metadata.yarn.TablesDef.YarnApplicationsToKillTableDef.PENDING_EVENT_ID;
 import io.hops.metadata.yarn.dal.YarnApplicationsToKillDataAccess;
-import io.hops.metadata.yarn.entity.YarnApplicationsToKill;
-import io.hops.metadata.yarn.entity.YarnApplicationsToKill;
+import io.hops.metadata.yarn.entity.ContainersLogs;
 import io.hops.metadata.yarn.entity.YarnApplicationsToKill;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,6 +113,23 @@ public class YarnApplicationsToKillClusterJ implements
         return pqDTO;
 
     }
+    
+  @Override
+  public void removeAll(
+          Collection<YarnApplicationsToKill> KilledApplicationsList) throws
+          StorageException {
+    HopsSession session = connector.obtainSession();
+    List<YarnApplicationsToKillClusterJ.YarnApplicationsToKillDTO> toRemove
+            = new ArrayList<YarnApplicationsToKillClusterJ.YarnApplicationsToKillDTO>();
+
+    for (YarnApplicationsToKill entry : KilledApplicationsList) {
+      toRemove.add(createPersistable(entry, session));
+    }
+
+    session.deletePersistentAll(toRemove);
+    session.flush();
+    session.release(toRemove);
+  }
 
     
 }

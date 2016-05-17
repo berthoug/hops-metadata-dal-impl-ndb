@@ -497,8 +497,7 @@ void HopsJNIDispatcher::ProcessAndFillBatchData(
 
 	m_mapOfBTObjectsItr = m_mapOfBatchTransactionObjects.find(l_sRMNodeId);
         
-  std::cout << "\n¨[ProcessAndFillBatchData]  PendingEventId : " << l_iPendingEventId << " RMNodeId: " << l_sRMNodeId << std::endl;
-        
+  //std::cout << "\n¨[ProcessAndFillBatchData]  PendingEventId : " << l_iPendingEventId << " RMNodeId: " << l_sRMNodeId << std::endl;        
 	if (m_mapOfBTObjectsItr != m_mapOfBatchTransactionObjects.end()) {
 		// so we found the existing rm node, check the pending id and update corresponding object pointers
 		// first check whether we have any existing pending event id
@@ -698,31 +697,30 @@ int HopsJNIDispatcher::SingleThreadBDWithRefTable() {
 		if (m_itrPendingEvent != m_mapOfPendingEvents.end()) {
 			// so we found the rm node , lets dispatch
 			// now sort the pending events
-      std::cout << "\n[SingleThreadBDWithRefTable] mapOfPendingEvents size: " << m_mapOfPendingEvents.size() << std::endl;
+      //std::cout << "\n[SingleThreadBDWithRefTable] mapOfPendingEvents size: " << m_mapOfPendingEvents.size() << std::endl;
 			std::sort(m_itrPendingEvent->second.begin(),
 					m_itrPendingEvent->second.end());
 			for (int i = 0; i < (int) m_itrPendingEvent->second.size(); ++i) {
 				// go through all the pending event and dispatch, this will avoid unnecessary dispatch
 				int l_iPendingEventId = m_itrPendingEvent->second[i];
-        std::cout << "\n[SingleThreadBDWithRefTable] dispatching pendingEvent :" << l_iPendingEventId << std::endl;
+        //std::cout << "\n[SingleThreadBDWithRefTable] dispatching pendingEvent :" << l_iPendingEventId << std::endl;
 				// now lets search the pending event id in the main map,
 
 				l_innermapItr = m_mapOfBTObjectsItr->second.find(
 						l_iPendingEventId);
-        
 				if (l_innermapItr != m_mapOfBTObjectsItr->second.end()) {
 					++GlobalTotalTransactionCount;
 					//int l_iPendingEventId = l_innermapItr->first;
 					for (int j = 0; j < (int) vecListJavaMethod.size(); ++j) {
 						m_ptrJNI->CallVoidMethod(m_newCallBackObj,
 								vecListJavaMethod[j]);
-            std::cout << "\n[SingleThreadBDWithRefTable] Calling Java methods" << std::endl;            
+            //std::cout << "\n[SingleThreadBDWithRefTable] Calling Java methods" << std::endl;            
 					}
 					for (int i = 0; i < (int) l_innermapItr->second.size();
 							++i) {
 						string l_sTableName(
 								l_innermapItr->second[i]->GetTableName());
-            std::cout << "\n[SingleThreadBDWithRefTable] dispatching table :" << l_sTableName << std::endl;
+            //std::cout << "\n[SingleThreadBDWithRefTable] dispatching table :" << l_sTableName << std::endl;
 						int l_iPos = m_TablePositions[l_sTableName];
 						m_ptrHopsObjects[l_iPos]->BuildHopJavaObject(
 								l_innermapItr->second[i]->m_listOfNdbValues);
@@ -793,7 +791,7 @@ int HopsJNIDispatcher::SingleThreadDispatch() {
 int HopsJNIDispatcher::PreprocessJavaObjectsWithoutReferenceTable(
 		vector<jobject> &_vecJObject) {
 	int GlobalTotalTransactionCount = 0;
-        std::cout << "\n[PreprocessJavaObjectsWithoutReferenceTable] Initiate " << std::endl;
+        //std::cout << "\n[PreprocessJavaObjectsWithoutReferenceTable] Initiate " << std::endl;
 	m_mapOfReturnObjectItr = m_mapOfReturnObject.begin();
 	for (; m_mapOfReturnObjectItr != m_mapOfReturnObject.end();
 			++m_mapOfReturnObjectItr) {
@@ -829,7 +827,7 @@ int HopsJNIDispatcher::PreprocessJavaObjectsWithoutReferenceTable(
 int HopsJNIDispatcher::PreprocessJavaObjects(vector<jobject> & _vecJObject) {
 
 	int GlobalTotalTransactionCount = 0;
-        std::cout << "\n[PreprocessJavaObjects] Initiate " << std::endl;
+        //std::cout << "\n[PreprocessJavaObjects] Initiate " << std::endl;
 	mapOfSortingItr = m_mapOfSortingObjects.begin();
 	for (; mapOfSortingItr != m_mapOfSortingObjects.end(); ++mapOfSortingItr) {
 		std::map<int, Uint64>::iterator l_innermapItr =
@@ -849,7 +847,7 @@ int HopsJNIDispatcher::PreprocessJavaObjects(vector<jobject> & _vecJObject) {
 			for (int i = 0; i < (int) m_mapOfReturnObjectItr->second.size();
 					++i) {
 				string sTablanme(m_mapOfReturnObjectItr->second[i]->GetTableName());
-                                std::cout << "\n[PreprocessJavaObjects] table : " << sTablanme << std::endl;
+        //std::cout << "\n[PreprocessJavaObjects] table : " << sTablanme << std::endl;
 				int l_iPos = m_TablePositions[sTablanme];
 
 				m_ptrHopsObjects[l_iPos]->BuildHopJavaObject(

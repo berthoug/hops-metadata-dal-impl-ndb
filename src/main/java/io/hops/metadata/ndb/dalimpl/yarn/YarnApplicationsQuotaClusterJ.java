@@ -119,6 +119,21 @@ public class YarnApplicationsQuotaClusterJ implements
     return pqDTO;
 
   }
+    
+  @Override
+  public void removeAll(Collection<YarnApplicationsQuota> ApplicationsList)
+          throws StorageException {
+    HopsSession session = connector.obtainSession();
+    List<YarnApplicationsQuotaDTO> toRemove = new ArrayList<YarnApplicationsQuotaDTO>();
+
+    for (YarnApplicationsQuota entry : ApplicationsList) {
+      toRemove.add(createPersistable(entry, session));
+    }
+
+    session.deletePersistentAll(toRemove);
+    session.flush();
+    session.release(toRemove);
+  }
 
 
 }
