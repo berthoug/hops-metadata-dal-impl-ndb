@@ -152,12 +152,11 @@ public class FullRMNodeClusterJ implements FullRMNodeDataAccess<RMNodeComps> {
     }else if(hopRMNode !=null){
       rmNodeId = hopRMNode.getNodeId();
     }
-    //we should probably have a constructor that does not need the last argument instead of passing null
     RMNodeComps result = new RMNodeComps(hopRMNode, hopNextHeartbeat, hopNode,
         hopNodeHBResponse, hopResource, hopPendingEvent,
         hopUpdatedContainerInfo, hopContainerIdsToClean,
         hopFinishedApplications,
-        ContainerStatusClusterJ.createList(containerStatusDTOs), rmNodeId,null);
+        ContainerStatusClusterJ.createList(containerStatusDTOs), rmNodeId);
     session.release(components);
     session.release(containerStatusDTOs);
     session.release(nextHBDTO);

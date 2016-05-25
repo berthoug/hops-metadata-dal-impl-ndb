@@ -171,7 +171,8 @@ public class ApplicationStateClusterJ implements
         state = new ApplicationState(appStateDTO.getapplicationid(),
             CompressionUtils.decompress(appStateDTO.getappstate()), appStateDTO.
             getappuser(), appStateDTO.getappname(),
-            appStateDTO.getappsmstate(),appStateDTO.gettimelimit(),appStateDTO.getbudgetlimit(),appStateDTO.getpricelimit() );
+            appStateDTO.getappsmstate(),appStateDTO.gettimelimit(),
+            appStateDTO.getbudgetlimit(),appStateDTO.getpricelimit() );
       } catch (IOException e) {
         throw new StorageException(e);
       } catch (DataFormatException e) {
