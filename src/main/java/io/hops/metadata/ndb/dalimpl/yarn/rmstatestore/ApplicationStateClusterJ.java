@@ -85,7 +85,11 @@ public class ApplicationStateClusterJ implements
     float getpricelimit();
     
     void setpricelimit(float pricelimit);
-        
+     
+    @Column(name = PRICETYPE)
+    String getpriceType();
+    
+    void setpriceType(String priceType);
     
   }
 
@@ -172,7 +176,8 @@ public class ApplicationStateClusterJ implements
             CompressionUtils.decompress(appStateDTO.getappstate()), appStateDTO.
             getappuser(), appStateDTO.getappname(),
             appStateDTO.getappsmstate(),appStateDTO.gettimelimit(),
-            appStateDTO.getbudgetlimit(),appStateDTO.getpricelimit() );
+            appStateDTO.getbudgetlimit(),appStateDTO.getpricelimit(), 
+            appStateDTO.getpriceType());
       } catch (IOException e) {
         throw new StorageException(e);
       } catch (DataFormatException e) {
@@ -210,6 +215,7 @@ public class ApplicationStateClusterJ implements
     appStateDTO.settimelimit(hop.getTimeLimit());
     appStateDTO.setbudgetlimit(hop.getBudgetLimit());
     appStateDTO.setpricelimit(hop.getPriceLimit());
+    appStateDTO.setpriceType(hop.getPriceType());
 
     return appStateDTO;
   }
