@@ -66,7 +66,6 @@ void HopsReturnObject::processNdbRecAttr(NdbRecAttr * _pNdbRectAttr) {
 	if (_pNdbRectAttr->isNULL() == 0) {
 		// we have a non-null value
 		NdbDictionary::Column::Type column_type = _pNdbRectAttr->getType();
-    //std::cout << "\nNdbRecAttr Column Type : " << column_type << " --- " << _pNdbRectAttr->getColumn()->getName() << std::endl;
 		switch (column_type) {
 		case NdbDictionary::Column::Char:
 		case NdbDictionary::Column::Varchar:
@@ -74,7 +73,6 @@ void HopsReturnObject::processNdbRecAttr(NdbRecAttr * _pNdbRectAttr) {
 			std::string l_sDatabaseValue;
 			GetString(_pNdbRectAttr, l_sDatabaseValue);
 			strcpy(l_stNdbValues.m_zValue, l_sDatabaseValue.c_str());
-    //std::cout << "\nNdbRecAttr String got in Switch: "<< column_type << " --- "<< l_sDatabaseValue << std::endl;
 		}
 			break;
 		case NdbDictionary::Column::Unsigned: {
@@ -87,7 +85,6 @@ void HopsReturnObject::processNdbRecAttr(NdbRecAttr * _pNdbRectAttr) {
 			break;
 		case NdbDictionary::Column::Int: {
 			l_stNdbValues.m_int32Value = _pNdbRectAttr->int32_value();
-    //std::cout << "\nNdbRecAttr Int got in Switch: "<< column_type << " --- "<< _pNdbRectAttr->int32_value() << std::endl;
 		}
 			break;
 		case NdbDictionary::Column::Binary:
@@ -108,7 +105,6 @@ void HopsReturnObject::processNdbRecAttr(NdbRecAttr * _pNdbRectAttr) {
 			break;
     case NdbDictionary::Column::Float: {
 			l_stNdbValues.m_float = _pNdbRectAttr->float_value();
-    //std::cout << "\nNdbRecAttr Float got in Switch: "<< column_type << " --- "<< _pNdbRectAttr->float_value() << std::endl;
 		}
 			break;
 		default: {

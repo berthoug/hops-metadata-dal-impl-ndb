@@ -358,6 +358,10 @@ CREATE TABLE `yarn_applicationstate` (
   `appuser` VARCHAR(45) NULL,
   `appname` VARCHAR(200) NULL,
   `appsmstate` VARCHAR(45) NULL,
+  `timelimit`  bigint NULL,
+  `budgetlimit` float NULL,
+  `pricelimit` float NULL,
+  `pricetype` VARCHAR(45) NULL,
 PRIMARY KEY (`applicationid`)
 ) ENGINE=ndbcluster DEFAULT CHARSET=latin1 PARTITION BY KEY(`applicationid`)$$
 
