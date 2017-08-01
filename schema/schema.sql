@@ -516,11 +516,11 @@ CREATE TABLE `yarn_containerid_toclean` (
 
 delimiter $$
 
-CREATE TABLE `yarn_rmnode_finishedapplications` (
+CREATE TABLE `yarn_rmnode_applications` (
   `rmnodeid` VARCHAR(255) NOT NULL,
   `applicationid` VARCHAR(45) NOT NULL,
   `status` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`rmnodeid`, `applicationid`),
+  PRIMARY KEY (`rmnodeid`, `applicationid`,`status`),
   INDEX `index2` (`rmnodeid` ASC)
 ) ENGINE=ndbcluster DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs PARTITION BY KEY(applicationid) $$
 
