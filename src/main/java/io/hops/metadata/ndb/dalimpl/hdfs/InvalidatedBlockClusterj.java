@@ -118,7 +118,7 @@ public class InvalidatedBlockClusterj implements
   }
   
   @Override
-  public Map<Long, Long> findInvalidatedBlockByStorageIdUsingMySQLServer(int storageId) throws StorageException {
+  public Map<Long, Long> findInvalidatedBlockBySidUsingMySQLServer(int storageId) throws StorageException {
     return MySQLQueryHelper.execute(String.format("SELECT %s, %s "
             + "FROM %s WHERE %s='%d'", BLOCK_ID, GENERATION_STAMP, TABLE_NAME, STORAGE_ID, storageId), new MySQLQueryHelper.ResultSetHandler<Map<Long,Long>>() {
       @Override
